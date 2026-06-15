@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ห้องดูซีรีส์ของฉัน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root {
+    --ink: #1B2430;
+    --paper: #FBF6EC;
+    --paper-soft: #F1E9D8;
+    --red: #D6453D;
+    --mint: #4C9A78;
+    --gold: #E8B73B;
+    --gold-deep: #C99A2E;
+    --ink-soft: #6B5B4A;
+    --paper-dim: #AAB4C2;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ---------- Header / marquee ---------- */
+  .marquee {
+    padding: 56px 24px 36px;
+    text-align: center;
+    border-bottom: 3px dashed var(--gold);
+  }
+
+  .marquee .eyebrow {
+    font-family: 'Bai Jamjuree', sans-serif;
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  .marquee h1 {
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    letter-spacing: 0.03em;
+    margin: 0 0 14px;
+  }
+
+  .marquee .stats {
+    font-size: 0.95rem;
+    color: var(--paper-dim);
+    margin: 0;
+    font-family: 'Bai Jamjuree', sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* ---------- Controls ---------- */
+  .controls {
+    max-width: 1100px;
+    margin: 32px auto 8px;
+    padding: 0 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-box {
+    flex: 1 1 220px;
+    background: var(--paper);
+    border: none;
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .filter-pills {
+    display: flex;
+    gap: 8px;
+  }
+
+  .pill {
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 2px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+
+  .pill.active {
+    background: var(--gold);
+    color: var(--ink);
+  }
+
+  .sort-select {
+    background: var(--paper);
+    border: none;
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .search-box:focus-visible,
+  .sort-select:focus-visible,
+  .pill:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Grid ---------- */
+  .grid {
+    max-width: 1100px;
+    margin: 24px auto 64px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  /* ---------- Ticket card ---------- */
+  .ticket {
+    background: var(--paper);
+    border-radius: 18px;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: rise .5s ease forwards;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    transition: transform .25s, box-shadow .25s;
+  }
+
+  .ticket:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ticket-main {
+    padding: 22px 22px 18px;
+  }
+
+  .ticket-type {
+    display: inline-block;
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  .ticket-type.series  { background: rgba(76,154,120,0.15); color: var(--mint); }
+  .ticket-type.variety { background: rgba(232,183,59,0.2);  color: var(--gold-deep); }
+
+  .ticket-title {
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+    line-height: 1.25;
+  }
+
+  .ticket-year {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+  }
+
+  .ticket-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .genre-tag {
+    font-size: 0.75rem;
+    background: var(--paper-soft);
+    padding: 3px 10px;
+    border-radius: 6px;
+    color: var(--ink-soft);
+  }
+
+  /* perforation between poster info and the stub */
+  .perforation {
+    position: relative;
+    border-top: 2px dashed #D8CDB8;
+  }
+
+  .perforation::before,
+  .perforation::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    width: 20px;
+    height: 20px;
+    background: var(--ink);
+    border-radius: 50%;
+  }
+
+  .perforation::before { left: -10px; }
+  .perforation::after  { right: -10px; }
+
+  .ticket-stub {
+    padding: 16px 22px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ticket-meta {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    font-family: 'Bai Jamjuree', sans-serif;
+    letter-spacing: 0.04em;
+  }
+
+  /* "ชอบ / เฉยๆ" stamp */
+  .stamp {
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transform: rotate(-8deg);
+    transition: transform .25s;
+  }
+
+  .stamp::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px dashed currentColor;
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  .stamp.liked   { color: var(--red); }
+  .stamp.neutral { color: var(--ink-soft); }
+
+  .ticket:hover .stamp { transform: rotate(-8deg) scale(1.08); }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--paper-dim);
+  }
+
+  .empty .stamp-big {
+    display: inline-block;
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.25em;
+    border: 4px solid var(--red);
+    color: var(--red);
+    padding: 14px 30px;
+    border-radius: 12px;
+    transform: rotate(-6deg);
+    margin-bottom: 18px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticket { animation: none; opacity: 1; transform: none; }
+    .ticket:hover, .ticket:hover .stamp { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="marquee">
+    <p class="eyebrow">My K-Content Diary</p>
+    <h1>ห้องดูซีรีส์ของฉัน</h1>
+    <p class="stats" id="stats"></p>
+  </header>
+
+  <main>
+    <div class="controls">
+      <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
+      <div class="filter-pills">
+        <button class="pill active" data-type="all">ทั้งหมด</button>
+        <button class="pill" data-type="series">ซีรีส์</button>
+        <button class="pill" data-type="variety">วาไรตี้</button>
+      </div>
+      <select id="sort" class="sort-select">
+        <option value="liked-first">ชอบก่อน</option>
+        <option value="year-desc">ปีล่าสุดก่อน</option>
+        <option value="title">ชื่อ A-Z</option>
+      </select>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="empty" id="empty" hidden>
+      <div class="stamp-big">SOLD OUT</div>
+      <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
+    </div>
+  </main>
+
+<script>
+  // ---------------------------------------------------------------
+  // เชื่อมกับ Google Sheet ของคุณ
+  //
+  // หัวคอลัมน์ในชีตของคุณ (ตามที่ใช้จริง):
+  //   Series Name | ประเภท | แนว / หมวด | ปีที่ออกอากาศ | จำนวนตอน | ความชอบส่วนตัว
+  //   - ประเภท ใส่ "Series" หรือ "Variety" (หรือ "ซีรีส์" / "วาไรตี้" ก็ได้)
+  //   - แนว / หมวด ถ้ามีหลายแนว ใส่คั่นด้วย comma ในเซลล์เดียว เช่น "คอมเมดี้, ฮีลลิ่ง"
+  //   - ความชอบส่วนตัว เป็น checkbox: ติ๊ก = ชอบ, ไม่ติ๊ก = เฉยๆ
+  //
+  // ไปที่ File > Share > Publish to web เลือกชีตที่ต้องการ
+  // เลือกรูปแบบเป็น "Comma-separated values (.csv)" แล้วกด Publish
+  // คัดลอกลิงก์ที่ได้มาวางแทนค่าด้านล่างนี้ (อยู่ในเครื่องหมาย "")
+  // ---------------------------------------------------------------
+  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=0&single=true&output=csv";
+
+  // ---------------------------------------------------------------
+  // ลิงก์ CSV ของชีต "Variety" (สำหรับรายการวาไรตี้)
+  // หัวคอลัมน์: ลำดับ | Variety Name | ประเภท | แนว / หมวด | ปีที่ออกอากาศ | จำนวนตอน | ความชอบส่วนตัว
+  // วิธีหาลิงก์: ไปที่แท็บ Variety ใน Google Sheet > File > Share > Publish to web
+  // เลือก sheet เป็น "Variety" (ไม่ใช่ Entire Document) รูปแบบ CSV แล้วกด Publish
+  // คัดลอกลิงก์มาวางแทนค่าด้านล่างนี้
+  // ---------------------------------------------------------------
+  const VARIETY_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=1521235531&single=true&output=csv";
+
+  // ข้อมูลตัวอย่าง — ใช้แสดงตอนยังไม่ได้ใส่ลิงก์ Google Sheet ด้านบน หรือดึงข้อมูลจากชีตไม่สำเร็จ
+  const fallbackShows = [
+    {
+      title: "Teach You a Lesson",
+      type: "series",
+      year: 2026,
+      episodes: 10,
+      genres: ["อาชญากรรม", "ดราม่าสังคม", "กฎหมาย"],
+      liked: true
+    },
+    {
+      title: "The WONDERfools",
+      type: "series",
+      year: 2026,
+      episodes: 8,
+      genres: ["คอมเมดี้", "ซูเปอร์ฮีโร่", "แอ็กชัน"],
+      liked: false
+    },
+    {
+      title: "Sold Out on You",
+      type: "series",
+      year: 2026,
+      episodes: 12,
+      genres: ["โรแมนติกคอมเมดี้", "ฮีลลิ่ง"],
+      liked: true
+    }
+  ];
+
+  let shows = [];
+  let usingFallback = true;
+
+  const grid = document.getElementById('grid');
+  const emptyState = document.getElementById('empty');
+  const searchInput = document.getElementById('search');
+  const sortSelect = document.getElementById('sort');
+  const pills = document.querySelectorAll('.pill');
+  const statsEl = document.getElementById('stats');
+
+  let activeType = 'all';
+
+  function updateStats() {
+    const total = shows.length;
+    if (total === 0) {
+      statsEl.textContent = 'ยังไม่มีรายการ — เริ่มเพิ่มเรื่องแรกของคุณได้เลย';
+      return;
+    }
+    const likedCount = shows.filter(s => s.liked).length;
+    let text = `บันทึกแล้ว ${total} เรื่อง · ชอบ ${likedCount} เรื่อง`;
+    if (usingFallback) {
+      text += ' · กำลังแสดงข้อมูลตัวอย่าง (ยังไม่เชื่อม Google Sheet)';
+    }
+    statsEl.textContent = text;
+  }
+
+  // แปลงแถวจาก Google Sheet (CSV) ให้เป็นรูปแบบเดียวกับ fallbackShows
+  function rowToShow(row) {
+    const typeRaw = (row['ประเภท'] || '').trim().toLowerCase();
+    return {
+      title: (row['Series Name'] || row['Variety Name'] || '').trim(),
+      type: (typeRaw === 'วาไรตี้' || typeRaw === 'variety') ? 'variety' : 'series',
+      year: Number(row['ปีที่ออกอากาศ']) || '',
+      episodes: Number(row['จำนวนตอน']) || 0,
+      genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
+      liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE'
+    };
+  }
+
+  async function loadData() {
+    const urls = [SHEET_CSV_URL, VARIETY_CSV_URL].filter(u => u.trim());
+
+    if (urls.length === 0) {
+      shows = fallbackShows;
+      usingFallback = true;
+      updateStats();
+      render();
+      return;
+    }
+
+    statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
+
+    try {
+      const allRows = [];
+      for (const url of urls) {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('โหลดข้อมูลไม่สำเร็จ');
+        const csvText = await res.text();
+        const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+        allRows.push(...parsed.data.map(rowToShow).filter(s => s.title));
+      }
+
+      if (allRows.length === 0) throw new Error('ไม่พบข้อมูลในชีต');
+
+      shows = allRows;
+      usingFallback = false;
+    } catch (err) {
+      console.error('โหลดจาก Google Sheet ไม่สำเร็จ ใช้ข้อมูลตัวอย่างแทน:', err);
+      shows = fallbackShows;
+      usingFallback = true;
+    }
+
+    updateStats();
+    render();
+  }
+
+  function render() {
+    const query = searchInput.value.trim().toLowerCase();
+
+    let filtered = shows.filter(s => {
+      const matchesType = activeType === 'all' || s.type === activeType;
+      const matchesQuery = !query || s.title.toLowerCase().includes(query);
+      return matchesType && matchesQuery;
+    });
+
+    const sortBy = sortSelect.value;
+    filtered = filtered.slice().sort((a, b) => {
+      if (sortBy === 'liked-first') return (b.liked === true ? 1 : 0) - (a.liked === true ? 1 : 0);
+      if (sortBy === 'year-desc')   return b.year - a.year;
+      if (sortBy === 'title')       return a.title.localeCompare(b.title);
+      return 0;
+    });
+
+    grid.innerHTML = '';
+
+    if (filtered.length === 0) {
+      emptyState.hidden = false;
+      return;
+    }
+    emptyState.hidden = true;
+
+    filtered.forEach((s, i) => {
+      const card = document.createElement('article');
+      card.className = 'ticket';
+      card.style.animationDelay = `${i * 0.06}s`;
+      card.innerHTML = `
+        <div class="ticket-main">
+          <span class="ticket-type ${s.type}">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span>
+          <h2 class="ticket-title">${s.title}</h2>
+          ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
+          <div class="ticket-genres">${s.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>
+        </div>
+        <div class="perforation"></div>
+        <div class="ticket-stub">
+          <span class="ticket-meta">${s.episodes} ตอน</span>
+          <div class="stamp ${s.liked ? 'liked' : 'neutral'}">${s.liked ? '♥' : '♡'}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  searchInput.addEventListener('input', render);
+  sortSelect.addEventListener('change', render);
+  pills.forEach(p => p.addEventListener('click', () => {
+    pills.forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    activeType = p.dataset.type;
+    render();
+  }));
+
+  loadData();
+</script>
+
+</body>
+</html>
