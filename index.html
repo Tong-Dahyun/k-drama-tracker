@@ -822,6 +822,30 @@
     renderPending();
   }));
 
+  function resetDiaryFilters() {
+    searchInput.value = '';
+    sortSelect.value = 'liked-first';
+    yearFilter.value = 'all';
+    genreFilter.value = 'all';
+    activeType = 'all';
+    activeYear = 'all';
+    activeGenre = 'all';
+    pills.forEach(x => x.classList.remove('active'));
+    document.querySelector('#page-diary .pill[data-type="all"]').classList.add('active');
+  }
+
+  function resetPendingFilters() {
+    searchInputPending.value = '';
+    sortSelectPending.value = 'year-desc';
+    yearFilterPending.value = 'all';
+    genreFilterPending.value = 'all';
+    activeTypePending = 'all';
+    activeYearPending = 'all';
+    activeGenrePending = 'all';
+    pillsPending.forEach(x => x.classList.remove('active'));
+    document.querySelector('#page-watchlist .pill[data-ptype="all"]').classList.add('active');
+  }
+
   pageTabs.forEach(tab => tab.addEventListener('click', () => {
     pageTabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
@@ -830,11 +854,15 @@
     if (tab.dataset.page === 'diary') {
       document.getElementById('page-diary').classList.add('active');
       pageTitle.textContent = 'ห้องดูซีรีส์ของฉัน';
+      resetDiaryFilters();
       updateStats();
+      render();
     } else {
       document.getElementById('page-watchlist').classList.add('active');
       pageTitle.textContent = 'อยากดู';
+      resetPendingFilters();
       updateStatsPending();
+      renderPending();
     }
   }));
 
