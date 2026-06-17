@@ -6,61 +6,66 @@
 <title>ห้องดูซีรีส์ของฉัน</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bai+Jamjuree:wght@400;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   :root {
-    --ink: #1B2430;
-    --paper: #FBF6EC;
-    --paper-soft: #F1E9D8;
-    --red: #D6453D;
-    --mint: #4C9A78;
-    --gold: #E8B73B;
-    --gold-deep: #C99A2E;
-    --ink-soft: #6B5B4A;
-    --paper-dim: #AAB4C2;
+    --bg: #141414;
+    --surface: #1F1F1F;
+    --surface-soft: #2B2B2B;
+    --border: #3A3A3A;
+    --red: #E50914;
+    --red-soft: rgba(229,9,20,0.18);
+    --mint: #46D369;
+    --mint-soft: rgba(70,211,105,0.15);
+    --gold: #E6B91E;
+    --gold-soft: rgba(230,185,30,0.18);
+    --text: #FFFFFF;
+    --text-soft: #B3B3B3;
+    --text-dim: #737373;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: var(--ink);
-    color: var(--paper);
-    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sarabun', 'Inter', sans-serif;
     min-height: 100vh;
   }
 
   /* ---------- Header / marquee ---------- */
   .marquee {
-    padding: 28px 24px 18px;
+    padding: 32px 24px 20px;
     text-align: center;
-    border-bottom: 3px dashed var(--gold);
+    border-bottom: 1px solid var(--border);
   }
 
   .marquee .eyebrow {
-    font-family: 'Bai Jamjuree', sans-serif;
-    color: var(--gold);
+    font-family: 'Inter', sans-serif;
+    color: var(--red);
     font-size: 0.7rem;
-    letter-spacing: 0.3em;
+    font-weight: 700;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
   }
 
   .marquee h1 {
-    font-family: 'Bai Jamjuree', sans-serif;
-    font-weight: 700;
-    font-size: clamp(1.4rem, 4vw, 2.1rem);
-    letter-spacing: 0.03em;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    letter-spacing: -0.01em;
     margin: 0 0 8px;
+    color: var(--text);
   }
 
   .marquee .stats {
     font-size: 0.85rem;
-    color: var(--paper-dim);
+    color: var(--text-soft);
     margin: 0;
-    font-family: 'Bai Jamjuree', sans-serif;
-    letter-spacing: 0.05em;
+    font-family: 'Sarabun', sans-serif;
   }
 
   /* ---------- Page tabs (ห้องดูซีรีส์ / อยากดู) ---------- */
@@ -74,21 +79,20 @@
   }
 
   .page-tab {
-    font-family: 'Bai Jamjuree', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 0.85rem;
-    letter-spacing: 0.04em;
     padding: 10px 22px;
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    color: var(--paper-dim);
+    color: var(--text-soft);
     cursor: pointer;
     transition: color .2s, border-color .2s;
   }
 
   .page-tab.active {
-    color: var(--paper);
+    color: var(--text);
     border-bottom-color: var(--red);
   }
 
@@ -113,14 +117,16 @@
 
   .search-box {
     flex: 1 1 180px;
-    background: var(--paper);
-    border: none;
-    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
     padding: 9px 16px;
     font-family: 'Sarabun', sans-serif;
     font-size: 0.9rem;
-    color: var(--ink);
+    color: var(--text);
   }
+
+  .search-box::placeholder { color: var(--text-dim); }
 
   .filter-pills {
     display: flex;
@@ -128,31 +134,32 @@
   }
 
   .pill {
-    font-family: 'Bai Jamjuree', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 0.8rem;
     padding: 8px 14px;
-    border-radius: 999px;
-    border: 2px solid var(--gold);
-    background: transparent;
-    color: var(--gold);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-soft);
     cursor: pointer;
-    transition: background .2s, color .2s;
+    transition: background .2s, color .2s, border-color .2s;
   }
 
   .pill.active {
-    background: var(--gold);
-    color: var(--ink);
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
   }
 
   .sort-select {
-    background: var(--paper);
-    border: none;
-    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
     padding: 9px 14px;
     font-family: 'Sarabun', sans-serif;
     font-size: 0.82rem;
-    color: var(--ink);
+    color: var(--text);
     cursor: pointer;
     max-width: 140px;
   }
@@ -176,22 +183,24 @@
 
   /* ---------- Ticket card ---------- */
   .ticket {
-    background: var(--paper);
-    border-radius: 12px;
-    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     opacity: 0;
     transform: translateY(12px);
     animation: rise .4s ease forwards;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.22);
-    transition: transform .25s, box-shadow .25s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    transition: transform .25s, box-shadow .25s, border-color .25s;
   }
 
   .ticket:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.32);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+    border-color: var(--red);
   }
 
   @keyframes rise {
@@ -205,30 +214,31 @@
 
   .ticket-type {
     display: inline-block;
-    font-family: 'Bai Jamjuree', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 0.62rem;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     padding: 3px 9px;
     border-radius: 999px;
     margin-bottom: 6px;
   }
 
-  .ticket-type.series  { background: rgba(76,154,120,0.15); color: var(--mint); }
-  .ticket-type.variety { background: rgba(232,183,59,0.2);  color: var(--gold-deep); }
+  .ticket-type.series  { background: var(--mint-soft); color: var(--mint); }
+  .ticket-type.variety { background: var(--gold-soft); color: var(--gold); }
 
   .ticket-title {
-    font-family: 'Bai Jamjuree', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     margin: 0 0 2px;
     line-height: 1.25;
+    color: var(--text);
   }
 
   .ticket-year {
     font-size: 0.75rem;
-    color: var(--ink-soft);
+    color: var(--text-dim);
     margin: 0 0 8px;
   }
 
@@ -241,16 +251,16 @@
 
   .genre-tag {
     font-size: 0.65rem;
-    background: var(--paper-soft);
+    background: var(--surface-soft);
     padding: 2px 8px;
     border-radius: 5px;
-    color: var(--ink-soft);
+    color: var(--text-soft);
   }
 
   /* perforation between poster info and the stub */
   .perforation {
     position: relative;
-    border-top: 2px dashed #D8CDB8;
+    border-top: 2px dashed var(--border);
   }
 
   .perforation::before,
@@ -260,7 +270,7 @@
     top: -8px;
     width: 16px;
     height: 16px;
-    background: var(--ink);
+    background: var(--bg);
     border-radius: 50%;
   }
 
@@ -277,18 +287,17 @@
 
   .ticket-meta {
     font-size: 0.7rem;
-    color: var(--ink-soft);
-    font-family: 'Bai Jamjuree', sans-serif;
-    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
   }
 
   /* "ชอบ / เฉยๆ" stamp */
   .stamp {
-    font-family: 'Bai Jamjuree', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1.1rem;
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
     border-radius: 50%;
     border: 2px solid currentColor;
@@ -296,23 +305,13 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    transform: rotate(-8deg);
     transition: transform .25s;
   }
 
-  .stamp::after {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border: 1px dashed currentColor;
-    border-radius: 50%;
-    opacity: 0.5;
-  }
+  .stamp.liked   { color: var(--red); background: var(--red-soft); }
+  .stamp.neutral { color: var(--text-dim); }
 
-  .stamp.liked   { color: var(--red); }
-  .stamp.neutral { color: var(--ink-soft); }
-
-  .ticket:hover .stamp { transform: rotate(-8deg) scale(1.08); }
+  .ticket:hover .stamp { transform: scale(1.08); }
 
   /* ---------- Watchlist variant: "อยากดู" ---------- */
   .ticket.watchlist .perforation {
@@ -320,10 +319,10 @@
   }
 
   .watch-status {
-    font-family: 'Bai Jamjuree', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 0.66rem;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     padding: 5px 10px;
     border-radius: 7px;
     display: inline-flex;
@@ -340,12 +339,12 @@
     flex-shrink: 0;
   }
 
-  .watch-status.ready { background: rgba(76,154,120,0.15); color: var(--mint); }
+  .watch-status.ready { background: var(--mint-soft); color: var(--mint); }
   .watch-status.ready::before { background: var(--mint); }
 
-  .watch-status.airing { background: rgba(232,183,59,0.2); color: var(--gold-deep); }
+  .watch-status.airing { background: var(--gold-soft); color: var(--gold); }
   .watch-status.airing::before {
-    background: var(--gold-deep);
+    background: var(--gold);
     animation: pulse-dot 1.6s ease-in-out infinite;
   }
 
@@ -364,20 +363,19 @@
     margin: 32px auto;
     padding: 48px 24px;
     text-align: center;
-    color: var(--paper-dim);
+    color: var(--text-soft);
   }
 
   .empty .stamp-big {
     display: inline-block;
-    font-family: 'Bai Jamjuree', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1.3rem;
-    letter-spacing: 0.25em;
-    border: 4px solid var(--red);
+    letter-spacing: 0.2em;
+    border: 2px solid var(--red);
     color: var(--red);
     padding: 14px 30px;
     border-radius: 12px;
-    transform: rotate(-6deg);
     margin-bottom: 18px;
   }
 
