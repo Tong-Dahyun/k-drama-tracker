@@ -63,6 +63,43 @@
     letter-spacing: 0.05em;
   }
 
+  /* ---------- Page tabs (ห้องดูซีรีส์ / อยากดู) ---------- */
+  .page-tabs {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 14px 24px 0;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .page-tab {
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    padding: 10px 22px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--paper-dim);
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+  }
+
+  .page-tab.active {
+    color: var(--paper);
+    border-bottom-color: var(--red);
+  }
+
+  .page-tab:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .page-section { display: none; }
+  .page-section.active { display: block; }
+
   /* ---------- Controls ---------- */
   .controls {
     max-width: 1100px;
@@ -276,6 +313,50 @@
 
   .ticket:hover .stamp { transform: rotate(-8deg) scale(1.08); }
 
+  /* ---------- Watchlist variant: "อยากดู" ---------- */
+  .ticket.watchlist .perforation {
+    border-top-style: dotted;
+  }
+
+  .watch-status {
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-weight: 600;
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    padding: 5px 10px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .watch-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .watch-status.ready { background: rgba(76,154,120,0.15); color: var(--mint); }
+  .watch-status.ready::before { background: var(--mint); }
+
+  .watch-status.airing { background: rgba(232,183,59,0.2); color: var(--gold-deep); }
+  .watch-status.airing::before {
+    background: var(--gold-deep);
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .watch-status.airing::before { animation: none; }
+  }
+
   /* ---------- Empty state ---------- */
   .empty {
     max-width: 1100px;
@@ -309,37 +390,73 @@
 
   <header class="marquee">
     <p class="eyebrow">My K-Content Diary</p>
-    <h1>ห้องดูซีรีส์ของฉัน</h1>
+    <h1 id="pageTitle">ห้องดูซีรีส์ของฉัน</h1>
     <p class="stats" id="stats"></p>
   </header>
 
+  <nav class="page-tabs">
+    <button class="page-tab active" data-page="diary">บันทึกที่ดูแล้ว</button>
+    <button class="page-tab" data-page="watchlist">อยากดู</button>
+  </nav>
+
   <main>
-    <div class="controls">
-      <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
-      <div class="filter-pills">
-        <button class="pill active" data-type="all">ทั้งหมด</button>
-        <button class="pill" data-type="series">ซีรีส์</button>
-        <button class="pill" data-type="variety">วาไรตี้</button>
+    <section class="page-section active" id="page-diary">
+      <div class="controls">
+        <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
+        <div class="filter-pills">
+          <button class="pill active" data-type="all">ทั้งหมด</button>
+          <button class="pill" data-type="series">ซีรีส์</button>
+          <button class="pill" data-type="variety">วาไรตี้</button>
+        </div>
+        <select id="yearFilter" class="sort-select">
+          <option value="all">ทุกปี</option>
+        </select>
+        <select id="genreFilter" class="sort-select">
+          <option value="all">ทุกแนว</option>
+        </select>
+        <select id="sort" class="sort-select">
+          <option value="liked-first">ชอบก่อน</option>
+          <option value="year-desc">ปีล่าสุดก่อน</option>
+          <option value="title">ชื่อ A-Z</option>
+        </select>
       </div>
-      <select id="yearFilter" class="sort-select">
-        <option value="all">ทุกปี</option>
-      </select>
-      <select id="genreFilter" class="sort-select">
-        <option value="all">ทุกแนว</option>
-      </select>
-      <select id="sort" class="sort-select">
-        <option value="liked-first">ชอบก่อน</option>
-        <option value="year-desc">ปีล่าสุดก่อน</option>
-        <option value="title">ชื่อ A-Z</option>
-      </select>
-    </div>
 
-    <div class="grid" id="grid"></div>
+      <div class="grid" id="grid"></div>
 
-    <div class="empty" id="empty" hidden>
-      <div class="stamp-big">SOLD OUT</div>
-      <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
-    </div>
+      <div class="empty" id="empty" hidden>
+        <div class="stamp-big">SOLD OUT</div>
+        <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
+      </div>
+    </section>
+
+    <section class="page-section" id="page-watchlist">
+      <div class="controls">
+        <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่องที่อยากดู...">
+        <div class="filter-pills">
+          <button class="pill active" data-ptype="all">ทั้งหมด</button>
+          <button class="pill" data-ptype="series">ซีรีส์</button>
+          <button class="pill" data-ptype="variety">วาไรตี้</button>
+        </div>
+        <select id="yearFilterPending" class="sort-select">
+          <option value="all">ทุกปี</option>
+        </select>
+        <select id="genreFilterPending" class="sort-select">
+          <option value="all">ทุกแนว</option>
+        </select>
+        <select id="sortPending" class="sort-select">
+          <option value="year-desc">ปีล่าสุดก่อน</option>
+          <option value="ready-first">จบแล้วก่อน</option>
+          <option value="title">ชื่อ A-Z</option>
+        </select>
+      </div>
+
+      <div class="grid" id="gridPending"></div>
+
+      <div class="empty" id="emptyPending" hidden>
+        <div class="stamp-big">SOLD OUT</div>
+        <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
+      </div>
+    </section>
   </main>
 
 <script>
@@ -366,6 +483,15 @@
   // คัดลอกลิงก์มาวางแทนค่าด้านล่างนี้
   // ---------------------------------------------------------------
   const VARIETY_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=1521235531&single=true&output=csv";
+
+  // ---------------------------------------------------------------
+  // ลิงก์ CSV ของชีต "Pending Series" (สนใจแต่ยังไม่ดู)
+  // หัวคอลัมน์: ชื่อเรื่อง | ประเภท | แนว / หมวด | ปีที่ออกอากาศ | จำนวนตอน | จบแล้ว
+  //   - จบแล้ว: TRUE = ออกอากาศจบครบทุกตอนแล้ว (พร้อมดูยกชุด), FALSE = ยังไม่จบ/ยังไม่เริ่มฉาย
+  // วิธีหาลิงก์: ไปที่แท็บ Pending Series ใน Google Sheet > File > Share > Publish to web
+  // เลือก sheet เป็น "Pending Series" รูปแบบ CSV แล้วกด Publish แล้ววางลิงก์แทนค่าด้านล่างนี้
+  // ---------------------------------------------------------------
+  const PENDING_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=1095542226&single=true&output=csv";
 
   // ข้อมูลตัวอย่าง — ใช้แสดงตอนยังไม่ได้ใส่ลิงก์ Google Sheet ด้านบน หรือดึงข้อมูลจากชีตไม่สำเร็จ
   const fallbackShows = [
@@ -397,6 +523,8 @@
 
   let shows = [];
   let usingFallback = true;
+  let pending = [];
+  let usingFallbackPending = true;
 
   const grid = document.getElementById('grid');
   const emptyState = document.getElementById('empty');
@@ -407,9 +535,24 @@
   const pills = document.querySelectorAll('.pill');
   const statsEl = document.getElementById('stats');
 
+  const gridPending = document.getElementById('gridPending');
+  const emptyStatePending = document.getElementById('emptyPending');
+  const searchInputPending = document.getElementById('searchPending');
+  const sortSelectPending = document.getElementById('sortPending');
+  const yearFilterPending = document.getElementById('yearFilterPending');
+  const genreFilterPending = document.getElementById('genreFilterPending');
+  const pillsPending = document.querySelectorAll('#page-watchlist .pill');
+
+  const pageTabs = document.querySelectorAll('.page-tab');
+  const pageTitle = document.getElementById('pageTitle');
+
   let activeType = 'all';
   let activeYear = 'all';
   let activeGenre = 'all';
+
+  let activeTypePending = 'all';
+  let activeYearPending = 'all';
+  let activeGenrePending = 'all';
 
   function updateStats() {
     const total = shows.length;
@@ -421,6 +564,22 @@
     let text = `บันทึกแล้ว ${total} เรื่อง · ชอบ ${likedCount} เรื่อง`;
     if (usingFallback) {
       text += ' · กำลังแสดงข้อมูลตัวอย่าง (ยังไม่เชื่อม Google Sheet)';
+    }
+    statsEl.textContent = text;
+  }
+
+  function updateStatsPending() {
+    const watchlistActive = document.getElementById('page-watchlist').classList.contains('active');
+    if (!watchlistActive) return;
+    const total = pending.length;
+    if (total === 0) {
+      statsEl.textContent = 'ยังไม่มีรายการที่อยากดู — เริ่มเพิ่มเรื่องแรกได้เลย';
+      return;
+    }
+    const readyCount = pending.filter(s => s.finished).length;
+    let text = `สนใจอยู่ ${total} เรื่อง · จบแล้วพร้อมดู ${readyCount} เรื่อง`;
+    if (usingFallbackPending) {
+      text += ' · ยังไม่เชื่อม Google Sheet (ใส่ลิงก์ PENDING_CSV_URL ในโค้ด)';
     }
     statsEl.textContent = text;
   }
@@ -438,6 +597,19 @@
     };
   }
 
+  // แปลงแถวจากชีต "Pending Series" (สนใจแต่ยังไม่ดู)
+  function rowToPending(row) {
+    const typeRaw = (row['ประเภท'] || '').trim().toLowerCase();
+    return {
+      title: (row['ชื่อเรื่อง'] || '').trim(),
+      type: (typeRaw === 'วาไรตี้' || typeRaw === 'variety') ? 'variety' : 'series',
+      year: Number(row['ปีที่ออกอากาศ']) || '',
+      episodes: Number(row['จำนวนตอน']) || 0,
+      genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
+      finished: (row['จบแล้ว'] || '').trim().toUpperCase() === 'TRUE'
+    };
+  }
+
   // เติม dropdown ปีและแนว/หมวด ตามข้อมูลที่โหลดมาจริง
   function populateFilters() {
     const years = [...new Set(shows.map(s => s.year).filter(Boolean))].sort((a, b) => b - a);
@@ -446,6 +618,16 @@
 
     const genres = [...new Set(shows.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
     genreFilter.innerHTML = '<option value="all">ทุกแนว</option>' +
+      genres.map(g => `<option value="${g}">${g}</option>`).join('');
+  }
+
+  function populateFiltersPending() {
+    const years = [...new Set(pending.map(s => s.year).filter(Boolean))].sort((a, b) => b - a);
+    yearFilterPending.innerHTML = '<option value="all">ทุกปี</option>' +
+      years.map(y => `<option value="${y}">${y}</option>`).join('');
+
+    const genres = [...new Set(pending.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
+    genreFilterPending.innerHTML = '<option value="all">ทุกแนว</option>' +
       genres.map(g => `<option value="${g}">${g}</option>`).join('');
   }
 
@@ -486,6 +668,38 @@
     updateStats();
     populateFilters();
     render();
+  }
+
+  async function loadPending() {
+    if (!PENDING_CSV_URL.trim()) {
+      pending = [];
+      usingFallbackPending = true;
+      updateStatsPending();
+      populateFiltersPending();
+      renderPending();
+      return;
+    }
+
+    try {
+      const res = await fetch(PENDING_CSV_URL);
+      if (!res.ok) throw new Error('โหลดข้อมูลไม่สำเร็จ');
+      const csvText = await res.text();
+      const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+      const rows = parsed.data.map(rowToPending).filter(s => s.title);
+
+      if (rows.length === 0) throw new Error('ไม่พบข้อมูลในชีต');
+
+      pending = rows;
+      usingFallbackPending = false;
+    } catch (err) {
+      console.error('โหลด Pending Series จาก Google Sheet ไม่สำเร็จ:', err);
+      pending = [];
+      usingFallbackPending = true;
+    }
+
+    updateStatsPending();
+    populateFiltersPending();
+    renderPending();
   }
 
   function render() {
@@ -536,6 +750,56 @@
     });
   }
 
+  function renderPending() {
+    const query = searchInputPending.value.trim().toLowerCase();
+
+    let filtered = pending.filter(s => {
+      const matchesType = activeTypePending === 'all' || s.type === activeTypePending;
+      const matchesQuery = !query || s.title.toLowerCase().includes(query);
+      const matchesYear = activeYearPending === 'all' || String(s.year) === activeYearPending;
+      const matchesGenre = activeGenrePending === 'all' || s.genres.includes(activeGenrePending);
+      return matchesType && matchesQuery && matchesYear && matchesGenre;
+    });
+
+    const sortBy = sortSelectPending.value;
+    filtered = filtered.slice().sort((a, b) => {
+      if (sortBy === 'ready-first') return (b.finished === true ? 1 : 0) - (a.finished === true ? 1 : 0);
+      if (sortBy === 'year-desc')   return b.year - a.year;
+      if (sortBy === 'title')       return a.title.localeCompare(b.title);
+      return 0;
+    });
+
+    gridPending.innerHTML = '';
+
+    if (filtered.length === 0) {
+      emptyStatePending.hidden = false;
+      return;
+    }
+    emptyStatePending.hidden = true;
+
+    filtered.forEach((s, i) => {
+      const card = document.createElement('article');
+      card.className = 'ticket watchlist';
+      card.style.animationDelay = `${i * 0.06}s`;
+      const statusClass = s.finished ? 'ready' : 'airing';
+      const statusLabel = s.finished ? 'จบแล้ว พร้อมดูยกชุด' : 'กำลังออกอากาศ';
+      card.innerHTML = `
+        <div class="ticket-main">
+          <span class="ticket-type ${s.type}">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span>
+          <h2 class="ticket-title">${s.title}</h2>
+          ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
+          <div class="ticket-genres">${s.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>
+        </div>
+        <div class="perforation"></div>
+        <div class="ticket-stub">
+          <span class="ticket-meta">${s.episodes ? s.episodes + ' ตอน' : ''}</span>
+          <span class="watch-status ${statusClass}">${statusLabel}</span>
+        </div>
+      `;
+      gridPending.appendChild(card);
+    });
+  }
+
   searchInput.addEventListener('input', render);
   sortSelect.addEventListener('change', render);
   yearFilter.addEventListener('change', () => { activeYear = yearFilter.value; render(); });
@@ -547,7 +811,35 @@
     render();
   }));
 
+  searchInputPending.addEventListener('input', renderPending);
+  sortSelectPending.addEventListener('change', renderPending);
+  yearFilterPending.addEventListener('change', () => { activeYearPending = yearFilterPending.value; renderPending(); });
+  genreFilterPending.addEventListener('change', () => { activeGenrePending = genreFilterPending.value; renderPending(); });
+  pillsPending.forEach(p => p.addEventListener('click', () => {
+    pillsPending.forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    activeTypePending = p.dataset.ptype;
+    renderPending();
+  }));
+
+  pageTabs.forEach(tab => tab.addEventListener('click', () => {
+    pageTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+
+    if (tab.dataset.page === 'diary') {
+      document.getElementById('page-diary').classList.add('active');
+      pageTitle.textContent = 'ห้องดูซีรีส์ของฉัน';
+      updateStats();
+    } else {
+      document.getElementById('page-watchlist').classList.add('active');
+      pageTitle.textContent = 'อยากดู';
+      updateStatsPending();
+    }
+  }));
+
   loadData();
+  loadPending();
 </script>
 
 </body>
