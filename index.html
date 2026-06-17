@@ -416,8 +416,8 @@
           <option value="all">ทุกแนว</option>
         </select>
         <select id="sort" class="sort-select">
-          <option value="liked-first">ชอบก่อน</option>
           <option value="year-desc">ปีล่าสุดก่อน</option>
+          <option value="liked-first">ชอบก่อน</option>
           <option value="title">ชื่อ A-Z</option>
         </select>
       </div>
@@ -853,7 +853,7 @@
 
   function resetDiaryFilters() {
     searchInput.value = '';
-    sortSelect.value = 'liked-first';
+    sortSelect.value = 'year-desc';
     yearFilter.value = 'all';
     genreFilter.value = 'all';
     activeType = 'all';
