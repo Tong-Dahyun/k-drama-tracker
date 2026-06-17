@@ -601,7 +601,7 @@
   function rowToPending(row) {
     const typeRaw = (row['ประเภท'] || '').trim().toLowerCase();
     return {
-      title: (row['ชื่อเรื่อง'] || '').trim(),
+      title: (row['Series Name'] || row['ชื่อเรื่อง'] || '').trim(),
       type: (typeRaw === 'วาไรตี้' || typeRaw === 'variety') ? 'variety' : 'series',
       year: Number(row['ปีที่ออกอากาศ']) || '',
       episodes: Number(row['จำนวนตอน']) || 0,
