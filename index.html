@@ -523,8 +523,10 @@
 
   let shows = [];
   let usingFallback = true;
+  let diaryLoaded = false;
   let pending = [];
   let usingFallbackPending = true;
+  let pendingLoaded = false;
 
   const grid = document.getElementById('grid');
   const emptyState = document.getElementById('empty');
@@ -555,6 +557,12 @@
   let activeGenrePending = 'all';
 
   function updateStats() {
+    const diaryActive = document.getElementById('page-diary').classList.contains('active');
+    if (!diaryActive) return;
+    if (!diaryLoaded) {
+      statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
+      return;
+    }
     const total = shows.length;
     if (total === 0) {
       statsEl.textContent = 'ยังไม่มีรายการ — เริ่มเพิ่มเรื่องแรกของคุณได้เลย';
@@ -571,6 +579,10 @@
   function updateStatsPending() {
     const watchlistActive = document.getElementById('page-watchlist').classList.contains('active');
     if (!watchlistActive) return;
+    if (!pendingLoaded) {
+      statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
+      return;
+    }
     const total = pending.length;
     if (total === 0) {
       statsEl.textContent = 'ยังไม่มีรายการที่อยากดู — เริ่มเพิ่มเรื่องแรกได้เลย';
@@ -637,6 +649,7 @@
     if (urls.length === 0) {
       shows = fallbackShows;
       usingFallback = true;
+      diaryLoaded = true;
       updateStats();
       populateFilters();
       render();
@@ -665,6 +678,7 @@
       usingFallback = true;
     }
 
+    diaryLoaded = true;
     updateStats();
     populateFilters();
     render();
@@ -674,6 +688,7 @@
     if (!PENDING_CSV_URL.trim()) {
       pending = [];
       usingFallbackPending = true;
+      pendingLoaded = true;
       updateStatsPending();
       populateFiltersPending();
       renderPending();
@@ -697,12 +712,19 @@
       usingFallbackPending = true;
     }
 
+    pendingLoaded = true;
     updateStatsPending();
     populateFiltersPending();
     renderPending();
   }
 
   function render() {
+    if (!diaryLoaded) {
+      grid.innerHTML = '';
+      emptyState.hidden = true;
+      return;
+    }
+
     const query = searchInput.value.trim().toLowerCase();
 
     let filtered = shows.filter(s => {
@@ -751,6 +773,12 @@
   }
 
   function renderPending() {
+    if (!pendingLoaded) {
+      gridPending.innerHTML = '';
+      emptyStatePending.hidden = true;
+      return;
+    }
+
     const query = searchInputPending.value.trim().toLowerCase();
 
     let filtered = pending.filter(s => {
