@@ -318,6 +318,26 @@
     border-top-style: dotted;
   }
 
+  .mark-watched-btn {
+    display: block;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 8px 0;
+    border: none;
+    border-top: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+
+  .mark-watched-btn:hover {
+    background: var(--red);
+    color: #fff;
+  }
+
   .watch-status {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
@@ -492,6 +512,17 @@
     cursor: pointer;
   }
 
+  .like-choice-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .like-choice-btn.selected {
+    border-color: var(--red);
+    color: var(--red);
+    background: var(--red-soft);
+  }
+
   .form-status {
     font-size: 0.8rem;
     margin-top: 10px;
@@ -620,6 +651,24 @@
           <button type="submit" class="add-entry-btn" id="submitAddBtn">บันทึก</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="moveModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>ดูเรื่องนี้แล้ว?</h3>
+      <p style="color: var(--text-soft); font-size: 0.85rem; margin: -8px 0 16px;" id="moveModalTitle"></p>
+      <div class="form-field">
+        <label>ความชอบส่วนตัว</label>
+        <div class="form-row">
+          <button type="button" class="btn-secondary like-choice-btn" data-liked="true" id="likeChoiceYes">♥ ชอบ</button>
+          <button type="button" class="btn-secondary like-choice-btn" data-liked="false" id="likeChoiceNo">♡ เฉยๆ</button>
+        </div>
+      </div>
+      <p class="form-status" id="moveFormStatus"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="closeMoveModal">ยกเลิก</button>
+      </div>
     </div>
   </div>
 
@@ -991,6 +1040,7 @@
       const card = document.createElement('article');
       card.className = 'ticket watchlist';
       card.style.animationDelay = `${i * 0.06}s`;
+      card.dataset.title = s.title;
       const statusClass = s.finished ? 'ready' : 'airing';
       const statusLabel = s.finished ? 'จบแล้ว พร้อมดูยกชุด' : 'กำลังออกอากาศ';
       card.innerHTML = `
@@ -1005,6 +1055,7 @@
           <span class="ticket-meta">${s.episodes ? s.episodes + ' ตอน' : ''}</span>
           <span class="watch-status ${statusClass}">${statusLabel}</span>
         </div>
+        <button class="mark-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>
       `;
       gridPending.appendChild(card);
     });
@@ -1150,6 +1201,7 @@
         mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
+          action: 'addPending',
           title: newEntry.title,
           type: typeRaw,
           genres: genresStr,
@@ -1165,6 +1217,102 @@
       console.error('ส่งข้อมูลไปยัง Apps Script ไม่สำเร็จ:', err);
     }
   });
+
+  // ---------------------------------------------------------------
+  // ปุ่ม "ดูแล้ว ✓" บนการ์ดในหน้า "อยากดู"
+  // เปิด modal ให้เลือกชอบ/เฉยๆ ก่อน แล้วย้ายเรื่องนั้นไปหน้า "บันทึกที่ดูแล้ว"
+  // (ลบออกจาก Pending Series, เพิ่มเข้า Series หรือ Variety ตามประเภท)
+  // ---------------------------------------------------------------
+  const moveModalOverlay = document.getElementById('moveModalOverlay');
+  const moveModalTitle = document.getElementById('moveModalTitle');
+  const moveFormStatus = document.getElementById('moveFormStatus');
+  const closeMoveModalBtn = document.getElementById('closeMoveModal');
+  const likeChoiceYes = document.getElementById('likeChoiceYes');
+  const likeChoiceNo = document.getElementById('likeChoiceNo');
+
+  let pendingMoveEntry = null; // เรื่องที่กำลังจะย้าย (รอเลือกชอบ/เฉยๆ)
+
+  function openMoveModal(entry) {
+    pendingMoveEntry = entry;
+    moveModalTitle.textContent = entry.title;
+    moveFormStatus.textContent = '';
+    likeChoiceYes.classList.remove('selected');
+    likeChoiceNo.classList.remove('selected');
+    moveModalOverlay.hidden = false;
+  }
+
+  function closeMoveModal() {
+    moveModalOverlay.hidden = true;
+    pendingMoveEntry = null;
+  }
+
+  closeMoveModalBtn.addEventListener('click', closeMoveModal);
+  moveModalOverlay.addEventListener('click', (e) => {
+    if (e.target === moveModalOverlay) closeMoveModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !moveModalOverlay.hidden) closeMoveModal();
+  });
+
+  // คลิกที่ปุ่ม "ดูแล้ว ✓" บนการ์ด (event delegation เพราะการ์ดถูกสร้างใหม่ทุกครั้งที่ render)
+  gridPending.addEventListener('click', (e) => {
+    const btn = e.target.closest('.mark-watched-btn');
+    if (!btn) return;
+    const title = btn.dataset.title;
+    const entry = pending.find(p => p.title === title);
+    if (entry) openMoveModal(entry);
+  });
+
+  async function confirmMove(liked) {
+    if (!pendingMoveEntry) return;
+    const entry = pendingMoveEntry;
+    closeMoveModal();
+
+    // 1) อัปเดตหน้าเว็บทันที (optimistic update) — ลบจาก pending, เพิ่มเข้า shows
+    pending = pending.filter(p => p.title !== entry.title);
+    shows = [{ ...entry, liked }, ...shows];
+    usingFallback = false;
+    diaryLoaded = true;
+    usingFallbackPending = false;
+    pendingLoaded = true;
+
+    populateFilters();
+    populateFiltersPending();
+    renderPending();
+    updateStatsPending();
+    // หน้า "บันทึกที่ดูแล้ว" จะ render/update สถิติให้ตรง ก็ต่อเมื่อแท็บนั้น active อยู่
+    // แต่เราอัปเดต array ไว้แล้ว พอสลับแท็บไปจะเห็นข้อมูลใหม่ทันที
+    render();
+    updateStats();
+
+    // 2) ส่งไปบันทึกจริงที่ Google Sheet ผ่าน Apps Script เบื้องหลัง
+    if (!APPS_SCRIPT_URL.trim()) {
+      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — การย้ายนี้แสดงผลชั่วคราวเท่านั้น');
+      return;
+    }
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'moveToWatched',
+          title: entry.title,
+          type: entry.type === 'variety' ? 'Variety' : 'Series',
+          genres: entry.genres.join(', '),
+          year: entry.year,
+          episodes: entry.episodes,
+          liked: liked
+        })
+      });
+    } catch (err) {
+      console.error('ส่งคำขอย้ายข้อมูลไปยัง Apps Script ไม่สำเร็จ:', err);
+    }
+  }
+
+  likeChoiceYes.addEventListener('click', () => confirmMove(true));
+  likeChoiceNo.addEventListener('click', () => confirmMove(false));
 
   loadData();
   loadPending();
