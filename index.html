@@ -379,6 +379,128 @@
     margin-bottom: 18px;
   }
 
+  /* ---------- Add-entry button + modal ---------- */
+  .add-entry-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: none;
+    background: var(--red);
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .2s, transform .15s;
+  }
+
+  .add-entry-btn:hover { background: #f6121d; }
+  .add-entry-btn:active { transform: scale(0.97); }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+
+  .modal-overlay[hidden] { display: none; }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-box h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: var(--text);
+  }
+
+  .form-field {
+    margin-bottom: 14px;
+  }
+
+  .form-field label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    margin-bottom: 5px;
+  }
+
+  .form-field input,
+  .form-field select {
+    width: 100%;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-checkbox input { width: auto; }
+
+  .form-checkbox label {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .btn-secondary {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+  }
+
+  .form-status {
+    font-size: 0.8rem;
+    margin-top: 10px;
+    min-height: 1.2em;
+  }
+
+  .form-status.error { color: var(--red); }
+  .form-status.success { color: var(--mint); }
+
   @media (prefers-reduced-motion: reduce) {
     .ticket { animation: none; opacity: 1; transform: none; }
     .ticket:hover, .ticket:hover .stamp { transform: none; }
@@ -447,6 +569,7 @@
           <option value="ready-first">จบแล้วก่อน</option>
           <option value="title">ชื่อ A-Z</option>
         </select>
+        <button class="add-entry-btn" id="openAddModal">+ เพิ่มเรื่อง</button>
       </div>
 
       <div class="grid" id="gridPending"></div>
@@ -457,6 +580,48 @@
       </div>
     </section>
   </main>
+
+  <div class="modal-overlay" id="addModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>เพิ่มเรื่องที่อยากดู</h3>
+      <form id="addPendingForm">
+        <div class="form-field">
+          <label for="newTitle">ชื่อเรื่อง *</label>
+          <input type="text" id="newTitle" required placeholder="เช่น Crash Landing on You">
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="newType">ประเภท</label>
+            <select id="newType">
+              <option value="Series">ซีรีส์</option>
+              <option value="Variety">วาไรตี้</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="newYear">ปีที่ออกอากาศ</label>
+            <input type="number" id="newYear" placeholder="2026" min="1990" max="2100">
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="newGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label>
+          <input type="text" id="newGenres" placeholder="โรแมนติก, คอมเมดี้">
+        </div>
+        <div class="form-field">
+          <label for="newEpisodes">จำนวนตอน</label>
+          <input type="number" id="newEpisodes" placeholder="16" min="0">
+        </div>
+        <div class="form-checkbox">
+          <input type="checkbox" id="newFinished">
+          <label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label>
+        </div>
+        <p class="form-status" id="addFormStatus"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeAddModal">ยกเลิก</button>
+          <button type="submit" class="add-entry-btn" id="submitAddBtn">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
 <script>
   // ---------------------------------------------------------------
@@ -491,6 +656,16 @@
   // เลือก sheet เป็น "Pending Series" รูปแบบ CSV แล้วกด Publish แล้ววางลิงก์แทนค่าด้านล่างนี้
   // ---------------------------------------------------------------
   const PENDING_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=1095542226&single=true&output=csv";
+
+  // ---------------------------------------------------------------
+  // URL ของ Google Apps Script Web App — ใช้สำหรับ "เขียน" ข้อมูลกลับเข้า
+  // ชีต Pending Series เวลามีคนเพิ่มเรื่องจากฟอร์มในเว็บ (ปุ่ม "+ เพิ่มเรื่อง")
+  // วิธีหา URL: เปิด Google Sheet > Extensions > Apps Script > วางโค้ด Code.gs ที่ Claude เตรียมไว้
+  // จากนั้น Deploy > New deployment > Web app (Execute as: Me, Who has access: Anyone)
+  // คัดลอก URL ที่ลงท้ายด้วย /exec มาวางแทนค่าด้านล่างนี้
+  // ถ้าเว้นว่างไว้ ปุ่ม "+ เพิ่มเรื่อง" จะยังกดได้ แต่จะไม่ถูกบันทึกลง Google Sheet จริง
+  // ---------------------------------------------------------------
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQrn0UcU8xYlVb0YksP1jp0q6Q2JTYzd_nvpRdLfmoyjdOIOWB-uLjdYtKSY-X1IIn/exec";
 
   // ข้อมูลตัวอย่าง — ใช้แสดงตอนยังไม่ได้ใส่ลิงก์ Google Sheet ด้านบน หรือดึงข้อมูลจากชีตไม่สำเร็จ
   const fallbackShows = [
@@ -892,6 +1067,96 @@
       renderPending();
     }
   }));
+
+  // ---------------------------------------------------------------
+  // ฟอร์ม "+ เพิ่มเรื่อง" — เพิ่มรายการในหน้าเว็บทันที (optimistic update)
+  // แล้วส่งข้อมูลไปบันทึกจริงที่ Google Sheet ผ่าน Apps Script เบื้องหลัง
+  // ---------------------------------------------------------------
+  const openAddModalBtn = document.getElementById('openAddModal');
+  const closeAddModalBtn = document.getElementById('closeAddModal');
+  const addModalOverlay = document.getElementById('addModalOverlay');
+  const addPendingForm = document.getElementById('addPendingForm');
+  const addFormStatus = document.getElementById('addFormStatus');
+  const submitAddBtn = document.getElementById('submitAddBtn');
+
+  function openAddModal() {
+    addModalOverlay.hidden = false;
+    addFormStatus.textContent = '';
+    addFormStatus.className = 'form-status';
+    document.getElementById('newTitle').focus();
+  }
+
+  function closeAddModal() {
+    addModalOverlay.hidden = true;
+    addPendingForm.reset();
+  }
+
+  openAddModalBtn.addEventListener('click', openAddModal);
+  closeAddModalBtn.addEventListener('click', closeAddModal);
+  addModalOverlay.addEventListener('click', (e) => {
+    if (e.target === addModalOverlay) closeAddModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !addModalOverlay.hidden) closeAddModal();
+  });
+
+  addPendingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const title = document.getElementById('newTitle').value.trim();
+    if (!title) return;
+
+    const typeRaw = document.getElementById('newType').value;
+    const year = Number(document.getElementById('newYear').value) || '';
+    const genresStr = document.getElementById('newGenres').value.trim();
+    const episodes = Number(document.getElementById('newEpisodes').value) || 0;
+    const finished = document.getElementById('newFinished').checked;
+
+    const newEntry = {
+      title,
+      type: typeRaw.toLowerCase() === 'variety' ? 'variety' : 'series',
+      year,
+      episodes,
+      genres: genresStr.split(',').map(g => g.trim()).filter(Boolean),
+      finished
+    };
+
+    // 1) แสดงรายการใหม่ในหน้าเว็บทันที โดยไม่ต้องรอ Google Sheet
+    pending = [newEntry, ...pending];
+    usingFallbackPending = false;
+    pendingLoaded = true;
+    populateFiltersPending();
+    renderPending();
+    updateStatsPending();
+    closeAddModal();
+
+    // 2) ส่งข้อมูลไปบันทึกจริงที่ Google Sheet ผ่าน Apps Script เบื้องหลัง
+    if (!APPS_SCRIPT_URL.trim()) {
+      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — รายการนี้แสดงผลชั่วคราวเท่านั้น จะหายไปเมื่อรีเฟรชหน้า');
+      return;
+    }
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          title: newEntry.title,
+          type: typeRaw,
+          genres: genresStr,
+          year: newEntry.year,
+          episodes: newEntry.episodes,
+          finished: newEntry.finished
+        })
+      });
+      // หมายเหตุ: ใช้ mode 'no-cors' เพราะ Apps Script Web App ไม่ส่ง CORS header กลับมา
+      // ทำให้เบราว์เซอร์อ่านผลลัพธ์จริงไม่ได้ (ไม่รู้ว่าสำเร็จหรือ error แน่ชัด)
+      // แต่ request จะถูกส่งไปและ Apps Script จะเขียนข้อมูลเข้าชีตเบื้องหลังตามปกติ
+    } catch (err) {
+      console.error('ส่งข้อมูลไปยัง Apps Script ไม่สำเร็จ:', err);
+    }
+  });
 
   loadData();
   loadPending();
