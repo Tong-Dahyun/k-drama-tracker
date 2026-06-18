@@ -745,7 +745,9 @@
     const seriesCount = shows.filter(s => s.type === 'series').length;
     const varietyCount = shows.filter(s => s.type === 'variety').length;
     const likedCount = shows.filter(s => s.liked).length;
-    let text = `บันทึกแล้ว ${total} เรื่อง (ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}) · ชอบ ${likedCount} เรื่อง`;
+    const likedSeries = shows.filter(s => s.type === 'series' && s.liked).length;
+    const likedVariety = shows.filter(s => s.type === 'variety' && s.liked).length;
+    let text = `บันทึกแล้ว ${total} เรื่อง (ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}) · ชอบ ${likedCount} เรื่อง (ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety})`;
     if (usingFallback) {
       text += ' · กำลังแสดงข้อมูลตัวอย่าง (ยังไม่เชื่อม Google Sheet)';
     }
@@ -767,7 +769,9 @@
     const seriesCount = pending.filter(s => s.type === 'series').length;
     const varietyCount = pending.filter(s => s.type === 'variety').length;
     const readyCount = pending.filter(s => s.finished).length;
-    let text = `สนใจอยู่ ${total} เรื่อง (ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}) · จบแล้วพร้อมดู ${readyCount} เรื่อง`;
+    const readySeries = pending.filter(s => s.type === 'series' && s.finished).length;
+    const readyVariety = pending.filter(s => s.type === 'variety' && s.finished).length;
+    let text = `สนใจอยู่ ${total} เรื่อง (ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}) · จบแล้วพร้อมดู ${readyCount} เรื่อง (ซีรีส์ ${readySeries} · วาไรตี้ ${readyVariety})`;
     if (usingFallbackPending) {
       text += ' · ยังไม่เชื่อม Google Sheet (ใส่ลิงก์ PENDING_CSV_URL ในโค้ด)';
     }
