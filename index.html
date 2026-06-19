@@ -210,6 +210,69 @@
   .ticket-main {
     padding: 14px 14px 10px;
     flex: 1 0 auto;
+    position: relative;
+  }
+
+  .card-menu-btn {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s;
+  }
+
+  .card-menu-btn:hover {
+    background: var(--surface-soft);
+    color: var(--text);
+  }
+
+  .card-menu {
+    position: absolute;
+    top: 38px;
+    right: 10px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 90px;
+    z-index: 10;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  }
+
+  .card-menu[hidden] { display: none; }
+
+  .card-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    cursor: pointer;
+  }
+
+  .card-menu button:hover {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .card-menu button.menu-delete:hover {
+    background: var(--red-soft);
+    color: var(--red);
   }
 
   .ticket-type {
@@ -234,6 +297,7 @@
     margin: 0 0 2px;
     line-height: 1.25;
     color: var(--text);
+    padding-right: 26px;
   }
 
   .ticket-year {
@@ -673,6 +737,65 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="editModalOverlay" hidden>
+    <div class="modal-box">
+      <h3 id="editModalHeading">แก้ไขข้อมูล</h3>
+      <form id="editEntryForm">
+        <div class="form-field">
+          <label for="editTitle">ชื่อเรื่อง *</label>
+          <input type="text" id="editTitle" required>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="editType">ประเภท</label>
+            <select id="editType">
+              <option value="Series">ซีรีส์</option>
+              <option value="Variety">วาไรตี้</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="editYear">ปีที่ออกอากาศ</label>
+            <input type="number" id="editYear" min="1990" max="2100">
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="editGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label>
+          <input type="text" id="editGenres">
+        </div>
+        <div class="form-field">
+          <label for="editEpisodes">จำนวนตอน</label>
+          <input type="number" id="editEpisodes" min="0">
+        </div>
+        <div class="form-checkbox" id="editLikedRow">
+          <input type="checkbox" id="editLiked">
+          <label for="editLiked">ชอบเรื่องนี้</label>
+        </div>
+        <div class="form-checkbox" id="editFinishedRow">
+          <input type="checkbox" id="editFinished">
+          <label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label>
+        </div>
+        <p class="form-status" id="editFormStatus"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeEditModal">ยกเลิก</button>
+          <button type="submit" class="add-entry-btn" id="submitEditBtn">บันทึกการแก้ไข</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="deleteModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>ลบรายการนี้?</h3>
+      <p style="color: var(--text-soft); font-size: 0.85rem;" id="deleteModalTitle"></p>
+      <p style="color: var(--text-dim); font-size: 0.8rem;">การลบนี้จะลบออกจาก Google Sheet ด้วย และไม่สามารถย้อนกลับได้</p>
+      <p class="form-status" id="deleteFormStatus"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="closeDeleteModal">ยกเลิก</button>
+        <button type="button" class="add-entry-btn" id="confirmDeleteBtn" style="background: var(--red);">ลบรายการนี้</button>
+      </div>
+    </div>
+  </div>
+
 <script>
   // ---------------------------------------------------------------
   // เชื่อมกับ Google Sheet ของคุณ
@@ -995,6 +1118,11 @@
       card.innerHTML = `
         <div class="ticket-main">
           <span class="ticket-type ${s.type}">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span>
+          <button class="card-menu-btn" data-title="${s.title}">⋮</button>
+          <div class="card-menu" hidden>
+            <button class="menu-edit edit-diary-btn" data-title="${s.title}">แก้ไข</button>
+            <button class="menu-delete delete-diary-btn" data-title="${s.title}">ลบ</button>
+          </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
           <div class="ticket-genres">${s.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>
@@ -1052,6 +1180,11 @@
       card.innerHTML = `
         <div class="ticket-main">
           <span class="ticket-type ${s.type}">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span>
+          <button class="card-menu-btn" data-title="${s.title}">⋮</button>
+          <div class="card-menu" hidden>
+            <button class="menu-edit edit-pending-btn" data-title="${s.title}">แก้ไข</button>
+            <button class="menu-delete delete-pending-btn" data-title="${s.title}">ลบ</button>
+          </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
           <div class="ticket-genres">${s.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>
@@ -1320,6 +1453,259 @@
 
   likeChoiceYes.addEventListener('click', () => confirmMove(true));
   likeChoiceNo.addEventListener('click', () => confirmMove(false));
+
+  // ---------------------------------------------------------------
+  // แก้ไข / ลบ รายการ — ใช้ได้ทั้งหน้า "บันทึกที่ดูแล้ว" และ "อยากดู"
+  // ---------------------------------------------------------------
+  const editModalOverlay = document.getElementById('editModalOverlay');
+  const editModalHeading = document.getElementById('editModalHeading');
+  const editEntryForm = document.getElementById('editEntryForm');
+  const editFormStatus = document.getElementById('editFormStatus');
+  const closeEditModalBtn = document.getElementById('closeEditModal');
+  const editLikedRow = document.getElementById('editLikedRow');
+  const editFinishedRow = document.getElementById('editFinishedRow');
+
+  const deleteModalOverlay = document.getElementById('deleteModalOverlay');
+  const deleteModalTitle = document.getElementById('deleteModalTitle');
+  const deleteFormStatus = document.getElementById('deleteFormStatus');
+  const closeDeleteModalBtn = document.getElementById('closeDeleteModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+  // เก็บ context ของรายการที่กำลังแก้ไข/ลบอยู่
+  // source: 'diary' | 'pending' — บอกว่ารายการนี้มาจาก array ไหน (shows หรือ pending)
+  let editContext = null;
+  let deleteContext = null;
+
+  function sheetKeyFor(source, type) {
+    if (source === 'pending') return 'pending';
+    return type === 'variety' ? 'variety' : 'series';
+  }
+
+  // ---------- เปิด/ปิด modal แก้ไข ----------
+  function openEditModal(entry, source) {
+    editContext = { originalTitle: entry.title, source };
+    editModalHeading.textContent = source === 'pending' ? 'แก้ไขเรื่องที่อยากดู' : 'แก้ไขข้อมูล';
+    document.getElementById('editTitle').value = entry.title;
+    document.getElementById('editType').value = entry.type === 'variety' ? 'Variety' : 'Series';
+    document.getElementById('editYear').value = entry.year || '';
+    document.getElementById('editGenres').value = entry.genres.join(', ');
+    document.getElementById('editEpisodes').value = entry.episodes || '';
+
+    if (source === 'pending') {
+      editLikedRow.style.display = 'none';
+      editFinishedRow.style.display = 'flex';
+      document.getElementById('editFinished').checked = !!entry.finished;
+    } else {
+      editLikedRow.style.display = 'flex';
+      editFinishedRow.style.display = 'none';
+      document.getElementById('editLiked').checked = !!entry.liked;
+    }
+
+    editFormStatus.textContent = '';
+    editModalOverlay.hidden = false;
+  }
+
+  function closeEditModal() {
+    editModalOverlay.hidden = true;
+    editEntryForm.reset();
+    editContext = null;
+  }
+
+  closeEditModalBtn.addEventListener('click', closeEditModal);
+  editModalOverlay.addEventListener('click', (e) => {
+    if (e.target === editModalOverlay) closeEditModal();
+  });
+
+  // ---------- เปิด/ปิด modal ลบ ----------
+  function openDeleteModal(entry, source) {
+    deleteContext = { title: entry.title, type: entry.type, source };
+    deleteModalTitle.textContent = entry.title;
+    deleteFormStatus.textContent = '';
+    deleteModalOverlay.hidden = false;
+  }
+
+  function closeDeleteModal() {
+    deleteModalOverlay.hidden = true;
+    deleteContext = null;
+  }
+
+  closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
+  deleteModalOverlay.addEventListener('click', (e) => {
+    if (e.target === deleteModalOverlay) closeDeleteModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!editModalOverlay.hidden) closeEditModal();
+    if (!deleteModalOverlay.hidden) closeDeleteModal();
+  });
+
+  // ---------- เปิด/ปิดเมนู ⋮ บนการ์ด ----------
+  function closeAllCardMenus() {
+    document.querySelectorAll('.card-menu').forEach(m => { m.hidden = true; });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.card-menu-btn') && !e.target.closest('.card-menu')) {
+      closeAllCardMenus();
+    }
+  });
+
+  // ---------- คลิกปุ่มแก้ไข/ลบ บนการ์ด (event delegation) ----------
+  grid.addEventListener('click', (e) => {
+    const menuBtn = e.target.closest('.card-menu-btn');
+    if (menuBtn) {
+      const menu = menuBtn.nextElementSibling;
+      const wasHidden = menu.hidden;
+      closeAllCardMenus();
+      menu.hidden = !wasHidden;
+      return;
+    }
+
+    const editBtn = e.target.closest('.edit-diary-btn');
+    if (editBtn) {
+      closeAllCardMenus();
+      const entry = shows.find(s => s.title === editBtn.dataset.title);
+      if (entry) openEditModal(entry, 'diary');
+      return;
+    }
+    const deleteBtn = e.target.closest('.delete-diary-btn');
+    if (deleteBtn) {
+      closeAllCardMenus();
+      const entry = shows.find(s => s.title === deleteBtn.dataset.title);
+      if (entry) openDeleteModal(entry, 'diary');
+    }
+  });
+
+  gridPending.addEventListener('click', (e) => {
+    const menuBtn = e.target.closest('.card-menu-btn');
+    if (menuBtn) {
+      const menu = menuBtn.nextElementSibling;
+      const wasHidden = menu.hidden;
+      closeAllCardMenus();
+      menu.hidden = !wasHidden;
+      return;
+    }
+
+    const editBtn = e.target.closest('.edit-pending-btn');
+    if (editBtn) {
+      closeAllCardMenus();
+      const entry = pending.find(p => p.title === editBtn.dataset.title);
+      if (entry) openEditModal(entry, 'pending');
+      return;
+    }
+    const deleteBtn = e.target.closest('.delete-pending-btn');
+    if (deleteBtn) {
+      closeAllCardMenus();
+      const entry = pending.find(p => p.title === deleteBtn.dataset.title);
+      if (entry) openDeleteModal(entry, 'pending');
+    }
+  });
+
+  // ---------- ส่งฟอร์มแก้ไข ----------
+  editEntryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!editContext) return;
+
+    const { originalTitle, source } = editContext;
+    const newTitle = document.getElementById('editTitle').value.trim();
+    if (!newTitle) return;
+
+    const typeRaw = document.getElementById('editType').value;
+    const type = typeRaw.toLowerCase() === 'variety' ? 'variety' : 'series';
+    const year = Number(document.getElementById('editYear').value) || '';
+    const genresStr = document.getElementById('editGenres').value.trim();
+    const genres = genresStr.split(',').map(g => g.trim()).filter(Boolean);
+    const episodes = Number(document.getElementById('editEpisodes').value) || 0;
+    const liked = document.getElementById('editLiked').checked;
+    const finished = document.getElementById('editFinished').checked;
+
+    closeEditModal();
+
+    // 1) อัปเดตหน้าเว็บทันที (optimistic update)
+    if (source === 'pending') {
+      pending = pending.map(p => p.title === originalTitle
+        ? { ...p, title: newTitle, type, year, genres, episodes, finished }
+        : p);
+      renderPending();
+      updateStatsPending();
+    } else {
+      shows = shows.map(s => s.title === originalTitle
+        ? { ...s, title: newTitle, type, year, genres, episodes, liked }
+        : s);
+      populateFilters();
+      render();
+      updateStats();
+    }
+
+    // 2) ส่งไปบันทึกจริงที่ Google Sheet เบื้องหลัง
+    if (!APPS_SCRIPT_URL.trim()) {
+      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — การแก้ไขนี้แสดงผลชั่วคราวเท่านั้น');
+      return;
+    }
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'update',
+          sheet: sheetKeyFor(source, type),
+          originalTitle,
+          title: newTitle,
+          type: typeRaw,
+          genres: genresStr,
+          year,
+          episodes,
+          liked,
+          finished
+        })
+      });
+    } catch (err) {
+      console.error('ส่งคำขอแก้ไขไปยัง Apps Script ไม่สำเร็จ:', err);
+    }
+  });
+
+  // ---------- ยืนยันลบ ----------
+  confirmDeleteBtn.addEventListener('click', async () => {
+    if (!deleteContext) return;
+    const { title, type, source } = deleteContext;
+    closeDeleteModal();
+
+    // 1) อัปเดตหน้าเว็บทันที (optimistic update)
+    if (source === 'pending') {
+      pending = pending.filter(p => p.title !== title);
+      renderPending();
+      updateStatsPending();
+    } else {
+      shows = shows.filter(s => s.title !== title);
+      populateFilters();
+      render();
+      updateStats();
+    }
+
+    // 2) ลบจริงที่ Google Sheet เบื้องหลัง
+    if (!APPS_SCRIPT_URL.trim()) {
+      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — การลบนี้แสดงผลชั่วคราวเท่านั้น');
+      return;
+    }
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'delete',
+          sheet: sheetKeyFor(source, type),
+          title
+        })
+      });
+    } catch (err) {
+      console.error('ส่งคำขอลบไปยัง Apps Script ไม่สำเร็จ:', err);
+    }
+  });
 
   loadData();
   loadPending();
