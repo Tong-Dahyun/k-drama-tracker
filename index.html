@@ -568,6 +568,7 @@
         </select>
         <select id="sort" class="sort-select">
           <option value="year-desc">ปีล่าสุดก่อน</option>
+          <option value="recently-watched">ล่าสุดที่ดู</option>
           <option value="liked-first">ชอบก่อน</option>
           <option value="title">ชื่อ A-Z</option>
         </select>
@@ -724,7 +725,8 @@
       year: 2026,
       episodes: 10,
       genres: ["อาชญากรรม", "ดราม่าสังคม", "กฎหมาย"],
-      liked: true
+      liked: true,
+      no: 1
     },
     {
       title: "The WONDERfools",
@@ -732,7 +734,8 @@
       year: 2026,
       episodes: 8,
       genres: ["คอมเมดี้", "ซูเปอร์ฮีโร่", "แอ็กชัน"],
-      liked: false
+      liked: false,
+      no: 2
     },
     {
       title: "Sold Out on You",
@@ -740,7 +743,8 @@
       year: 2026,
       episodes: 12,
       genres: ["โรแมนติกคอมเมดี้", "ฮีลลิ่ง"],
-      liked: true
+      liked: true,
+      no: 3
     }
   ];
 
@@ -836,7 +840,8 @@
       year: Number(row['ปีที่ออกอากาศ']) || '',
       episodes: Number(row['จำนวนตอน']) || 0,
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
-      liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE'
+      liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE',
+      no: Number(row['No.'] || row['ลำดับ']) || 0
     };
   }
 
@@ -968,9 +973,10 @@
 
     const sortBy = sortSelect.value;
     filtered = filtered.slice().sort((a, b) => {
-      if (sortBy === 'liked-first') return (b.liked === true ? 1 : 0) - (a.liked === true ? 1 : 0);
-      if (sortBy === 'year-desc')   return b.year - a.year;
-      if (sortBy === 'title')       return a.title.localeCompare(b.title);
+      if (sortBy === 'liked-first')       return (b.liked === true ? 1 : 0) - (a.liked === true ? 1 : 0);
+      if (sortBy === 'year-desc')         return b.year - a.year;
+      if (sortBy === 'recently-watched')  return (b.no || 0) - (a.no || 0);
+      if (sortBy === 'title')             return a.title.localeCompare(b.title);
       return 0;
     });
 
@@ -1270,7 +1276,8 @@
 
     // 1) อัปเดตหน้าเว็บทันที (optimistic update) — ลบจาก pending, เพิ่มเข้า shows
     pending = pending.filter(p => p.title !== entry.title);
-    shows = [{ ...entry, liked }, ...shows];
+    const maxNo = shows.reduce((m, s) => Math.max(m, s.no || 0), 0);
+    shows = [{ ...entry, liked, no: maxNo + 1 }, ...shows];
     usingFallback = false;
     diaryLoaded = true;
     usingFallbackPending = false;
