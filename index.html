@@ -130,6 +130,18 @@
     outline-offset: 2px;
   }
 
+  .page-tabs > .page-tab {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .page-tabs .tab-icon {
+    font-size: 1rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
   /* ---------- View sections (สรุป / รายละเอียด) ---------- */
   .view-section { display: none; }
   .view-section.active { display: block; }
@@ -658,6 +670,10 @@
       text-align: center;
     }
 
+    .page-tabs > .page-tab {
+      justify-content: center;
+    }
+
     .page-tab.active {
       border-left-color: transparent;
       border-bottom-color: var(--red);
@@ -853,8 +869,8 @@
       </div>
 
       <nav class="page-tabs">
-        <button class="page-tab active" data-view="summary">สรุป</button>
-        <button class="page-tab" data-view="detail">รายละเอียด</button>
+        <button class="page-tab active" data-view="summary"><span class="tab-icon">📊</span>Summary</button>
+        <button class="page-tab" data-view="detail"><span class="tab-icon">🎬</span>Series &amp; Variety</button>
       </nav>
     </aside>
 
