@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bai+Jamjuree:wght@400;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
 <style>
   :root {
     --bg: #141414;
@@ -1592,11 +1592,20 @@
     const emptyMsg = document.getElementById('yearlyChartEmpty');
     if (!canvas) return;
 
+    if (typeof Chart === 'undefined') {
+      // Chart.js โหลดจาก CDN ไม่สำเร็จ (เช่น เน็ตหลุด หรือลิงก์ใช้ไม่ได้)
+      canvas.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'โหลดไลบรารีสำหรับวาดกราฟไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง';
+      return;
+    }
+
     const years = [...new Set(shows.map(s => s.year).filter(Boolean))].sort((a, b) => a - b);
 
     if (!diaryLoaded || years.length === 0) {
       canvas.hidden = true;
       emptyMsg.hidden = false;
+      emptyMsg.textContent = 'ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ';
       if (yearlyChartInstance) {
         yearlyChartInstance.destroy();
         yearlyChartInstance = null;
@@ -1614,76 +1623,83 @@
       yearlyChartInstance.destroy();
     }
 
-    yearlyChartInstance = new Chart(canvas.getContext('2d'), {
-      data: {
-        labels: years,
-        datasets: [
-          {
-            type: 'bar',
-            label: 'จำนวนที่ดู',
-            data: watchedCounts,
-            backgroundColor: 'rgba(229,9,20,0.75)',
-            hoverBackgroundColor: 'rgba(229,9,20,0.95)',
-            borderRadius: 6,
-            maxBarThickness: 48,
-            yAxisID: 'yWatched',
-            order: 2
-          },
-          {
-            type: 'line',
-            label: 'จำนวนที่ถูกใจ',
-            data: likedCounts,
-            borderColor: '#46D369',
-            backgroundColor: '#46D369',
-            pointBackgroundColor: '#46D369',
-            pointBorderColor: '#141414',
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            borderWidth: 2,
-            tension: 0.3,
-            yAxisID: 'yLiked',
-            order: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: {
-            labels: { color: '#B3B3B3', font: { family: 'Inter' } }
-          },
-          tooltip: {
-            backgroundColor: '#1F1F1F',
-            borderColor: '#3A3A3A',
-            borderWidth: 1,
-            titleColor: '#FFFFFF',
-            bodyColor: '#B3B3B3'
-          }
+    try {
+      yearlyChartInstance = new Chart(canvas.getContext('2d'), {
+        data: {
+          labels: years,
+          datasets: [
+            {
+              type: 'bar',
+              label: 'จำนวนที่ดู',
+              data: watchedCounts,
+              backgroundColor: 'rgba(229,9,20,0.75)',
+              hoverBackgroundColor: 'rgba(229,9,20,0.95)',
+              borderRadius: 6,
+              maxBarThickness: 48,
+              yAxisID: 'yWatched',
+              order: 2
+            },
+            {
+              type: 'line',
+              label: 'จำนวนที่ถูกใจ',
+              data: likedCounts,
+              borderColor: '#46D369',
+              backgroundColor: '#46D369',
+              pointBackgroundColor: '#46D369',
+              pointBorderColor: '#141414',
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              borderWidth: 2,
+              tension: 0.3,
+              yAxisID: 'yLiked',
+              order: 1
+            }
+          ]
         },
-        scales: {
-          x: {
-            ticks: { color: '#B3B3B3', font: { family: 'Inter' } },
-            grid: { color: 'rgba(255,255,255,0.06)' }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              labels: { color: '#B3B3B3', font: { family: 'Inter' } }
+            },
+            tooltip: {
+              backgroundColor: '#1F1F1F',
+              borderColor: '#3A3A3A',
+              borderWidth: 1,
+              titleColor: '#FFFFFF',
+              bodyColor: '#B3B3B3'
+            }
           },
-          yWatched: {
-            position: 'left',
-            beginAtZero: true,
-            ticks: { color: '#B3B3B3', precision: 0 },
-            grid: { color: 'rgba(255,255,255,0.06)' },
-            title: { display: true, text: 'จำนวนที่ดู (เรื่อง)', color: '#B3B3B3' }
-          },
-          yLiked: {
-            position: 'right',
-            beginAtZero: true,
-            ticks: { color: '#B3B3B3', precision: 0 },
-            grid: { drawOnChartArea: false },
-            title: { display: true, text: 'จำนวนที่ถูกใจ (เรื่อง)', color: '#B3B3B3' }
+          scales: {
+            x: {
+              ticks: { color: '#B3B3B3', font: { family: 'Inter' } },
+              grid: { color: 'rgba(255,255,255,0.06)' }
+            },
+            yWatched: {
+              position: 'left',
+              beginAtZero: true,
+              ticks: { color: '#B3B3B3', precision: 0 },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              title: { display: true, text: 'จำนวนที่ดู (เรื่อง)', color: '#B3B3B3' }
+            },
+            yLiked: {
+              position: 'right',
+              beginAtZero: true,
+              ticks: { color: '#B3B3B3', precision: 0 },
+              grid: { drawOnChartArea: false },
+              title: { display: true, text: 'จำนวนที่ถูกใจ (เรื่อง)', color: '#B3B3B3' }
+            }
           }
         }
-      }
-    });
+      });
+    } catch (err) {
+      console.error('สร้างกราฟไม่สำเร็จ:', err);
+      canvas.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
+    }
   }
 
   function updateSummary() {
