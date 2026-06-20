@@ -1619,6 +1619,10 @@
     const watchedCounts = years.map(y => shows.filter(s => s.year === y).length);
     const likedCounts = years.map(y => shows.filter(s => s.year === y && s.liked).length);
 
+    // ทำให้แกน y ทั้งสองฝั่งใช้สเกลเดียวกัน (ค่าสูงสุดเท่ากัน) เพื่อให้เทียบสัดส่วนแท่ง/เส้นได้ตรงๆ
+    const rawMax = Math.max(1, ...watchedCounts, ...likedCounts);
+    const sharedAxisMax = Math.ceil((rawMax * 1.1) / 10) * 10 || 10;
+
     if (yearlyChartInstance) {
       yearlyChartInstance.destroy();
     }
@@ -1679,14 +1683,16 @@
             },
             yWatched: {
               position: 'left',
-              beginAtZero: true,
+              min: 0,
+              max: sharedAxisMax,
               ticks: { color: '#B3B3B3', precision: 0 },
               grid: { color: 'rgba(255,255,255,0.06)' },
               title: { display: true, text: 'จำนวนที่ดู (เรื่อง)', color: '#B3B3B3' }
             },
             yLiked: {
               position: 'right',
-              beginAtZero: true,
+              min: 0,
+              max: sharedAxisMax,
               ticks: { color: '#B3B3B3', precision: 0 },
               grid: { drawOnChartArea: false },
               title: { display: true, text: 'จำนวนที่ถูกใจ (เรื่อง)', color: '#B3B3B3' }
