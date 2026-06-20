@@ -17,6 +17,7 @@
     --border: #3A3A3A;
     --red: #E50914;
     --red-soft: rgba(229,9,20,0.18);
+    --red-muted: rgba(229,9,20,0.35);
     --mint: #46D369;
     --mint-soft: rgba(70,211,105,0.15);
     --gold: #E6B91E;
@@ -101,8 +102,8 @@
 
   .page-tab {
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 0.88rem;
+    font-weight: 700;
+    font-size: 0.9rem;
     padding: 10px 12px;
     background: transparent;
     border: none;
@@ -145,6 +146,42 @@
     width: 16px;
     height: 16px;
     display: block;
+  }
+
+  .nav-section-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    cursor: default;
+    user-select: none;
+    margin-top: 14px;
+  }
+
+  .nav-section-label:first-child {
+    margin-top: 0;
+  }
+
+  .page-tabs-sub {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 2px 0 4px;
+  }
+
+  .sub-page-tab {
+    padding-left: 30px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+
+  .sub-page-tab:hover:not(.active) {
+    color: var(--text-soft);
   }
 
   /* ---------- View sections (สรุป / รายละเอียด) ---------- */
@@ -349,23 +386,6 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .sub-tabs {
-    display: flex;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-
-  .sub-tabs .page-tab {
-    border-left: none;
-    border-bottom: 3px solid transparent;
-    border-radius: 8px 8px 0 0;
-  }
-
-  .sub-tabs .page-tab.active {
-    border-left-color: transparent;
-    border-bottom-color: var(--red);
-  }
-
   /* ---------- ตัวกรอง (search / filters / sort) ---------- */
   .sidebar-controls {
     display: flex;
@@ -373,8 +393,6 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    padding-left: 20px;
-    border-left: 1px solid var(--border);
     flex: 1;
     min-width: 280px;
   }
@@ -756,6 +774,7 @@
 
     .page-tabs {
       flex-direction: row;
+      flex-wrap: wrap;
       gap: 4px;
       margin-bottom: 0;
     }
@@ -796,11 +815,27 @@
       gap: 14px;
     }
 
-    .sub-tabs {
-      width: 100%;
+    .nav-section-label {
+      flex-basis: 100%;
+      margin-top: 10px;
     }
 
-    .sub-tabs .page-tab { flex: 1; }
+    .nav-section-label:first-child {
+      margin-top: 0;
+    }
+
+    .page-tabs-sub {
+      flex-direction: row;
+      flex-basis: 100%;
+      order: 3;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .sub-page-tab {
+      flex: 1;
+      padding-left: 12px;
+    }
 
     .sidebar-controls {
       padding-left: 0;
@@ -966,8 +1001,16 @@
       </div>
 
       <nav class="page-tabs">
-        <button class="page-tab active" data-view="summary"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg></span>Dashboard</button>
-        <button class="page-tab" data-view="detail"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></span>Series &amp; Variety</button>
+        <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg></span>Dashboard</div>
+        <div class="page-tabs-sub">
+          <button class="page-tab sub-page-tab active" data-nav="summary">Summary</button>
+        </div>
+
+        <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></span>Series &amp; Variety</div>
+        <div class="page-tabs-sub">
+          <button class="page-tab sub-page-tab" data-nav="diary">บันทึกที่ดูแล้ว</button>
+          <button class="page-tab sub-page-tab" data-nav="watchlist">อยากดู</button>
+        </div>
       </nav>
     </aside>
 
@@ -1025,14 +1068,9 @@
         </div>
       </section>
 
-      <!-- ---------- หน้า "รายละเอียด" — แท็บย่อย + ตัวกรอง + การ์ดตั๋ว ---------- -->
+      <!-- ---------- หน้า "รายละเอียด" — ตัวกรอง + การ์ดตั๋ว (แท็บย่อยอยู่ในแถบซ้ายแล้ว) ---------- -->
       <section class="view-section" id="view-detail">
         <div class="detail-topbar">
-          <nav class="sub-tabs">
-            <button class="page-tab active" data-page="diary">บันทึกที่ดูแล้ว</button>
-            <button class="page-tab" data-page="watchlist">อยากดู</button>
-          </nav>
-
           <div class="sidebar-controls page-section active" id="controls-diary">
             <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
             <div class="filter-pills">
@@ -1315,8 +1353,7 @@
   const genreFilterPending = document.getElementById('genreFilterPending');
   const pillsPending = document.querySelectorAll('#controls-watchlist .pill');
 
-  const viewTabs = document.querySelectorAll('.page-tabs > .page-tab[data-view]');
-  const subTabs = document.querySelectorAll('.sub-tabs > .page-tab[data-page]');
+  const navItems = document.querySelectorAll('.page-tabs-sub > .page-tab[data-nav]');
 
   let activeType = 'all';
   let activeYear = 'all';
@@ -1701,47 +1738,35 @@
   slicerSeriesBtn.addEventListener('click', () => toggleSummaryType('series'));
   slicerVarietyBtn.addEventListener('click', () => toggleSummaryType('variety'));
 
-  // ---------- สลับหน้า "สรุป" / "รายละเอียด" (เมนูใน sidebar) ----------
-  viewTabs.forEach(tab => tab.addEventListener('click', () => {
-    viewTabs.forEach(t => t.classList.remove('active'));
+  // ---------- เมนูย่อยใน sidebar: Summary / บันทึกที่ดูแล้ว / อยากดู ----------
+  // "Dashboard" และ "Series & Variety" เป็นแค่หัวข้อ คลิกไม่ได้ — คลิกได้เฉพาะเมนูย่อยเท่านั้น
+  // ไฮไลต์สีแดง: ติดเฉพาะปุ่มที่ถูกคลิกจริงเพียงปุ่มเดียวเท่านั้น
+  navItems.forEach(tab => tab.addEventListener('click', () => {
+    navItems.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
+
     document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
 
-    if (tab.dataset.view === 'summary') {
+    if (tab.dataset.nav === 'summary') {
       document.getElementById('view-summary').classList.add('active');
       updateSummary();
     } else {
       document.getElementById('view-detail').classList.add('active');
-      // แสดงข้อมูลของแท็บย่อยที่ active อยู่ตอนนี้ (diary หรือ watchlist)
-      const activeSub = document.querySelector('.sub-tabs .page-tab.active');
-      if (activeSub && activeSub.dataset.page === 'watchlist') {
-        updateStatsPending();
-        renderPending();
-      } else {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+
+      if (tab.dataset.nav === 'diary') {
+        document.getElementById('page-diary').classList.add('active');
+        document.getElementById('controls-diary').classList.add('active');
+        resetDiaryFilters();
         updateStats();
         render();
+      } else {
+        document.getElementById('page-watchlist').classList.add('active');
+        document.getElementById('controls-watchlist').classList.add('active');
+        resetPendingFilters();
+        updateStatsPending();
+        renderPending();
       }
-    }
-  }));
-
-  // ---------- สลับแท็บย่อย "บันทึกที่ดูแล้ว" / "อยากดู" (ในหน้ารายละเอียด) ----------
-  subTabs.forEach(tab => tab.addEventListener('click', () => {
-    subTabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-
-    if (tab.dataset.page === 'diary') {
-      document.getElementById('page-diary').classList.add('active');
-      document.getElementById('controls-diary').classList.add('active');
-      resetDiaryFilters();
-      updateStats();
-      render();
-    } else {
-      document.getElementById('page-watchlist').classList.add('active');
-      document.getElementById('controls-watchlist').classList.add('active');
-      resetPendingFilters();
-      updateStatsPending();
-      renderPending();
     }
   }));
 
