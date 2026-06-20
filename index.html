@@ -2114,6 +2114,9 @@
     const titleEl = document.getElementById('genreTableTitle');
     if (!tbody) return;
 
+    const scrollWrap = tbody.closest('.genre-table-scroll');
+    if (scrollWrap) scrollWrap.scrollTop = 0;
+
     if (!selectedGenre) {
       tbody.innerHTML = '';
       titleEl.textContent = 'คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง';
