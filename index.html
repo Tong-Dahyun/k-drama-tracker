@@ -156,12 +156,10 @@
   .sidebar-controls.page-section.active { display: flex; }
 
   /* ---------- หน้า "สรุป" ---------- */
-  .view-heading {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: var(--text);
-    margin: 0 0 18px;
+  .dashboard-slicer {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
   }
 
   .summary-grid {
@@ -953,7 +951,10 @@
     <main>
       <!-- ---------- หน้า "สรุป" — ภาพรวมสถิติจากบันทึกที่ดูแล้ว ---------- -->
       <section class="view-section active" id="view-summary">
-        <h2 class="view-heading">ภาพรวมการดูของฉัน</h2>
+        <div class="dashboard-slicer">
+          <button class="pill active" id="slicerSeries" data-summary-type="series">Series</button>
+          <button class="pill active" id="slicerVariety" data-summary-type="variety">Variety</button>
+        </div>
         <div class="summary-grid">
           <div class="summary-card">
             <div class="summary-icon red">📺</div>
@@ -1294,6 +1295,13 @@
   let activeTypePending = 'all';
   let activeYearPending = 'all';
   let activeGenrePending = 'all';
+
+  // ---------- Slicer ของหน้า Dashboard: Series / Variety ----------
+  let summaryTypeFilter = { series: true, variety: true };
+
+  function getSummaryShows() {
+    return shows.filter(s => summaryTypeFilter[s.type]);
+  }
 
   function updateStats() {
     if (!statsEl) return;
@@ -1639,6 +1647,30 @@
     document.querySelector('#controls-watchlist .pill[data-ptype="all"]').classList.add('active');
   }
 
+  // ---------- Slicer หน้า Dashboard: Series / Variety (เลือกได้หลายตัว, ปิดพร้อมกันทั้งคู่ไม่ได้) ----------
+  const slicerSeriesBtn = document.getElementById('slicerSeries');
+  const slicerVarietyBtn = document.getElementById('slicerVariety');
+
+  function refreshSlicerButtons() {
+    slicerSeriesBtn.classList.toggle('active', summaryTypeFilter.series);
+    slicerVarietyBtn.classList.toggle('active', summaryTypeFilter.variety);
+  }
+
+  function toggleSummaryType(type) {
+    const next = { ...summaryTypeFilter, [type]: !summaryTypeFilter[type] };
+    // กันไม่ให้ปิดทั้งสองตัวเลือกพร้อมกัน (จะกลายเป็นไม่มีข้อมูลเลย) — ถ้าเกิดขึ้น ให้กลับไปเลือกทั้งคู่แทน
+    if (!next.series && !next.variety) {
+      summaryTypeFilter = { series: true, variety: true };
+    } else {
+      summaryTypeFilter = next;
+    }
+    refreshSlicerButtons();
+    updateSummary();
+  }
+
+  slicerSeriesBtn.addEventListener('click', () => toggleSummaryType('series'));
+  slicerVarietyBtn.addEventListener('click', () => toggleSummaryType('variety'));
+
   // ---------- สลับหน้า "สรุป" / "รายละเอียด" (เมนูใน sidebar) ----------
   viewTabs.forEach(tab => tab.addEventListener('click', () => {
     viewTabs.forEach(t => t.classList.remove('active'));
@@ -1701,7 +1733,8 @@
       return;
     }
 
-    const years = [...new Set(shows.map(s => s.year).filter(Boolean))].sort((a, b) => a - b);
+    const summaryShows = getSummaryShows();
+    const years = [...new Set(summaryShows.map(s => s.year).filter(Boolean))].sort((a, b) => a - b);
 
     if (!diaryLoaded || years.length === 0) {
       canvas.hidden = true;
@@ -1717,8 +1750,8 @@
     canvas.hidden = false;
     emptyMsg.hidden = true;
 
-    const watchedCounts = years.map(y => shows.filter(s => s.year === y).length);
-    const likedCounts = years.map(y => shows.filter(s => s.year === y && s.liked).length);
+    const watchedCounts = years.map(y => summaryShows.filter(s => s.year === y).length);
+    const likedCounts = years.map(y => summaryShows.filter(s => s.year === y && s.liked).length);
 
     // ทำให้แกน y ทั้งสองฝั่งใช้สเกลเดียวกัน (ค่าสูงสุดเท่ากัน) เพื่อให้เทียบสัดส่วนแท่ง/เส้นได้ตรงๆ
     const rawMax = Math.max(1, ...watchedCounts, ...likedCounts);
@@ -1828,7 +1861,8 @@
       return;
     }
 
-    const total = shows.length;
+    const summaryShows = getSummaryShows();
+    const total = summaryShows.length;
 
     if (!diaryLoaded || total === 0) {
       canvas.hidden = true;
@@ -1848,7 +1882,7 @@
     centerText.hidden = false;
     emptyMsg.hidden = true;
 
-    const likedCount = shows.filter(s => s.liked).length;
+    const likedCount = summaryShows.filter(s => s.liked).length;
     const neutralCount = total - likedCount;
     const pct = Math.round((likedCount / total) * 100);
 
@@ -1914,12 +1948,13 @@
       return;
     }
 
-    const total = shows.length;
-    const seriesCount = shows.filter(s => s.type === 'series').length;
-    const varietyCount = shows.filter(s => s.type === 'variety').length;
-    const likedCount = shows.filter(s => s.liked).length;
-    const likedSeries = shows.filter(s => s.type === 'series' && s.liked).length;
-    const likedVariety = shows.filter(s => s.type === 'variety' && s.liked).length;
+    const summaryShows = getSummaryShows();
+    const total = summaryShows.length;
+    const seriesCount = summaryShows.filter(s => s.type === 'series').length;
+    const varietyCount = summaryShows.filter(s => s.type === 'variety').length;
+    const likedCount = summaryShows.filter(s => s.liked).length;
+    const likedSeries = summaryShows.filter(s => s.type === 'series' && s.liked).length;
+    const likedVariety = summaryShows.filter(s => s.type === 'variety' && s.liked).length;
 
     summaryTotal.textContent = total;
     summaryTotalBreakdown.textContent = `ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}`;
