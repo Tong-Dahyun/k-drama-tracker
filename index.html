@@ -245,6 +245,77 @@
     padding: 40px 0;
   }
 
+  .donut-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .donut-wrap {
+    position: relative;
+    height: 120px;
+    margin-top: 4px;
+  }
+
+  .donut-card .chart-empty {
+    padding: 30px 0;
+  }
+
+  .donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .donut-center-value {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .donut-center-label {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.68rem;
+    color: var(--text-soft);
+    margin-top: 3px;
+  }
+
+  .donut-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+  }
+
+  .legend-item b {
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-dot.liked   { background: var(--mint); }
+  .legend-dot.neutral { background: var(--border); }
+
   /* ---------- หน้า "รายละเอียด": แท็บย่อย + ตัวกรอง ---------- */
   .detail-topbar {
     display: flex;
@@ -896,11 +967,20 @@
             <p class="summary-value" id="summaryLiked">—</p>
             <p class="summary-sub" id="summaryLikedBreakdown"></p>
           </div>
-          <div class="summary-card">
-            <div class="summary-icon gold">📅</div>
-            <p class="summary-label">ปีล่าสุด</p>
-            <p class="summary-value" id="summaryYear">—</p>
-            <p class="summary-sub">เรื่องใหม่ล่าสุดในคลัง</p>
+          <div class="summary-card donut-card">
+            <p class="summary-label">สัดส่วนความชอบ</p>
+            <div class="donut-wrap">
+              <canvas id="likedDonutChart"></canvas>
+              <div class="donut-center" id="donutCenterText" hidden>
+                <span class="donut-center-value" id="donutCenterPct">—</span>
+                <span class="donut-center-label">ชอบ</span>
+              </div>
+            </div>
+            <p class="chart-empty" id="donutChartEmpty" hidden>ยังไม่มีข้อมูล</p>
+            <div class="donut-legend">
+              <span class="legend-item"><i class="legend-dot liked"></i>ชอบ <b id="donutLikedCount">—</b></span>
+              <span class="legend-item"><i class="legend-dot neutral"></i>เฉยๆ <b id="donutNeutralCount">—</b></span>
+            </div>
           </div>
         </div>
 
@@ -1729,20 +1809,108 @@
     }
   }
 
+  let likedDonutChartInstance = null;
+
+  function renderLikedDonutChart() {
+    const canvas = document.getElementById('likedDonutChart');
+    const emptyMsg = document.getElementById('donutChartEmpty');
+    const centerText = document.getElementById('donutCenterText');
+    const centerPctEl = document.getElementById('donutCenterPct');
+    const legendLiked = document.getElementById('donutLikedCount');
+    const legendNeutral = document.getElementById('donutNeutralCount');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') {
+      canvas.hidden = true;
+      centerText.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'โหลดไลบรารีสำหรับวาดกราฟไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง';
+      return;
+    }
+
+    const total = shows.length;
+
+    if (!diaryLoaded || total === 0) {
+      canvas.hidden = true;
+      centerText.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'ยังไม่มีข้อมูล';
+      legendLiked.textContent = '—';
+      legendNeutral.textContent = '—';
+      if (likedDonutChartInstance) {
+        likedDonutChartInstance.destroy();
+        likedDonutChartInstance = null;
+      }
+      return;
+    }
+
+    canvas.hidden = false;
+    centerText.hidden = false;
+    emptyMsg.hidden = true;
+
+    const likedCount = shows.filter(s => s.liked).length;
+    const neutralCount = total - likedCount;
+    const pct = Math.round((likedCount / total) * 100);
+
+    centerPctEl.textContent = pct + '%';
+    legendLiked.textContent = likedCount;
+    legendNeutral.textContent = neutralCount;
+
+    if (likedDonutChartInstance) {
+      likedDonutChartInstance.destroy();
+    }
+
+    try {
+      likedDonutChartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['ชอบ', 'เฉยๆ'],
+          datasets: [{
+            data: [likedCount, neutralCount],
+            backgroundColor: ['#46D369', '#3A3A3A'],
+            borderColor: '#1F1F1F',
+            borderWidth: 2,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '72%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1F1F1F',
+              borderColor: '#3A3A3A',
+              borderWidth: 1,
+              titleColor: '#FFFFFF',
+              bodyColor: '#B3B3B3'
+            }
+          }
+        }
+      });
+    } catch (err) {
+      console.error('สร้างกราฟโดนัทไม่สำเร็จ:', err);
+      canvas.hidden = true;
+      centerText.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
+    }
+  }
+
   function updateSummary() {
     const summaryTotal = document.getElementById('summaryTotal');
     const summaryTotalBreakdown = document.getElementById('summaryTotalBreakdown');
     const summaryLiked = document.getElementById('summaryLiked');
     const summaryLikedBreakdown = document.getElementById('summaryLikedBreakdown');
-    const summaryYear = document.getElementById('summaryYear');
 
     if (!diaryLoaded) {
       summaryTotal.textContent = '…';
       summaryLiked.textContent = '…';
-      summaryYear.textContent = '…';
       summaryTotalBreakdown.textContent = 'กำลังโหลดข้อมูล...';
       summaryLikedBreakdown.textContent = '';
       renderYearlyChart();
+      renderLikedDonutChart();
       return;
     }
 
@@ -1752,15 +1920,15 @@
     const likedCount = shows.filter(s => s.liked).length;
     const likedSeries = shows.filter(s => s.type === 'series' && s.liked).length;
     const likedVariety = shows.filter(s => s.type === 'variety' && s.liked).length;
-    const years = shows.map(s => s.year).filter(Boolean);
 
     summaryTotal.textContent = total;
     summaryTotalBreakdown.textContent = `ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}`;
     summaryLiked.textContent = likedCount;
     summaryLikedBreakdown.textContent = `ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
-    summaryYear.textContent = years.length ? Math.max(...years) : '—';
 
     renderYearlyChart();
+    renderLikedDonutChart();
+
   }
 
   // ---------------------------------------------------------------
