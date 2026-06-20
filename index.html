@@ -303,6 +303,86 @@
     padding: 40px 0;
   }
 
+  .genre-card-body {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .genre-chart-wrap {
+    position: relative;
+    flex: 1 1 360px;
+    min-width: 280px;
+    height: 320px;
+  }
+
+  .genre-table-wrap {
+    flex: 1 1 280px;
+    min-width: 240px;
+  }
+
+  .genre-table-title {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    margin: 0 0 12px;
+    min-height: 1.3em;
+  }
+
+  .genre-table-scroll {
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
+  .genre-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.85rem;
+  }
+
+  .genre-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .genre-table tbody td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .genre-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .genre-table-empty-row td {
+    color: var(--text-dim);
+    text-align: center;
+    padding: 18px 0;
+  }
+
+  .liked-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+  }
+
+  .liked-tag.liked { color: var(--mint); }
+  .liked-tag.neutral { color: var(--text-dim); }
+
   .donut-card {
     display: flex;
     flex-direction: column;
@@ -809,6 +889,11 @@
       height: 240px;
     }
 
+    .genre-chart-wrap {
+      height: 260px;
+      flex-basis: 100%;
+    }
+
     .detail-topbar {
       flex-direction: column;
       align-items: stretch;
@@ -1065,6 +1150,27 @@
             <canvas id="yearlyChart"></canvas>
           </div>
           <p class="chart-empty" id="yearlyChartEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
+        </div>
+
+        <div class="chart-card">
+          <h3>Top 10 แนวที่ดูเยอะที่สุด</h3>
+          <div class="genre-card-body">
+            <div class="genre-chart-wrap">
+              <canvas id="genreChart"></canvas>
+              <p class="chart-empty" id="genreChartEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
+            </div>
+            <div class="genre-table-wrap">
+              <p class="genre-table-title" id="genreTableTitle">คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง</p>
+              <div class="genre-table-scroll">
+                <table class="genre-table">
+                  <thead>
+                    <tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr>
+                  </thead>
+                  <tbody id="genreTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1985,6 +2091,156 @@
     }
   }
 
+  // ---------- กราฟ Top 10 แนวที่ดูเยอะที่สุด + ตารางรายชื่อตามแนวที่เลือก ----------
+  let genreChartInstance = null;
+  let selectedGenre = null;
+
+  function getTopGenres(n) {
+    const summaryShows = getSummaryShows();
+    const counts = {};
+    summaryShows.forEach(s => {
+      s.genres.forEach(g => {
+        if (!g) return;
+        counts[g] = (counts[g] || 0) + 1;
+      });
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, n);
+  }
+
+  function renderGenreTable() {
+    const tbody = document.getElementById('genreTableBody');
+    const titleEl = document.getElementById('genreTableTitle');
+    if (!tbody) return;
+
+    if (!selectedGenre) {
+      tbody.innerHTML = '';
+      titleEl.textContent = 'คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง';
+      return;
+    }
+
+    const summaryShows = getSummaryShows();
+    const list = summaryShows.filter(s => s.genres.includes(selectedGenre));
+
+    titleEl.textContent = `แนว "${selectedGenre}" — ${list.length} เรื่อง`;
+
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในแนวนี้</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(s => `
+      <tr>
+        <td>${s.title}</td>
+        <td>${s.liked
+          ? '<span class="liked-tag liked">♥ ชอบ</span>'
+          : '<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td>
+      </tr>
+    `).join('');
+  }
+
+  function renderGenreChart() {
+    const canvas = document.getElementById('genreChart');
+    const emptyMsg = document.getElementById('genreChartEmpty');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') {
+      canvas.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'โหลดไลบรารีสำหรับวาดกราฟไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง';
+      return;
+    }
+
+    const topGenres = getTopGenres(10);
+
+    if (!diaryLoaded || topGenres.length === 0) {
+      canvas.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ';
+      if (genreChartInstance) {
+        genreChartInstance.destroy();
+        genreChartInstance = null;
+      }
+      return;
+    }
+
+    // ถ้าแนวที่เคยเลือกไว้ไม่ติด Top 10 ของชุดข้อมูลปัจจุบันแล้ว (เช่นสลับ slicer) ให้ล้างการเลือก
+    const labels = topGenres.map(g => g[0]);
+    if (selectedGenre && !labels.includes(selectedGenre)) {
+      selectedGenre = null;
+    }
+
+    canvas.hidden = false;
+    emptyMsg.hidden = true;
+
+    const data = topGenres.map(g => g[1]);
+    const barColors = labels.map(l => l === selectedGenre ? '#E50914' : 'rgba(229,9,20,0.55)');
+
+    if (genreChartInstance) {
+      genreChartInstance.destroy();
+    }
+
+    try {
+      genreChartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'จำนวนเรื่อง',
+            data,
+            backgroundColor: barColors,
+            hoverBackgroundColor: '#E50914',
+            borderRadius: 6,
+            maxBarThickness: 22
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1F1F1F',
+              borderColor: '#3A3A3A',
+              borderWidth: 1,
+              titleColor: '#FFFFFF',
+              bodyColor: '#B3B3B3'
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { color: '#B3B3B3', precision: 0 },
+              grid: { color: 'rgba(255,255,255,0.06)' }
+            },
+            y: {
+              ticks: { color: '#B3B3B3', font: { family: 'Sarabun' } },
+              grid: { display: false }
+            }
+          },
+          onClick: (evt, elements) => {
+            if (!elements.length) return;
+            const idx = elements[0].index;
+            const genre = labels[idx];
+            selectedGenre = (selectedGenre === genre) ? null : genre;
+            renderGenreChart();
+            renderGenreTable();
+          },
+          onHover: (evt, elements) => {
+            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+          }
+        }
+      });
+    } catch (err) {
+      console.error('สร้างกราฟแนวไม่สำเร็จ:', err);
+      canvas.hidden = true;
+      emptyMsg.hidden = false;
+      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
+    }
+  }
+
   function updateSummary() {
     const summaryTotal = document.getElementById('summaryTotal');
     const summaryTotalBreakdown = document.getElementById('summaryTotalBreakdown');
@@ -1998,6 +2254,8 @@
       summaryLikedBreakdown.textContent = '';
       renderYearlyChart();
       renderLikedDonutChart();
+      renderGenreChart();
+      renderGenreTable();
       return;
     }
 
@@ -2016,6 +2274,8 @@
 
     renderYearlyChart();
     renderLikedDonutChart();
+    renderGenreChart();
+    renderGenreTable();
 
   }
 
