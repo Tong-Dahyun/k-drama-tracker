@@ -35,65 +35,89 @@
     min-height: 100vh;
   }
 
-  /* ---------- Header / marquee ---------- */
-  .marquee {
-    padding: 32px 24px 20px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
+  /* ---------- App shell: sidebar (summary/detail nav) + main content ---------- */
+  .app-shell {
+    display: flex;
+    align-items: flex-start;
+    min-height: 100vh;
   }
 
-  .marquee .eyebrow {
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    padding: 28px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    margin-bottom: 24px;
+  }
+
+  .sidebar-header .eyebrow {
     font-family: 'Inter', sans-serif;
     color: var(--red);
-    font-size: 0.7rem;
+    font-size: 0.66rem;
     font-weight: 700;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     margin: 0 0 8px;
   }
 
-  .marquee h1 {
+  .sidebar-header h1 {
     font-family: 'Inter', sans-serif;
     font-weight: 800;
-    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-size: 1.3rem;
     letter-spacing: -0.01em;
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: var(--text);
+    line-height: 1.2;
   }
 
-  .marquee .stats {
-    font-size: 0.85rem;
+  .sidebar-header .stats {
+    font-size: 0.76rem;
     color: var(--text-soft);
     margin: 0;
     font-family: 'Sarabun', sans-serif;
+    line-height: 1.5;
   }
 
-  /* ---------- Page tabs (ห้องดูซีรีส์ / อยากดู) ---------- */
+  /* ---------- Sidebar nav (สรุป / รายละเอียด) ---------- */
   .page-tabs {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 14px 24px 0;
     display: flex;
-    justify-content: center;
-    gap: 0;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .page-tab {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 0.85rem;
-    padding: 10px 22px;
+    font-size: 0.88rem;
+    padding: 10px 12px;
     background: transparent;
     border: none;
-    border-bottom: 3px solid transparent;
+    border-left: 3px solid transparent;
+    border-radius: 0 8px 8px 0;
     color: var(--text-soft);
     cursor: pointer;
-    transition: color .2s, border-color .2s;
+    text-align: left;
+    transition: color .2s, border-color .2s, background .2s;
   }
 
   .page-tab.active {
     color: var(--text);
-    border-bottom-color: var(--red);
+    border-left-color: var(--red);
+    background: var(--surface);
+  }
+
+  .page-tab:hover:not(.active) {
+    background: var(--surface);
+    color: var(--text);
   }
 
   .page-tab:focus-visible {
@@ -101,28 +125,125 @@
     outline-offset: 2px;
   }
 
+  /* ---------- View sections (สรุป / รายละเอียด) ---------- */
+  .view-section { display: none; }
+  .view-section.active { display: block; }
   .page-section { display: none; }
   .page-section.active { display: block; }
+  .sidebar-controls.page-section { display: none; }
+  .sidebar-controls.page-section.active { display: flex; }
 
-  /* ---------- Controls ---------- */
-  .controls {
-    max-width: 1100px;
-    margin: 18px auto 4px;
-    padding: 0 24px;
+  /* ---------- หน้า "สรุป" ---------- */
+  .view-heading {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--text);
+    margin: 0 0 18px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 20px;
+  }
+
+  .summary-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+  }
+
+  .summary-icon.red  { background: var(--red-soft);  color: var(--red); }
+  .summary-icon.mint { background: var(--mint-soft); color: var(--mint); }
+  .summary-icon.gold { background: var(--gold-soft); color: var(--gold); }
+
+  .summary-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    margin: 0 0 4px;
+  }
+
+  .summary-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 6px;
+    line-height: 1;
+  }
+
+  .summary-sub {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* ---------- หน้า "รายละเอียด": แท็บย่อย + ตัวกรอง ---------- */
+  .detail-topbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sub-tabs {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .sub-tabs .page-tab {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .sub-tabs .page-tab.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--red);
+  }
+
+  /* ---------- ตัวกรอง (search / filters / sort) ---------- */
+  .sidebar-controls {
+    display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+    gap: 8px;
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
+    flex: 1;
+    min-width: 280px;
   }
 
   .search-box {
-    flex: 1 1 180px;
+    width: auto;
+    flex: 1 1 160px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 9px 16px;
+    padding: 9px 14px;
     font-family: 'Sarabun', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: var(--text);
   }
 
@@ -131,14 +252,15 @@
   .filter-pills {
     display: flex;
     gap: 6px;
+    flex-wrap: wrap;
   }
 
   .pill {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 0.8rem;
-    padding: 8px 14px;
-    border-radius: 10px;
+    font-size: 0.78rem;
+    padding: 7px 12px;
+    border-radius: 8px;
     border: 1px solid var(--border);
     background: var(--surface);
     color: var(--text-soft);
@@ -153,15 +275,16 @@
   }
 
   .sort-select {
+    width: auto;
+    flex: 0 1 130px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 9px 14px;
+    padding: 9px 12px;
     font-family: 'Sarabun', sans-serif;
     font-size: 0.82rem;
     color: var(--text);
     cursor: pointer;
-    max-width: 140px;
   }
 
   .search-box:focus-visible,
@@ -171,11 +294,20 @@
     outline-offset: 2px;
   }
 
-  /* ---------- Grid ---------- */
+  .sidebar-controls .add-entry-btn {
+    width: auto;
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Main content / Grid ---------- */
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 28px 24px;
+  }
+
   .grid {
-    max-width: 1100px;
-    margin: 16px auto 48px;
-    padding: 0 24px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
     gap: 14px;
@@ -463,6 +595,72 @@
     margin-bottom: 18px;
   }
 
+  /* ---------- Responsive: collapse sidebar into a top bar on narrow screens ---------- */
+  @media (max-width: 860px) {
+    .app-shell {
+      flex-direction: column;
+    }
+
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 20px 20px 16px;
+    }
+
+    .page-tabs {
+      flex-direction: row;
+      gap: 4px;
+      margin-bottom: 0;
+    }
+
+    .page-tab {
+      border-left: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      flex: 1;
+      text-align: center;
+    }
+
+    .page-tab.active {
+      border-left-color: transparent;
+      border-bottom-color: var(--red);
+      background: transparent;
+    }
+
+    .summary-grid {
+      max-width: none;
+    }
+
+    .detail-topbar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+
+    .sub-tabs {
+      width: 100%;
+    }
+
+    .sub-tabs .page-tab { flex: 1; }
+
+    .sidebar-controls {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      min-width: 0;
+    }
+
+    .search-box { flex: 1 1 160px; width: auto; }
+    .sort-select { width: auto; flex: 0 1 140px; }
+    .sidebar-controls .add-entry-btn { width: auto; margin-top: 0; }
+
+    main { padding: 20px 16px; }
+  }
+
   /* ---------- Add-entry button + modal ---------- */
   .add-entry-btn {
     font-family: 'Inter', sans-serif;
@@ -604,78 +802,117 @@
 </head>
 <body>
 
-  <header class="marquee">
-    <p class="eyebrow">My K-Content Diary</p>
-    <h1 id="pageTitle">ห้องดูซีรีส์ของฉัน</h1>
-    <p class="stats" id="stats"></p>
-  </header>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <p class="eyebrow">My K-Content Diary</p>
+        <h1 id="pageTitle">ห้องดูซีรีส์ของฉัน</h1>
+        <p class="stats" id="stats"></p>
+      </div>
 
-  <nav class="page-tabs">
-    <button class="page-tab active" data-page="diary">บันทึกที่ดูแล้ว</button>
-    <button class="page-tab" data-page="watchlist">อยากดู</button>
-  </nav>
+      <nav class="page-tabs">
+        <button class="page-tab active" data-view="summary">สรุป</button>
+        <button class="page-tab" data-view="detail">รายละเอียด</button>
+      </nav>
+    </aside>
 
-  <main>
-    <section class="page-section active" id="page-diary">
-      <div class="controls">
-        <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
-        <div class="filter-pills">
-          <button class="pill active" data-type="all">ทั้งหมด</button>
-          <button class="pill" data-type="series">ซีรีส์</button>
-          <button class="pill" data-type="variety">วาไรตี้</button>
+    <main>
+      <!-- ---------- หน้า "สรุป" — ภาพรวมสถิติจากบันทึกที่ดูแล้ว ---------- -->
+      <section class="view-section active" id="view-summary">
+        <h2 class="view-heading">ภาพรวมการดูของฉัน</h2>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-icon red">📺</div>
+            <p class="summary-label">บันทึกแล้วทั้งหมด</p>
+            <p class="summary-value" id="summaryTotal">—</p>
+            <p class="summary-sub" id="summaryTotalBreakdown"></p>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon mint">♥</div>
+            <p class="summary-label">ชอบ</p>
+            <p class="summary-value" id="summaryLiked">—</p>
+            <p class="summary-sub" id="summaryLikedBreakdown"></p>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon gold">📅</div>
+            <p class="summary-label">ปีล่าสุด</p>
+            <p class="summary-value" id="summaryYear">—</p>
+            <p class="summary-sub">เรื่องใหม่ล่าสุดในคลัง</p>
+          </div>
         </div>
-        <select id="yearFilter" class="sort-select">
-          <option value="all">ทุกปี</option>
-        </select>
-        <select id="genreFilter" class="sort-select">
-          <option value="all">ทุกแนว</option>
-        </select>
-        <select id="sort" class="sort-select">
-          <option value="year-desc">ปีล่าสุดก่อน</option>
-          <option value="recently-watched">ล่าสุดที่ดู</option>
-          <option value="liked-first">ชอบก่อน</option>
-          <option value="title">ชื่อ A-Z</option>
-        </select>
-      </div>
+      </section>
 
-      <div class="grid" id="grid"></div>
+      <!-- ---------- หน้า "รายละเอียด" — แท็บย่อย + ตัวกรอง + การ์ดตั๋ว ---------- -->
+      <section class="view-section" id="view-detail">
+        <div class="detail-topbar">
+          <nav class="sub-tabs">
+            <button class="page-tab active" data-page="diary">บันทึกที่ดูแล้ว</button>
+            <button class="page-tab" data-page="watchlist">อยากดู</button>
+          </nav>
 
-      <div class="empty" id="empty" hidden>
-        <div class="stamp-big">SOLD OUT</div>
-        <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
-      </div>
-    </section>
+          <div class="sidebar-controls page-section active" id="controls-diary">
+            <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
+            <div class="filter-pills">
+              <button class="pill active" data-type="all">ทั้งหมด</button>
+              <button class="pill" data-type="series">ซีรีส์</button>
+              <button class="pill" data-type="variety">วาไรตี้</button>
+            </div>
+            <select id="yearFilter" class="sort-select">
+              <option value="all">ทุกปี</option>
+            </select>
+            <select id="genreFilter" class="sort-select">
+              <option value="all">ทุกแนว</option>
+            </select>
+            <select id="sort" class="sort-select">
+              <option value="year-desc">ปีล่าสุดก่อน</option>
+              <option value="recently-watched">ล่าสุดที่ดู</option>
+              <option value="liked-first">ชอบก่อน</option>
+              <option value="title">ชื่อ A-Z</option>
+            </select>
+          </div>
 
-    <section class="page-section" id="page-watchlist">
-      <div class="controls">
-        <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่องที่อยากดู...">
-        <div class="filter-pills">
-          <button class="pill active" data-ptype="all">ทั้งหมด</button>
-          <button class="pill" data-ptype="series">ซีรีส์</button>
-          <button class="pill" data-ptype="variety">วาไรตี้</button>
+          <div class="sidebar-controls page-section" id="controls-watchlist">
+            <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่องที่อยากดู...">
+            <div class="filter-pills">
+              <button class="pill active" data-ptype="all">ทั้งหมด</button>
+              <button class="pill" data-ptype="series">ซีรีส์</button>
+              <button class="pill" data-ptype="variety">วาไรตี้</button>
+            </div>
+            <select id="yearFilterPending" class="sort-select">
+              <option value="all">ทุกปี</option>
+            </select>
+            <select id="genreFilterPending" class="sort-select">
+              <option value="all">ทุกแนว</option>
+            </select>
+            <select id="sortPending" class="sort-select">
+              <option value="year-desc">ปีล่าสุดก่อน</option>
+              <option value="ready-first">จบแล้วก่อน</option>
+              <option value="title">ชื่อ A-Z</option>
+            </select>
+            <button class="add-entry-btn" id="openAddModal">+ เพิ่มเรื่อง</button>
+          </div>
         </div>
-        <select id="yearFilterPending" class="sort-select">
-          <option value="all">ทุกปี</option>
-        </select>
-        <select id="genreFilterPending" class="sort-select">
-          <option value="all">ทุกแนว</option>
-        </select>
-        <select id="sortPending" class="sort-select">
-          <option value="year-desc">ปีล่าสุดก่อน</option>
-          <option value="ready-first">จบแล้วก่อน</option>
-          <option value="title">ชื่อ A-Z</option>
-        </select>
-        <button class="add-entry-btn" id="openAddModal">+ เพิ่มเรื่อง</button>
-      </div>
 
-      <div class="grid" id="gridPending"></div>
+        <section class="page-section active" id="page-diary">
+          <div class="grid" id="grid"></div>
 
-      <div class="empty" id="emptyPending" hidden>
-        <div class="stamp-big">SOLD OUT</div>
-        <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
-      </div>
-    </section>
-  </main>
+          <div class="empty" id="empty" hidden>
+            <div class="stamp-big">SOLD OUT</div>
+            <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
+          </div>
+        </section>
+
+        <section class="page-section" id="page-watchlist">
+          <div class="grid" id="gridPending"></div>
+
+          <div class="empty" id="emptyPending" hidden>
+            <div class="stamp-big">SOLD OUT</div>
+            <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
 
   <div class="modal-overlay" id="addModalOverlay" hidden>
     <div class="modal-box">
@@ -884,7 +1121,7 @@
   const sortSelect = document.getElementById('sort');
   const yearFilter = document.getElementById('yearFilter');
   const genreFilter = document.getElementById('genreFilter');
-  const pills = document.querySelectorAll('.pill');
+  const pills = document.querySelectorAll('#controls-diary .pill');
   const statsEl = document.getElementById('stats');
 
   const gridPending = document.getElementById('gridPending');
@@ -893,9 +1130,10 @@
   const sortSelectPending = document.getElementById('sortPending');
   const yearFilterPending = document.getElementById('yearFilterPending');
   const genreFilterPending = document.getElementById('genreFilterPending');
-  const pillsPending = document.querySelectorAll('#page-watchlist .pill');
+  const pillsPending = document.querySelectorAll('#controls-watchlist .pill');
 
-  const pageTabs = document.querySelectorAll('.page-tab');
+  const viewTabs = document.querySelectorAll('.page-tabs > .page-tab[data-view]');
+  const subTabs = document.querySelectorAll('.sub-tabs > .page-tab[data-page]');
   const pageTitle = document.getElementById('pageTitle');
 
   let activeType = 'all';
@@ -1012,6 +1250,7 @@
       updateStats();
       populateFilters();
       render();
+      updateSummary();
       return;
     }
 
@@ -1041,6 +1280,7 @@
     updateStats();
     populateFilters();
     render();
+    updateSummary();
   }
 
   async function loadPending() {
@@ -1231,7 +1471,7 @@
     activeYear = 'all';
     activeGenre = 'all';
     pills.forEach(x => x.classList.remove('active'));
-    document.querySelector('#page-diary .pill[data-type="all"]').classList.add('active');
+    document.querySelector('#controls-diary .pill[data-type="all"]').classList.add('active');
   }
 
   function resetPendingFilters() {
@@ -1243,28 +1483,86 @@
     activeYearPending = 'all';
     activeGenrePending = 'all';
     pillsPending.forEach(x => x.classList.remove('active'));
-    document.querySelector('#page-watchlist .pill[data-ptype="all"]').classList.add('active');
+    document.querySelector('#controls-watchlist .pill[data-ptype="all"]').classList.add('active');
   }
 
-  pageTabs.forEach(tab => tab.addEventListener('click', () => {
-    pageTabs.forEach(t => t.classList.remove('active'));
+  // ---------- สลับหน้า "สรุป" / "รายละเอียด" (เมนูใน sidebar) ----------
+  viewTabs.forEach(tab => tab.addEventListener('click', () => {
+    viewTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+
+    if (tab.dataset.view === 'summary') {
+      document.getElementById('view-summary').classList.add('active');
+      pageTitle.textContent = 'ห้องดูซีรีส์ของฉัน';
+      updateSummary();
+    } else {
+      document.getElementById('view-detail').classList.add('active');
+      pageTitle.textContent = 'ห้องดูซีรีส์ของฉัน';
+      // แสดงข้อมูลของแท็บย่อยที่ active อยู่ตอนนี้ (diary หรือ watchlist)
+      const activeSub = document.querySelector('.sub-tabs .page-tab.active');
+      if (activeSub && activeSub.dataset.page === 'watchlist') {
+        updateStatsPending();
+        renderPending();
+      } else {
+        updateStats();
+        render();
+      }
+    }
+  }));
+
+  // ---------- สลับแท็บย่อย "บันทึกที่ดูแล้ว" / "อยากดู" (ในหน้ารายละเอียด) ----------
+  subTabs.forEach(tab => tab.addEventListener('click', () => {
+    subTabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
 
     if (tab.dataset.page === 'diary') {
       document.getElementById('page-diary').classList.add('active');
-      pageTitle.textContent = 'ห้องดูซีรีส์ของฉัน';
+      document.getElementById('controls-diary').classList.add('active');
       resetDiaryFilters();
       updateStats();
       render();
     } else {
       document.getElementById('page-watchlist').classList.add('active');
-      pageTitle.textContent = 'อยากดู';
+      document.getElementById('controls-watchlist').classList.add('active');
       resetPendingFilters();
       updateStatsPending();
       renderPending();
     }
   }));
+
+  // ---------- อัปเดตการ์ดสถิติในหน้า "สรุป" (อิงจากบันทึกที่ดูแล้วเท่านั้น) ----------
+  function updateSummary() {
+    const summaryTotal = document.getElementById('summaryTotal');
+    const summaryTotalBreakdown = document.getElementById('summaryTotalBreakdown');
+    const summaryLiked = document.getElementById('summaryLiked');
+    const summaryLikedBreakdown = document.getElementById('summaryLikedBreakdown');
+    const summaryYear = document.getElementById('summaryYear');
+
+    if (!diaryLoaded) {
+      summaryTotal.textContent = '…';
+      summaryLiked.textContent = '…';
+      summaryYear.textContent = '…';
+      summaryTotalBreakdown.textContent = 'กำลังโหลดข้อมูล...';
+      summaryLikedBreakdown.textContent = '';
+      return;
+    }
+
+    const total = shows.length;
+    const seriesCount = shows.filter(s => s.type === 'series').length;
+    const varietyCount = shows.filter(s => s.type === 'variety').length;
+    const likedCount = shows.filter(s => s.liked).length;
+    const likedSeries = shows.filter(s => s.type === 'series' && s.liked).length;
+    const likedVariety = shows.filter(s => s.type === 'variety' && s.liked).length;
+    const years = shows.map(s => s.year).filter(Boolean);
+
+    summaryTotal.textContent = total;
+    summaryTotalBreakdown.textContent = `ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}`;
+    summaryLiked.textContent = likedCount;
+    summaryLikedBreakdown.textContent = `ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
+    summaryYear.textContent = years.length ? Math.max(...years) : '—';
+  }
 
   // ---------------------------------------------------------------
   // ฟอร์ม "+ เพิ่มเรื่อง" — เพิ่มรายการในหน้าเว็บทันที (optimistic update)
