@@ -137,9 +137,14 @@
   }
 
   .page-tabs .tab-icon {
-    font-size: 1rem;
-    line-height: 1;
+    display: inline-flex;
     flex-shrink: 0;
+  }
+
+  .page-tabs .tab-icon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
   }
 
   /* ---------- View sections (สรุป / รายละเอียด) ---------- */
@@ -869,8 +874,8 @@
       </div>
 
       <nav class="page-tabs">
-        <button class="page-tab active" data-view="summary"><span class="tab-icon">📊</span>Summary</button>
-        <button class="page-tab" data-view="detail"><span class="tab-icon">🎬</span>Series &amp; Variety</button>
+        <button class="page-tab active" data-view="summary"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg></span>Dashboard</button>
+        <button class="page-tab" data-view="detail"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></span>Series &amp; Variety</button>
       </nav>
     </aside>
 
