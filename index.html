@@ -174,17 +174,32 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .summary-card-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 16px;
   }
 
   .summary-icon {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    margin-bottom: 14px;
+    margin-bottom: 0;
+  }
+
+  .summary-icon svg {
+    width: 19px;
+    height: 19px;
   }
 
   .summary-icon.red  { background: var(--red-soft);  color: var(--red); }
@@ -195,7 +210,7 @@
     font-family: 'Inter', sans-serif;
     font-size: 0.78rem;
     color: var(--text-soft);
-    margin: 0 0 4px;
+    margin: 0;
   }
 
   .summary-value {
@@ -205,6 +220,7 @@
     color: var(--text);
     margin: 0 0 6px;
     line-height: 1;
+    text-align: center;
   }
 
   .summary-sub {
@@ -212,6 +228,9 @@
     font-size: 0.78rem;
     color: var(--text-dim);
     margin: 0;
+    text-align: center;
+    margin-top: auto;
+    padding-top: 10px;
   }
 
   .chart-card {
@@ -956,14 +975,22 @@
         </div>
         <div class="summary-grid">
           <div class="summary-card">
-            <div class="summary-icon red">📺</div>
-            <p class="summary-label">บันทึกแล้วทั้งหมด</p>
+            <div class="summary-card-head">
+              <div class="summary-icon red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+              </div>
+              <p class="summary-label">บันทึกแล้วทั้งหมด</p>
+            </div>
             <p class="summary-value" id="summaryTotal">—</p>
             <p class="summary-sub" id="summaryTotalBreakdown"></p>
           </div>
           <div class="summary-card">
-            <div class="summary-icon mint">♥</div>
-            <p class="summary-label">ชอบ</p>
+            <div class="summary-card-head">
+              <div class="summary-icon mint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+              </div>
+              <p class="summary-label">จำนวนเรื่องที่ถูกใจ</p>
+            </div>
             <p class="summary-value" id="summaryLiked">—</p>
             <p class="summary-sub" id="summaryLikedBreakdown"></p>
           </div>
