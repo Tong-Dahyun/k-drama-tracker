@@ -1078,6 +1078,74 @@
   .form-status.error { color: var(--red); }
   .form-status.success { color: var(--mint); }
 
+  /* ---------- หน้า Login ---------- */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+  }
+
+  .login-overlay[hidden] { display: none; }
+
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 30px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+
+  .login-eyebrow {
+    font-family: 'Inter', sans-serif;
+    color: var(--red);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    margin: 0 0 10px;
+  }
+
+  .login-box h2 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--text);
+    margin: 0 0 24px;
+  }
+
+  .login-box .form-field {
+    text-align: left;
+  }
+
+  .login-submit-btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* ---------- ปุ่มออกจากระบบ (ติดด้านล่างของแถบซ้าย) ---------- */
+  .logout-btn {
+    margin-top: auto;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-align: left;
+    transition: color .2s;
+  }
+
+  .logout-btn:hover {
+    color: var(--text-soft);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .ticket { animation: none; opacity: 1; transform: none; }
     .ticket:hover, .ticket:hover .stamp { transform: none; }
@@ -1085,6 +1153,25 @@
 </style>
 </head>
 <body>
+
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <p class="login-eyebrow">SERIES &amp; VARIETY</p>
+      <h2>เข้าสู่ระบบ</h2>
+      <form id="loginForm">
+        <div class="form-field">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" required autocomplete="username">
+        </div>
+        <div class="form-field">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required autocomplete="current-password">
+        </div>
+        <p class="form-status" id="loginFormStatus"></p>
+        <button type="submit" class="add-entry-btn login-submit-btn" id="loginSubmitBtn">เข้าสู่ระบบ</button>
+      </form>
+    </div>
+  </div>
 
   <div class="app-shell">
     <aside class="sidebar">
@@ -1105,6 +1192,8 @@
           <button class="page-tab sub-page-tab" data-nav="watchlist">Watchlist</button>
         </div>
       </nav>
+
+      <button class="logout-btn" id="logoutBtn">ออกจากระบบ</button>
     </aside>
 
     <main>
@@ -2733,8 +2822,102 @@
     }
   });
 
-  loadData();
-  loadPending();
+  // ---------------------------------------------------------------
+  // ระบบ Login — บังเนื้อหาทั้งหมดไว้จนกว่าจะกรอก Username/Password ถูกต้อง
+  // เช็คกับชีต "Accounts" ผ่าน Apps Script (action: 'login')
+  // เก็บสถานะ login ไว้ใน localStorage เพื่อไม่ต้อง login ใหม่ทุกครั้งที่เข้าเว็บ
+  //
+  // หมายเหตุสำคัญ: คำขอนี้ไม่ใช้ mode 'no-cors' เหมือน action อื่นๆ เพราะจำเป็นต้องอ่าน
+  // ผลลัพธ์กลับมาจริงๆ ว่า login ผ่านหรือไม่ (ใช้ Content-Type: text/plain เพื่อเลี่ยงปัญหา
+  // CORS preflight เหมือนเดิม)
+  // ---------------------------------------------------------------
+  const AUTH_STORAGE_KEY = 'ktracker_auth';
+
+  const loginOverlay = document.getElementById('loginOverlay');
+  const loginForm = document.getElementById('loginForm');
+  const loginFormStatus = document.getElementById('loginFormStatus');
+  const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  function getStoredAuth() {
+    try {
+      const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !parsed.username) return null;
+      return parsed;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function setStoredAuth(username) {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ username, loggedInAt: Date.now() }));
+  }
+
+  function clearStoredAuth() {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+  }
+
+  function unlockApp() {
+    loginOverlay.hidden = true;
+    loadData();
+    loadPending();
+  }
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!username || !password) return;
+
+    if (!APPS_SCRIPT_URL.trim()) {
+      loginFormStatus.textContent = 'ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL ในโค้ด ไม่สามารถเข้าสู่ระบบได้';
+      loginFormStatus.className = 'form-status error';
+      return;
+    }
+
+    loginSubmitBtn.disabled = true;
+    loginFormStatus.textContent = 'กำลังตรวจสอบ...';
+    loginFormStatus.className = 'form-status';
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'login', username, password })
+      });
+      const result = await res.json();
+
+      if (result.ok) {
+        setStoredAuth(result.username || username);
+        loginFormStatus.textContent = '';
+        loginFormStatus.className = 'form-status';
+        loginForm.reset();
+        unlockApp();
+      } else {
+        loginFormStatus.textContent = result.error || 'Username หรือ Password ไม่ถูกต้อง';
+        loginFormStatus.className = 'form-status error';
+      }
+    } catch (err) {
+      console.error('เข้าสู่ระบบไม่สำเร็จ:', err);
+      loginFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
+      loginFormStatus.className = 'form-status error';
+    } finally {
+      loginSubmitBtn.disabled = false;
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    clearStoredAuth();
+    location.reload();
+  });
+
+  // เช็คตอนเปิดหน้าเว็บ: ถ้าเคย login ไว้แล้ว (มีอยู่ใน localStorage) ก็เข้าได้เลยไม่ต้อง login ซ้ำ
+  if (getStoredAuth()) {
+    unlockApp();
+  }
 </script>
 
 </body>
