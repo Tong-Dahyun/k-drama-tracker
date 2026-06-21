@@ -1146,6 +1146,142 @@
     color: var(--text-soft);
   }
 
+  /* ---------- หน้า Settings > Users ---------- */
+  .users-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .users-heading {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .users-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow-x: auto;
+    max-width: 900px;
+  }
+
+  .users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.88rem;
+  }
+
+  .users-table thead th {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .users-table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  .users-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .users-table-wrap .chart-empty {
+    padding: 30px 0;
+  }
+
+  .role-select {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .role-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .active-toggle-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-dim);
+  }
+
+  .active-toggle-btn.active {
+    background: var(--mint-soft);
+    color: var(--mint);
+    border-color: transparent;
+  }
+
+  .active-toggle-btn.inactive {
+    background: var(--surface-soft);
+    color: var(--text-dim);
+  }
+
+  .table-action-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 7px 13px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .table-action-btn:hover {
+    background: var(--surface-soft);
+    color: var(--text);
+  }
+
+  .table-action-btn.danger:hover {
+    background: var(--red-soft);
+    color: var(--red);
+    border-color: transparent;
+  }
+
+  .table-action-btn:disabled,
+  .active-toggle-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ---------- โหมด Viewer: ซ่อนปุ่มที่เกี่ยวกับการแก้ไขข้อมูลทั้งหมด ---------- */
+  body.viewer-mode #openAddModal,
+  body.viewer-mode .card-menu-btn,
+  body.viewer-mode .mark-watched-btn {
+    display: none !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .ticket { animation: none; opacity: 1; transform: none; }
     .ticket:hover, .ticket:hover .stamp { transform: none; }
@@ -1190,6 +1326,10 @@
         <div class="page-tabs-sub">
           <button class="page-tab sub-page-tab" data-nav="diary">Watched Series</button>
           <button class="page-tab sub-page-tab" data-nav="watchlist">Watchlist</button>
+        </div>
+        <div class="nav-section-label" id="settingsSectionLabel" hidden><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg></span>Settings</div>
+        <div class="page-tabs-sub" id="settingsSubNav" hidden>
+          <button class="page-tab sub-page-tab" data-nav="users">Users</button>
         </div>
       </nav>
 
@@ -1335,6 +1475,30 @@
           </div>
         </section>
       </section>
+
+      <!-- ---------- หน้า "Settings > Users" — จัดการผู้ใช้งาน (Admin เท่านั้น) ---------- -->
+      <section class="view-section" id="view-users">
+        <div class="users-topbar">
+          <h2 class="users-heading">จัดการผู้ใช้งาน</h2>
+          <button class="add-entry-btn" id="openAddUserModal">+ เพิ่มผู้ใช้</button>
+        </div>
+
+        <div class="users-table-wrap">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>สิทธิ์การแก้ไข</th>
+                <th>สถานะ</th>
+                <th>Reset</th>
+                <th>ลบ</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+          <p class="chart-empty" id="usersTableEmpty" hidden></p>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -1454,6 +1618,84 @@
         <button type="button" class="btn-secondary" id="closeDeleteModal">ยกเลิก</button>
         <button type="button" class="add-entry-btn" id="confirmDeleteBtn" style="background: var(--red);">ลบรายการนี้</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addUserModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>เพิ่มผู้ใช้ใหม่</h3>
+      <form id="addUserForm">
+        <div class="form-field">
+          <label for="newUserUsername">Username *</label>
+          <input type="text" id="newUserUsername" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="newUserPassword">Password *</label>
+          <input type="text" id="newUserPassword" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="newUserRole">สิทธิ์การแก้ไข</label>
+          <select id="newUserRole">
+            <option value="Editor" selected>Editor (แก้ไขข้อมูลได้)</option>
+            <option value="Viewer">Viewer (ดูอย่างเดียว)</option>
+            <option value="Admin">Admin (จัดการผู้ใช้ได้ด้วย)</option>
+          </select>
+        </div>
+        <p class="form-status" id="addUserFormStatus"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeAddUserModal">ยกเลิก</button>
+          <button type="submit" class="add-entry-btn" id="submitAddUserBtn">เพิ่มผู้ใช้</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="resetPasswordModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>ตั้งรหัสผ่านใหม่</h3>
+      <p style="color: var(--text-soft); font-size: 0.85rem; margin: -8px 0 16px;" id="resetPasswordModalTitle"></p>
+      <form id="resetPasswordForm">
+        <div class="form-field">
+          <label for="resetNewPassword">รหัสผ่านใหม่ *</label>
+          <input type="text" id="resetNewPassword" required autocomplete="off">
+        </div>
+        <p class="form-status" id="resetPasswordFormStatus"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeResetPasswordModal">ยกเลิก</button>
+          <button type="submit" class="add-entry-btn" id="submitResetPasswordBtn">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="deleteUserModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>ลบผู้ใช้นี้?</h3>
+      <p style="color: var(--text-soft); font-size: 0.85rem;" id="deleteUserModalTitle"></p>
+      <p style="color: var(--text-dim); font-size: 0.8rem;">บัญชีนี้จะเข้าสู่ระบบไม่ได้อีก และไม่สามารถย้อนกลับได้</p>
+      <p class="form-status" id="deleteUserFormStatus"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="closeDeleteUserModal">ยกเลิก</button>
+        <button type="button" class="add-entry-btn" id="confirmDeleteUserBtn" style="background: var(--red);">ลบผู้ใช้</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="adminReauthModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>ยืนยันรหัสผ่าน Admin</h3>
+      <p style="color: var(--text-soft); font-size: 0.85rem; margin: -8px 0 16px;">กรุณายืนยันรหัสผ่านของคุณอีกครั้งก่อนจัดการผู้ใช้งาน</p>
+      <form id="adminReauthForm">
+        <div class="form-field">
+          <label for="adminReauthPassword">Password</label>
+          <input type="password" id="adminReauthPassword" required autocomplete="current-password">
+        </div>
+        <p class="form-status" id="adminReauthFormStatus"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeAdminReauthModal">ยกเลิก</button>
+          <button type="submit" class="add-entry-btn" id="submitAdminReauthBtn">ยืนยัน</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1955,6 +2197,9 @@
     if (tab.dataset.nav === 'summary') {
       document.getElementById('view-summary').classList.add('active');
       updateSummary();
+    } else if (tab.dataset.nav === 'users') {
+      document.getElementById('view-users').classList.add('active');
+      loadUsersTable();
     } else {
       document.getElementById('view-detail').classList.add('active');
       document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -2830,6 +3075,13 @@
   // หมายเหตุสำคัญ: คำขอนี้ไม่ใช้ mode 'no-cors' เหมือน action อื่นๆ เพราะจำเป็นต้องอ่าน
   // ผลลัพธ์กลับมาจริงๆ ว่า login ผ่านหรือไม่ (ใช้ Content-Type: text/plain เพื่อเลี่ยงปัญหา
   // CORS preflight เหมือนเดิม)
+  //
+  // เรื่องสิทธิ์ (Role): Admin (แก้ไขข้อมูล + จัดการผู้ใช้ได้) / Editor (แก้ไขข้อมูลได้) /
+  // Viewer (ดูอย่างเดียว) — เก็บ username+role ไว้ใน localStorage เพื่อข้ามหน้า login รอบถัดไป
+  // แต่ "รหัสผ่าน" จะเก็บไว้ในตัวแปรในหน่วยความจำ (currentPassword) เท่านั้น ไม่ persist ลง
+  // localStorage เพื่อความปลอดภัย — ใช้ยืนยันตัวตนตอนทำรายการที่เกี่ยวกับ Settings > Users
+  // ถ้า refresh หน้าเว็บแล้วตัวแปรนี้หายไป ระบบจะขอให้พิมพ์รหัสผ่านยืนยันอีกครั้งตอนเข้า
+  // หน้า Users ครั้งแรกของรอบนั้น (ไม่ใช่ทุกครั้งที่ใช้งาน)
   // ---------------------------------------------------------------
   const AUTH_STORAGE_KEY = 'ktracker_auth';
 
@@ -2838,6 +3090,12 @@
   const loginFormStatus = document.getElementById('loginFormStatus');
   const loginSubmitBtn = document.getElementById('loginSubmitBtn');
   const logoutBtn = document.getElementById('logoutBtn');
+  const settingsSectionLabel = document.getElementById('settingsSectionLabel');
+  const settingsSubNav = document.getElementById('settingsSubNav');
+
+  let currentUsername = null;
+  let currentPassword = null; // อยู่ในหน่วยความจำเท่านั้น ไม่ persist
+  let currentRole = null;
 
   function getStoredAuth() {
     try {
@@ -2851,16 +3109,24 @@
     }
   }
 
-  function setStoredAuth(username) {
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ username, loggedInAt: Date.now() }));
+  function setStoredAuth(username, role) {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ username, role, loggedInAt: Date.now() }));
   }
 
   function clearStoredAuth() {
     localStorage.removeItem(AUTH_STORAGE_KEY);
   }
 
+  function applyRoleVisibility() {
+    document.body.classList.toggle('viewer-mode', currentRole === 'Viewer');
+    const isAdmin = currentRole === 'Admin';
+    settingsSectionLabel.hidden = !isAdmin;
+    settingsSubNav.hidden = !isAdmin;
+  }
+
   function unlockApp() {
     loginOverlay.hidden = true;
+    applyRoleVisibility();
     loadData();
     loadPending();
   }
@@ -2891,7 +3157,10 @@
       const result = await res.json();
 
       if (result.ok) {
-        setStoredAuth(result.username || username);
+        currentUsername = result.username || username;
+        currentPassword = password;
+        currentRole = result.role || 'Editor';
+        setStoredAuth(currentUsername, currentRole);
         loginFormStatus.textContent = '';
         loginFormStatus.className = 'form-status';
         loginForm.reset();
@@ -2915,9 +3184,372 @@
   });
 
   // เช็คตอนเปิดหน้าเว็บ: ถ้าเคย login ไว้แล้ว (มีอยู่ใน localStorage) ก็เข้าได้เลยไม่ต้อง login ซ้ำ
-  if (getStoredAuth()) {
+  // (role ที่เก็บไว้อาจไม่มีถ้า login ไว้ตั้งแต่ก่อนอัปเดตฟีเจอร์นี้ — จะ fallback เป็น Editor)
+  const existingAuth = getStoredAuth();
+  if (existingAuth) {
+    currentUsername = existingAuth.username;
+    currentRole = existingAuth.role || 'Editor';
     unlockApp();
   }
+
+  // ---------------------------------------------------------------
+  // ยืนยันรหัสผ่าน Admin อีกครั้ง — ใช้ก่อนทำรายการใดๆ ในหน้า Settings > Users
+  // ถ้ามี currentPassword ในหน่วยความจำอยู่แล้ว (เพิ่ง login รอบนี้) จะข้ามขั้นตอนนี้ไปเลย
+  // ---------------------------------------------------------------
+  const adminReauthModalOverlay = document.getElementById('adminReauthModalOverlay');
+  const adminReauthForm = document.getElementById('adminReauthForm');
+  const adminReauthFormStatus = document.getElementById('adminReauthFormStatus');
+  let pendingReauthResolve = null;
+  let pendingReauthReject = null;
+
+  function ensureAdminPassword() {
+    if (currentPassword) return Promise.resolve(currentPassword);
+    return new Promise((resolve, reject) => {
+      pendingReauthResolve = resolve;
+      pendingReauthReject = reject;
+      adminReauthFormStatus.textContent = '';
+      adminReauthFormStatus.className = 'form-status';
+      document.getElementById('adminReauthPassword').value = '';
+      adminReauthModalOverlay.hidden = false;
+      document.getElementById('adminReauthPassword').focus();
+    });
+  }
+
+  function closeAdminReauthModal(cancelled) {
+    adminReauthModalOverlay.hidden = true;
+    if (cancelled && pendingReauthReject) {
+      pendingReauthReject(new Error('cancelled'));
+    }
+    pendingReauthResolve = null;
+    pendingReauthReject = null;
+  }
+
+  document.getElementById('closeAdminReauthModal').addEventListener('click', () => closeAdminReauthModal(true));
+  adminReauthModalOverlay.addEventListener('click', (e) => {
+    if (e.target === adminReauthModalOverlay) closeAdminReauthModal(true);
+  });
+
+  adminReauthForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = document.getElementById('adminReauthPassword').value;
+    if (!password) return;
+
+    adminReauthFormStatus.textContent = 'กำลังตรวจสอบ...';
+    adminReauthFormStatus.className = 'form-status';
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'login', username: currentUsername, password })
+      });
+      const result = await res.json();
+
+      if (result.ok && result.role === 'Admin') {
+        currentPassword = password;
+        adminReauthModalOverlay.hidden = true;
+        if (pendingReauthResolve) {
+          pendingReauthResolve(password);
+          pendingReauthResolve = null;
+          pendingReauthReject = null;
+        }
+      } else {
+        adminReauthFormStatus.textContent = result.ok ? 'บัญชีนี้ไม่ใช่ Admin' : (result.error || 'รหัสผ่านไม่ถูกต้อง');
+        adminReauthFormStatus.className = 'form-status error';
+      }
+    } catch (err) {
+      console.error('ยืนยันตัวตนไม่สำเร็จ:', err);
+      adminReauthFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
+      adminReauthFormStatus.className = 'form-status error';
+    }
+  });
+
+  // เรียก action ที่เกี่ยวกับการจัดการผู้ใช้ทุกตัว ผ่านฟังก์ชันนี้ — แนบ adminUsername/adminPassword
+  // ให้ Apps Script เช็คสิทธิ์ Admin จริงๆ ทุกครั้งก่อนทำรายการ (ไม่ใช่แค่ซ่อนปุ่มในหน้าเว็บ)
+  async function callAdminAction(action, extraPayload) {
+    const password = await ensureAdminPassword();
+    const payload = Object.assign({
+      action: action,
+      adminUsername: currentUsername,
+      adminPassword: password
+    }, extraPayload || {});
+
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    return res.json();
+  }
+
+  // ---------------------------------------------------------------
+  // หน้า Settings > Users — ตาราง + เพิ่ม/แก้สิทธิ์/รีเซ็ตรหัส/ลบผู้ใช้
+  // ---------------------------------------------------------------
+  let usersList = [];
+  const usersTableBody = document.getElementById('usersTableBody');
+  const usersTableEmpty = document.getElementById('usersTableEmpty');
+
+  async function loadUsersTable() {
+    usersTableBody.innerHTML = '';
+    usersTableEmpty.hidden = true;
+
+    try {
+      const result = await callAdminAction('listUsers');
+      if (!result.ok) {
+        usersTableEmpty.hidden = false;
+        usersTableEmpty.textContent = result.error || 'โหลดรายชื่อผู้ใช้ไม่สำเร็จ';
+        return;
+      }
+      usersList = result.users || [];
+      renderUsersTable();
+    } catch (err) {
+      if (err.message !== 'cancelled') console.error('โหลดรายชื่อผู้ใช้ไม่สำเร็จ:', err);
+      usersTableEmpty.hidden = false;
+      usersTableEmpty.textContent = 'โหลดรายชื่อผู้ใช้ไม่สำเร็จ ลองใหม่อีกครั้ง';
+    }
+  }
+
+  function renderUsersTable() {
+    if (usersList.length === 0) {
+      usersTableBody.innerHTML = '';
+      usersTableEmpty.hidden = false;
+      usersTableEmpty.textContent = 'ยังไม่มีผู้ใช้งาน';
+      return;
+    }
+    usersTableEmpty.hidden = true;
+
+    usersTableBody.innerHTML = usersList.map(u => {
+      const isSelf = u.username === currentUsername;
+      return `
+        <tr>
+          <td>${u.username}${isSelf ? ' <span style="color:var(--text-dim); font-size:0.75rem;">(คุณ)</span>' : ''}</td>
+          <td>
+            <select class="role-select" data-username="${u.username}" ${isSelf ? 'disabled' : ''}>
+              <option value="Admin" ${u.role === 'Admin' ? 'selected' : ''}>Admin</option>
+              <option value="Editor" ${u.role === 'Editor' ? 'selected' : ''}>Editor</option>
+              <option value="Viewer" ${u.role === 'Viewer' ? 'selected' : ''}>Viewer</option>
+            </select>
+          </td>
+          <td>
+            <button class="active-toggle-btn ${u.active ? 'active' : 'inactive'}" data-username="${u.username}" data-active="${u.active}" ${isSelf ? 'disabled' : ''}>
+              ${u.active ? 'ใช้งานอยู่' : 'ปิดใช้งาน'}
+            </button>
+          </td>
+          <td><button class="table-action-btn reset-pw-btn" data-username="${u.username}">Reset</button></td>
+          <td><button class="table-action-btn danger delete-user-btn" data-username="${u.username}" ${isSelf ? 'disabled' : ''}>ลบ</button></td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  usersTableBody.addEventListener('change', async (e) => {
+    const select = e.target.closest('.role-select');
+    if (!select) return;
+    const username = select.dataset.username;
+    const newRole = select.value;
+    const prevRole = (usersList.find(u => u.username === username) || {}).role;
+    select.disabled = true;
+    try {
+      const result = await callAdminAction('updateUserRole', { targetUsername: username, newRole });
+      if (!result.ok) {
+        alert(result.error || 'อัปเดตสิทธิ์ไม่สำเร็จ');
+        select.value = prevRole;
+      } else {
+        const u = usersList.find(x => x.username === username);
+        if (u) u.role = newRole;
+      }
+    } catch (err) {
+      if (err.message !== 'cancelled') {
+        console.error(err);
+        alert('เชื่อมต่อไม่สำเร็จ');
+      }
+      select.value = prevRole;
+    } finally {
+      select.disabled = false;
+    }
+  });
+
+  usersTableBody.addEventListener('click', async (e) => {
+    const toggleBtn = e.target.closest('.active-toggle-btn');
+    if (toggleBtn) {
+      const username = toggleBtn.dataset.username;
+      const newActive = toggleBtn.dataset.active !== 'true';
+      toggleBtn.disabled = true;
+      try {
+        const result = await callAdminAction('toggleUserActive', { targetUsername: username, newActive });
+        if (!result.ok) {
+          alert(result.error || 'อัปเดตสถานะไม่สำเร็จ');
+        } else {
+          const u = usersList.find(x => x.username === username);
+          if (u) u.active = newActive;
+          renderUsersTable();
+        }
+      } catch (err) {
+        if (err.message !== 'cancelled') {
+          console.error(err);
+          alert('เชื่อมต่อไม่สำเร็จ');
+        }
+      } finally {
+        toggleBtn.disabled = false;
+      }
+      return;
+    }
+
+    const resetBtn = e.target.closest('.reset-pw-btn');
+    if (resetBtn) {
+      openResetPasswordModal(resetBtn.dataset.username);
+      return;
+    }
+
+    const deleteBtn = e.target.closest('.delete-user-btn');
+    if (deleteBtn) {
+      openDeleteUserModal(deleteBtn.dataset.username);
+    }
+  });
+
+  // ---------- modal: เพิ่มผู้ใช้ใหม่ ----------
+  const addUserModalOverlay = document.getElementById('addUserModalOverlay');
+  const addUserForm = document.getElementById('addUserForm');
+  const addUserFormStatus = document.getElementById('addUserFormStatus');
+
+  document.getElementById('openAddUserModal').addEventListener('click', () => {
+    addUserFormStatus.textContent = '';
+    addUserFormStatus.className = 'form-status';
+    addUserModalOverlay.hidden = false;
+    document.getElementById('newUserUsername').focus();
+  });
+
+  function closeAddUserModal() {
+    addUserModalOverlay.hidden = true;
+    addUserForm.reset();
+  }
+
+  document.getElementById('closeAddUserModal').addEventListener('click', closeAddUserModal);
+  addUserModalOverlay.addEventListener('click', (e) => {
+    if (e.target === addUserModalOverlay) closeAddUserModal();
+  });
+
+  addUserForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newUsername = document.getElementById('newUserUsername').value.trim();
+    const newPassword = document.getElementById('newUserPassword').value;
+    const newRole = document.getElementById('newUserRole').value;
+    if (!newUsername || !newPassword) return;
+
+    addUserFormStatus.textContent = 'กำลังบันทึก...';
+    addUserFormStatus.className = 'form-status';
+
+    try {
+      const result = await callAdminAction('addUser', { newUsername, newPassword, newRole });
+      if (result.ok) {
+        closeAddUserModal();
+        loadUsersTable();
+      } else {
+        addUserFormStatus.textContent = result.error || 'เพิ่มผู้ใช้ไม่สำเร็จ';
+        addUserFormStatus.className = 'form-status error';
+      }
+    } catch (err) {
+      if (err.message !== 'cancelled') {
+        console.error(err);
+        addUserFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
+        addUserFormStatus.className = 'form-status error';
+      }
+    }
+  });
+
+  // ---------- modal: ตั้งรหัสผ่านใหม่ ----------
+  const resetPasswordModalOverlay = document.getElementById('resetPasswordModalOverlay');
+  const resetPasswordForm = document.getElementById('resetPasswordForm');
+  const resetPasswordFormStatus = document.getElementById('resetPasswordFormStatus');
+  let resetPasswordTargetUsername = null;
+
+  function openResetPasswordModal(username) {
+    resetPasswordTargetUsername = username;
+    document.getElementById('resetPasswordModalTitle').textContent = username;
+    document.getElementById('resetNewPassword').value = '';
+    resetPasswordFormStatus.textContent = '';
+    resetPasswordFormStatus.className = 'form-status';
+    resetPasswordModalOverlay.hidden = false;
+    document.getElementById('resetNewPassword').focus();
+  }
+
+  function closeResetPasswordModal() {
+    resetPasswordModalOverlay.hidden = true;
+  }
+
+  document.getElementById('closeResetPasswordModal').addEventListener('click', closeResetPasswordModal);
+  resetPasswordModalOverlay.addEventListener('click', (e) => {
+    if (e.target === resetPasswordModalOverlay) closeResetPasswordModal();
+  });
+
+  resetPasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newPassword = document.getElementById('resetNewPassword').value;
+    if (!newPassword || !resetPasswordTargetUsername) return;
+
+    resetPasswordFormStatus.textContent = 'กำลังบันทึก...';
+    resetPasswordFormStatus.className = 'form-status';
+
+    try {
+      const result = await callAdminAction('resetUserPassword', {
+        targetUsername: resetPasswordTargetUsername, newPassword
+      });
+      if (result.ok) {
+        closeResetPasswordModal();
+      } else {
+        resetPasswordFormStatus.textContent = result.error || 'รีเซ็ตรหัสผ่านไม่สำเร็จ';
+        resetPasswordFormStatus.className = 'form-status error';
+      }
+    } catch (err) {
+      if (err.message !== 'cancelled') {
+        console.error(err);
+        resetPasswordFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
+        resetPasswordFormStatus.className = 'form-status error';
+      }
+    }
+  });
+
+  // ---------- modal: ลบผู้ใช้ ----------
+  const deleteUserModalOverlay = document.getElementById('deleteUserModalOverlay');
+  const deleteUserFormStatus = document.getElementById('deleteUserFormStatus');
+  let deleteUserTargetUsername = null;
+
+  function openDeleteUserModal(username) {
+    deleteUserTargetUsername = username;
+    document.getElementById('deleteUserModalTitle').textContent = username;
+    deleteUserFormStatus.textContent = '';
+    deleteUserFormStatus.className = 'form-status';
+    deleteUserModalOverlay.hidden = false;
+  }
+
+  function closeDeleteUserModal() {
+    deleteUserModalOverlay.hidden = true;
+  }
+
+  document.getElementById('closeDeleteUserModal').addEventListener('click', closeDeleteUserModal);
+  deleteUserModalOverlay.addEventListener('click', (e) => {
+    if (e.target === deleteUserModalOverlay) closeDeleteUserModal();
+  });
+
+  document.getElementById('confirmDeleteUserBtn').addEventListener('click', async () => {
+    if (!deleteUserTargetUsername) return;
+    try {
+      const result = await callAdminAction('deleteUser', { targetUsername: deleteUserTargetUsername });
+      if (result.ok) {
+        closeDeleteUserModal();
+        loadUsersTable();
+      } else {
+        deleteUserFormStatus.textContent = result.error || 'ลบผู้ใช้ไม่สำเร็จ';
+        deleteUserFormStatus.className = 'form-status error';
+      }
+    } catch (err) {
+      if (err.message !== 'cancelled') {
+        console.error(err);
+        deleteUserFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
+        deleteUserFormStatus.className = 'form-status error';
+      }
+    }
+  });
 </script>
 
 </body>
