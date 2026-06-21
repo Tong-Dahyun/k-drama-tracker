@@ -3094,8 +3094,33 @@
   const settingsSubNav = document.getElementById('settingsSubNav');
 
   let currentUsername = null;
-  let currentPassword = null; // อยู่ในหน่วยความจำเท่านั้น ไม่ persist
+  let currentPassword = null; // เก็บใน sessionStorage ด้วย (เฉพาะ Admin) เพื่อไม่ต้องถามรหัสซ้ำหลัง refresh
   let currentRole = null;
+
+  const SESSION_PW_KEY = 'ktracker_session_pw';
+
+  function rememberSessionPassword(password, role) {
+    currentPassword = password;
+    try {
+      if (role === 'Admin') {
+        sessionStorage.setItem(SESSION_PW_KEY, password);
+      } else {
+        sessionStorage.removeItem(SESSION_PW_KEY);
+      }
+    } catch (err) { /* sessionStorage ใช้ไม่ได้ (เช่น โหมด private) ก็ข้ามไป ไม่ critical */ }
+  }
+
+  function restoreSessionPassword() {
+    try {
+      const pw = sessionStorage.getItem(SESSION_PW_KEY);
+      if (pw) currentPassword = pw;
+    } catch (err) { /* ข้ามไป */ }
+  }
+
+  function clearSessionPassword() {
+    currentPassword = null;
+    try { sessionStorage.removeItem(SESSION_PW_KEY); } catch (err) { /* ข้ามไป */ }
+  }
 
   function getStoredAuth() {
     try {
@@ -3158,8 +3183,8 @@
 
       if (result.ok) {
         currentUsername = result.username || username;
-        currentPassword = password;
         currentRole = result.role || 'Editor';
+        rememberSessionPassword(password, currentRole);
         setStoredAuth(currentUsername, currentRole);
         loginFormStatus.textContent = '';
         loginFormStatus.className = 'form-status';
@@ -3180,6 +3205,7 @@
 
   logoutBtn.addEventListener('click', () => {
     clearStoredAuth();
+    clearSessionPassword();
     location.reload();
   });
 
@@ -3189,6 +3215,7 @@
   if (existingAuth) {
     currentUsername = existingAuth.username;
     currentRole = existingAuth.role || 'Editor';
+    if (currentRole === 'Admin') restoreSessionPassword();
     unlockApp();
   }
 
@@ -3246,7 +3273,7 @@
       const result = await res.json();
 
       if (result.ok && result.role === 'Admin') {
-        currentPassword = password;
+        rememberSessionPassword(password, 'Admin');
         adminReauthModalOverlay.hidden = true;
         if (pendingReauthResolve) {
           pendingReauthResolve(password);
