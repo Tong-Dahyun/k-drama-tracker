@@ -2411,7 +2411,7 @@
               dashboardTableState = { source: 'year', value: year };
               selectedGenre = null; selectedGenreSource = null;
               if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
-              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
+              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
             }
             renderGenreTable();
           },
@@ -2551,7 +2551,7 @@
                 dashboardTableState = { source: src, value: null };
                 selectedGenre = null; selectedGenreSource = null;
                 if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
-                if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
+                if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
               }
               renderGenreTable();
             },
@@ -2633,7 +2633,7 @@
               dashboardTableState = { source: src, value: null };
               selectedGenre = null; selectedGenreSource = null;
               if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
-              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
+              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
             }
             renderGenreTable();
           },
@@ -2836,7 +2836,7 @@
             );
             genreChartInstance.update('none');
             if (genreLikedChartInstance) {
-              genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)');
+              genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)');
               genreLikedChartInstance.update('none');
             }
             renderGenreTable();
@@ -2894,7 +2894,7 @@
 
     const labels = topData.map(d => d.genre);
     const pcts = topData.map(d => d.count);
-    const barColors = labels.map(l => l === selectedGenre ? '#E6B91E' : 'rgba(230,185,30,0.6)');
+    const barColors = labels.map(l => l === selectedGenre ? '#46D369' : 'rgba(70,211,105,0.55)');
 
     canvas.hidden = false; emptyMsg.hidden = true;
 
@@ -2909,7 +2909,7 @@
             label: '% ถูกใจ',
             data: pcts,
             backgroundColor: barColors,
-            hoverBackgroundColor: '#E6B91E',
+            hoverBackgroundColor: '#46D369',
             borderRadius: 6,
             maxBarThickness: 22
           }]
@@ -2946,7 +2946,7 @@
             selectedGenreSource = selectedGenre ? 'liked' : null;
             dashboardTableState = selectedGenre ? { source: 'genre-liked', value: selectedGenre } : { source: null, value: null };
             genreLikedChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
-              l === selectedGenre ? '#E6B91E' : 'rgba(230,185,30,0.6)'
+              l === selectedGenre ? '#46D369' : 'rgba(70,211,105,0.55)'
             );
             genreLikedChartInstance.update('none');
             if (genreChartInstance) {
