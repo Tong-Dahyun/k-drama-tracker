@@ -1429,7 +1429,7 @@
             </select>
             <select id="sort" class="sort-select">
               <option value="year-desc">ปีล่าสุดก่อน</option>
-              <option value="recently-watched">ล่าสุดที่ดู</option>
+              <option value="recently-watched" selected>ล่าสุดที่ดู</option>
               <option value="liked-first">ชอบก่อน</option>
               <option value="title">ชื่อ A-Z</option>
             </select>
@@ -2137,7 +2137,7 @@
 
   function resetDiaryFilters() {
     searchInput.value = '';
-    sortSelect.value = 'year-desc';
+    sortSelect.value = 'recently-watched';
     yearFilter.value = 'all';
     genreFilter.value = 'all';
     activeType = 'all';
