@@ -58,9 +58,20 @@
   }
 
   .sidebar-header {
+    display: flex;
+    align-items: center;
+    min-height: 54px;
     padding-bottom: 20px;
     margin-bottom: 20px;
     border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-header .brand-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 0;
   }
 
   .sidebar-header .eyebrow {
@@ -73,13 +84,6 @@
     margin: 0 0 8px;
   }
 
-  .sidebar-header .brand-logo {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin: 0 0 16px;
-    border-radius: 6px;
-  }
 
   .sidebar-header h1 {
     font-family: 'Inter', sans-serif;
