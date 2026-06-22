@@ -216,8 +216,9 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    flex: 1 1 320px;
-    min-width: 280px;
+    flex: 1 1 360px;
+    min-width: 300px;
+    max-width: 480px;
   }
 
   .summary-grid-2 {
@@ -227,13 +228,13 @@
   }
 
   .summary-right {
-    flex: 1.5 1 380px;
-    min-width: 300px;
+    flex: 2 1 480px;
+    min-width: 340px;
     margin: 0 !important;
   }
 
   .summary-right-chart {
-    height: 240px !important;
+    height: 300px !important;
   }
 
   .genre-section-3 {
@@ -2758,8 +2759,8 @@
   // ---------- กราฟ Top 10 แนวที่ถูกใจมากที่สุด (% liked per genre) ----------
   function getTopGenresLiked(n) {
     const summaryShows = getSummaryShows();
-    const total = {};
     const liked = {};
+    const total = {};
     summaryShows.forEach(s => {
       s.genres.forEach(g => {
         if (!g) return;
@@ -2767,10 +2768,9 @@
         if (s.liked) liked[g] = (liked[g] || 0) + 1;
       });
     });
-    return Object.keys(total)
-      .filter(g => total[g] >= 3) // กรองแนวที่มีน้อยกว่า 3 เรื่องออก (% ไม่น่าเชื่อถือ)
-      .map(g => ({ genre: g, pct: Math.round(((liked[g] || 0) / total[g]) * 100), count: total[g] }))
-      .sort((a, b) => b.pct - a.pct || b.count - a.count)
+    return Object.keys(liked)
+      .map(g => ({ genre: g, count: liked[g], total: total[g] || 0 }))
+      .sort((a, b) => b.count - a.count)
       .slice(0, n);
   }
 
@@ -2795,7 +2795,7 @@
     }
 
     const labels = topData.map(d => d.genre);
-    const pcts = topData.map(d => d.pct);
+    const pcts = topData.map(d => d.count);
     const barColors = labels.map(l => l === selectedGenre ? '#E6B91E' : 'rgba(230,185,30,0.6)');
 
     canvas.hidden = false; emptyMsg.hidden = true;
@@ -2825,14 +2825,14 @@
               backgroundColor: '#1F1F1F', borderColor: '#3A3A3A', borderWidth: 1,
               titleColor: '#FFFFFF', bodyColor: '#B3B3B3',
               callbacks: {
-                label: ctx => `${ctx.parsed.x}% (${topData[ctx.dataIndex].count} เรื่อง)`
+                label: ctx => `${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`
               }
             }
           },
           scales: {
             x: {
-              min: 0, max: 100,
-              ticks: { color: '#B3B3B3', callback: v => v + '%' },
+              min: 0,
+              ticks: { color: '#B3B3B3', precision: 0 },
               grid: { color: 'rgba(255,255,255,0.06)' }
             },
             y: {
