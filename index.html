@@ -2540,12 +2540,15 @@
     const airingEl = document.getElementById('watchlistAiringCount');
     if (!canvas) return;
 
+    // กรองตาม slicer Series/Variety เหมือนกับ chart อื่นใน Dashboard
+    const filteredPending = pending.filter(s => summaryTypeFilter[s.type]);
+
     if (typeof Chart === 'undefined') {
       canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
       return;
     }
 
-    const total = pending.length;
+    const total = filteredPending.length;
     if (!pendingLoaded || total === 0) {
       canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
       emptyMsg.textContent = 'ยังไม่มีรายการที่อยากดู';
@@ -2555,7 +2558,7 @@
     }
 
     canvas.hidden = false; centerEl.hidden = false; emptyMsg.hidden = true;
-    const readyCount = pending.filter(s => s.finished).length;
+    const readyCount = filteredPending.filter(s => s.finished).length;
     const airingCount = total - readyCount;
     totalEl.textContent = total;
     readyEl.textContent = readyCount;
