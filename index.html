@@ -2576,7 +2576,11 @@
             const idx = elements[0].index;
             const genre = labels[idx];
             selectedGenre = (selectedGenre === genre) ? null : genre;
-            renderGenreChart();
+            // อัปเดตสีแท่ง in-place ไม่ต้อง destroy/recreate → ไม่กระพริบ
+            genreChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
+              l === selectedGenre ? '#E50914' : 'rgba(229,9,20,0.55)'
+            );
+            genreChartInstance.update('none'); // 'none' = ไม่เล่น animation ตอน update สี
             renderGenreTable();
           },
           onHover: (evt, elements) => {
