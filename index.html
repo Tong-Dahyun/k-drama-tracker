@@ -2394,6 +2394,23 @@
           responsive: true,
           maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
+          onClick: (evt, elements) => {
+            if (!elements.length) return;
+            const idx = elements[0].index;
+            const year = years[idx];
+            if (dashboardTableState.source === 'year' && dashboardTableState.value === year) {
+              dashboardTableState = { source: null, value: null };
+            } else {
+              dashboardTableState = { source: 'year', value: year };
+              selectedGenre = null; selectedGenreSource = null;
+              if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
+              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
+            }
+            renderGenreTable();
+          },
+          onHover: (evt, elements) => {
+            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+          },
           plugins: {
             legend: {
               labels: { color: '#B3B3B3', font: { family: 'Inter' } }
@@ -2516,6 +2533,24 @@
               borderWidth: 1,
               titleColor: '#FFFFFF',
               bodyColor: '#B3B3B3'
+            },
+            onClick: (evt, elements) => {
+              if (!elements.length) return;
+              const idx = elements[0].index;
+              const src = idx === 0 ? 'liked-yes' : 'liked-no';
+              if (dashboardTableState.source === src) {
+                dashboardTableState = { source: null, value: null };
+              } else {
+                dashboardTableState = { source: src, value: null };
+                // ล้างการเลือก genre chart
+                selectedGenre = null; selectedGenreSource = null;
+                if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
+                if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
+              }
+              renderGenreTable();
+            },
+            onHover: (evt, elements) => {
+              evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
             }
           }
         }
@@ -2581,6 +2616,23 @@
             legend: { display: false },
             tooltip: { backgroundColor: '#1F1F1F', borderColor: '#3A3A3A', borderWidth: 1,
               titleColor: '#FFFFFF', bodyColor: '#B3B3B3' }
+          },
+          onClick: (evt, elements) => {
+            if (!elements.length) return;
+            const idx = elements[0].index;
+            const src = idx === 0 ? 'watchlist-ready' : 'watchlist-airing';
+            if (dashboardTableState.source === src) {
+              dashboardTableState = { source: null, value: null };
+            } else {
+              dashboardTableState = { source: src, value: null };
+              selectedGenre = null; selectedGenreSource = null;
+              if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
+              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
+            }
+            renderGenreTable();
+          },
+          onHover: (evt, elements) => {
+            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
           }
         }
       });
@@ -2595,6 +2647,10 @@
   let genreLikedChartInstance = null;
   let selectedGenre = null;
   let selectedGenreSource = null; // 'watched' | 'liked'
+
+  // state กลางสำหรับควบคุม Table ด้านล่าง
+  // source: 'genre-watched'|'genre-liked'|'liked-yes'|'liked-no'|'watchlist-ready'|'watchlist-airing'|'year'
+  let dashboardTableState = { source: null, value: null };
 
   function getTopGenres(n) {
     const summaryShows = getSummaryShows();
@@ -2618,34 +2674,68 @@
     const scrollWrap = tbody.closest('.genre-table-scroll');
     if (scrollWrap) scrollWrap.scrollTop = 0;
 
-    if (!selectedGenre) {
+    const { source, value } = dashboardTableState;
+
+    if (!source) {
       tbody.innerHTML = '';
-      titleEl.textContent = 'คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง';
+      titleEl.textContent = 'คลิกข้อมูลในกราฟเพื่อดูรายชื่อเรื่อง';
       return;
     }
 
     const summaryShows = getSummaryShows();
-    // liked chart → แสดงเฉพาะที่ถูกใจ | watched chart → แสดงทั้งหมด
-    const list = selectedGenreSource === 'liked'
-      ? summaryShows.filter(s => s.genres.includes(selectedGenre) && s.liked)
-      : summaryShows.filter(s => s.genres.includes(selectedGenre));
+    let list = [], title = '', isPending = false;
 
-    const sourceLabel = selectedGenreSource === 'liked' ? ' (เฉพาะที่ถูกใจ)' : '';
-    titleEl.textContent = `แนว "${selectedGenre}" — ${list.length} เรื่อง${sourceLabel}`;
+    if (source === 'genre-watched') {
+      list = summaryShows.filter(s => s.genres.includes(value));
+      title = `แนว "${value}" — ${list.length} เรื่อง`;
+    } else if (source === 'genre-liked') {
+      list = summaryShows.filter(s => s.genres.includes(value) && s.liked);
+      title = `แนว "${value}" — ${list.length} เรื่อง (เฉพาะที่ถูกใจ)`;
+    } else if (source === 'liked-yes') {
+      list = summaryShows.filter(s => s.liked);
+      title = `เรื่องที่ถูกใจ — ${list.length} เรื่อง`;
+    } else if (source === 'liked-no') {
+      list = summaryShows.filter(s => !s.liked);
+      title = `เรื่องที่เฉยๆ — ${list.length} เรื่อง`;
+    } else if (source === 'watchlist-ready') {
+      list = pending.filter(s => summaryTypeFilter[s.type] && s.finished);
+      title = `รอดูอยู่ (จบแล้ว พร้อมดู) — ${list.length} เรื่อง`;
+      isPending = true;
+    } else if (source === 'watchlist-airing') {
+      list = pending.filter(s => summaryTypeFilter[s.type] && !s.finished);
+      title = `รอดูอยู่ (กำลังออกอากาศ) — ${list.length} เรื่อง`;
+      isPending = true;
+    } else if (source === 'year') {
+      list = summaryShows.filter(s => s.year === value);
+      title = `ปี ${value} — ${list.length} เรื่อง`;
+    }
+
+    titleEl.textContent = title;
 
     if (list.length === 0) {
-      tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในแนวนี้</td></tr>';
+      tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';
       return;
     }
 
-    tbody.innerHTML = list.map(s => `
-      <tr>
-        <td>${s.title}</td>
-        <td>${s.liked
-          ? '<span class="liked-tag liked">♥ ชอบ</span>'
-          : '<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td>
-      </tr>
-    `).join('');
+    if (isPending) {
+      tbody.innerHTML = list.map(s => `
+        <tr>
+          <td>${s.title}</td>
+          <td>${s.finished
+            ? '<span class="liked-tag liked">✓ พร้อมดู</span>'
+            : '<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = list.map(s => `
+        <tr>
+          <td>${s.title}</td>
+          <td>${s.liked
+            ? '<span class="liked-tag liked">♥ ชอบ</span>'
+            : '<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td>
+        </tr>
+      `).join('');
+    }
   }
 
   function renderGenreChart() {
@@ -2734,6 +2824,7 @@
             const genre = labels[idx];
             selectedGenre = (selectedGenre === genre && selectedGenreSource === 'watched') ? null : genre;
             selectedGenreSource = selectedGenre ? 'watched' : null;
+            dashboardTableState = selectedGenre ? { source: 'genre-watched', value: selectedGenre } : { source: null, value: null };
             // อัปเดตสีแท่ง in-place ไม่กระพริบ
             genreChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
               l === selectedGenre ? '#E50914' : 'rgba(229,9,20,0.55)'
@@ -2850,6 +2941,7 @@
             const genre = labels[idx];
             selectedGenre = (selectedGenre === genre && selectedGenreSource === 'liked') ? null : genre;
             selectedGenreSource = selectedGenre ? 'liked' : null;
+            dashboardTableState = selectedGenre ? { source: 'genre-liked', value: selectedGenre } : { source: null, value: null };
             genreLikedChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
               l === selectedGenre ? '#E6B91E' : 'rgba(230,185,30,0.6)'
             );
