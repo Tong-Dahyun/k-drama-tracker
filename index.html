@@ -203,22 +203,18 @@
     margin-bottom: 20px;
   }
 
-  /* ---------- Summary layout: 2-column top + 3-part bottom ---------- */
+  /* ---------- Summary layout: CSS Grid 2 columns ---------- */
   .summary-layout {
-    display: flex;
+    display: grid;
+    grid-template-columns: 2fr 3fr;
     gap: 16px;
-    align-items: stretch;
-    flex-wrap: wrap;
     margin-bottom: 16px;
   }
 
   .summary-left {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto auto;
     gap: 16px;
-    flex: 1 1 360px;
-    min-width: 300px;
-    max-width: 480px;
   }
 
   .summary-grid-2 {
@@ -228,13 +224,21 @@
   }
 
   .summary-right {
-    flex: 2 1 480px;
-    min-width: 340px;
     margin: 0 !important;
+    min-width: 0;
   }
 
   .summary-right-chart {
-    height: 300px !important;
+    height: 280px !important;
+  }
+
+  @media (max-width: 860px) {
+    .summary-layout {
+      grid-template-columns: 1fr;
+    }
+    .summary-right-chart {
+      height: 220px !important;
+    }
   }
 
   .genre-section-3 {
@@ -935,10 +939,6 @@
       border-left-color: transparent;
       border-bottom-color: var(--red);
       background: transparent;
-    }
-
-    .summary-grid {
-      max-width: none;
     }
 
     .chart-card {
