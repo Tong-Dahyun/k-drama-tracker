@@ -204,35 +204,6 @@
     margin-bottom: 20px;
   }
 
-  .filter-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(229,9,20,0.15);
-    border: 1px solid rgba(229,9,20,0.4);
-    border-radius: 999px;
-    padding: 4px 10px 4px 12px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 0.78rem;
-    color: var(--red);
-    animation: fadeIn .15s ease;
-  }
-
-  .filter-badge-clear {
-    background: none;
-    border: none;
-    color: var(--red);
-    cursor: pointer;
-    font-size: 0.75rem;
-    padding: 0;
-    opacity: 0.7;
-    line-height: 1;
-  }
-
-  .filter-badge-clear:hover { opacity: 1; }
-
-  @keyframes fadeIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
-
   /* ---------- Summary layout: CSS Grid 2 columns ---------- */
   .summary-layout {
     display: grid;
@@ -1426,10 +1397,6 @@
         <div class="dashboard-slicer">
           <button class="pill active" id="slicerSeries" data-summary-type="series">Series</button>
           <button class="pill active" id="slicerVariety" data-summary-type="variety">Variety</button>
-          <span class="filter-badge" id="globalFilterBadge" hidden>
-            <span class="filter-badge-text"></span>
-            <button class="filter-badge-clear" id="clearFilterBtn">✕</button>
-          </span>
         </div>
 
         <!-- แถวบน: ซ้าย = การ์ดสถิติ + Donut/Watchlist | ขวา = กราฟรายปี -->
@@ -1942,37 +1909,6 @@
     return shows.filter(s => summaryTypeFilter[s.type]);
   }
 
-  // globalChartFilter: filter ข้ามกราฟ — set เมื่อคลิกข้อมูลใน chart ใดก็ตาม
-  // { type: 'liked', value: bool } | { type: 'year', value: number } | { type: 'genre', value: string }
-  let globalChartFilter = null;
-
-  function getChartShows() {
-    const base = getSummaryShows();
-    if (!globalChartFilter) return base;
-    const { type, value } = globalChartFilter;
-    if (type === 'liked') return base.filter(s => s.liked === value);
-    if (type === 'year')  return base.filter(s => s.year === value);
-    if (type === 'genre') return base.filter(s => s.genres.includes(value));
-    return base;
-  }
-
-  function clearGlobalFilter() {
-    globalChartFilter = null;
-    dashboardTableState = { source: null, value: null };
-    selectedGenre = null; selectedGenreSource = null;
-    updateFilterBadge();
-  }
-
-  // badge แสดง filter ที่ active อยู่ (อยู่ใต้ slicer)
-  function updateFilterBadge() {
-    let badge = document.getElementById('globalFilterBadge');
-    if (!badge) return;
-    if (!globalChartFilter) { badge.hidden = true; return; }
-    const { type, value } = globalChartFilter;
-    const labels = { liked: value ? '♥ ชอบ' : '♡ เฉยๆ', year: 'ปี ' + value, genre: '# ' + value };
-    badge.hidden = false;
-    badge.querySelector('.filter-badge-text').textContent = 'กรอง: ' + (labels[type] || '');
-  }
 
   function updateStats() {
     if (!statsEl) return;
@@ -2334,27 +2270,12 @@
     } else {
       summaryTypeFilter = next;
     }
-    // เมื่อสลับ slicer ให้ reset global filter ด้วยเพื่อไม่ให้ค้าง
-    globalChartFilter = null;
-    dashboardTableState = { source: null, value: null };
-    selectedGenre = null; selectedGenreSource = null;
-    updateFilterBadge();
     refreshSlicerButtons();
     updateSummary();
   }
 
   slicerSeriesBtn.addEventListener('click', () => toggleSummaryType('series'));
   slicerVarietyBtn.addEventListener('click', () => toggleSummaryType('variety'));
-
-  // ปุ่มล้าง global filter (badge ✕)
-  const clearFilterBtn = document.getElementById('clearFilterBtn');
-  if (clearFilterBtn) {
-    clearFilterBtn.addEventListener('click', () => {
-      clearGlobalFilter();
-      updateSummary();
-      renderGenreTable();
-    });
-  }
 
   // ---------- เมนูย่อยใน sidebar: Summary / บันทึกที่ดูแล้ว / อยากดู ----------
   // "Dashboard" และ "Series & Variety" เป็นแค่หัวข้อ คลิกไม่ได้ — คลิกได้เฉพาะเมนูย่อยเท่านั้น
@@ -2409,7 +2330,7 @@
       return;
     }
 
-    const summaryShows = getChartShows();
+    const summaryShows = getSummaryShows();
     const years = [...new Set(summaryShows.map(s => s.year).filter(Boolean))].sort((a, b) => a - b);
 
     if (!diaryLoaded || years.length === 0) {
@@ -2478,15 +2399,15 @@
             if (!elements.length) return;
             const idx = elements[0].index;
             const year = years[idx];
-            if (globalChartFilter && globalChartFilter.type === 'year' && globalChartFilter.value === year) {
-              clearGlobalFilter();
+            if (dashboardTableState.source === 'year' && dashboardTableState.value === year) {
+              dashboardTableState = { source: null, value: null };
             } else {
-              globalChartFilter = { type: 'year', value: year };
               dashboardTableState = { source: 'year', value: year };
               selectedGenre = null; selectedGenreSource = null;
-              updateFilterBadge();
+              if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
+              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
             }
-            setTimeout(() => { updateSummary(); renderGenreTable(); }, 0);
+            renderGenreTable();
           },
           onHover: (evt, elements) => {
             evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
@@ -2555,7 +2476,7 @@
       return;
     }
 
-    const summaryShows = getChartShows();
+    const summaryShows = getSummaryShows();
     const total = summaryShows.length;
 
     if (!diaryLoaded || total === 0) {
@@ -2618,16 +2539,15 @@
               if (!elements.length) return;
               const idx = elements[0].index;
               const src = idx === 0 ? 'liked-yes' : 'liked-no';
-              const likedVal = idx === 0;
-              if (globalChartFilter && globalChartFilter.type === 'liked' && globalChartFilter.value === likedVal) {
-                clearGlobalFilter();
+              if (dashboardTableState.source === src) {
+                dashboardTableState = { source: null, value: null };
               } else {
-                globalChartFilter = { type: 'liked', value: likedVal };
                 dashboardTableState = { source: src, value: null };
                 selectedGenre = null; selectedGenreSource = null;
-                updateFilterBadge();
+                if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
+                if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)'); genreLikedChartInstance.update('none'); }
               }
-              setTimeout(() => { updateSummary(); renderGenreTable(); }, 0);
+              renderGenreTable();
             },
             onHover: (evt, elements) => {
               evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
@@ -2733,7 +2653,7 @@
   let dashboardTableState = { source: null, value: null };
 
   function getTopGenres(n) {
-    const summaryShows = getChartShows();
+    const summaryShows = getSummaryShows();
     const counts = {};
     summaryShows.forEach(s => {
       s.genres.forEach(g => {
@@ -2762,7 +2682,7 @@
       return;
     }
 
-    const summaryShows = getChartShows();
+    const summaryShows = getSummaryShows();
     let list = [], title = '', isPending = false;
 
     if (source === 'genre-watched') {
@@ -2902,17 +2822,18 @@
             if (!elements.length) return;
             const idx = elements[0].index;
             const genre = labels[idx];
-            const isDeselect = selectedGenre === genre && selectedGenreSource === 'watched';
-            selectedGenre = isDeselect ? null : genre;
+            selectedGenre = (selectedGenre === genre && selectedGenreSource === 'watched') ? null : genre;
             selectedGenreSource = selectedGenre ? 'watched' : null;
             dashboardTableState = selectedGenre ? { source: 'genre-watched', value: selectedGenre } : { source: null, value: null };
-            if (isDeselect) {
-              clearGlobalFilter();
-            } else {
-              globalChartFilter = { type: 'genre', value: selectedGenre };
-              updateFilterBadge();
+            genreChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
+              l === selectedGenre ? '#E50914' : 'rgba(229,9,20,0.55)'
+            );
+            genreChartInstance.update('none');
+            if (genreLikedChartInstance) {
+              genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(230,185,30,0.6)');
+              genreLikedChartInstance.update('none');
             }
-            setTimeout(() => { updateSummary(); renderGenreTable(); }, 0);
+            renderGenreTable();
           },
           onHover: (evt, elements) => {
             evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
@@ -2929,7 +2850,7 @@
 
   // ---------- กราฟ Top 10 แนวที่ถูกใจมากที่สุด (% liked per genre) ----------
   function getTopGenresLiked(n) {
-    const summaryShows = getChartShows();
+    const summaryShows = getSummaryShows();
     const liked = {};
     const total = {};
     summaryShows.forEach(s => {
@@ -3015,17 +2936,18 @@
             if (!elements.length) return;
             const idx = elements[0].index;
             const genre = labels[idx];
-            const isDeselect = selectedGenre === genre && selectedGenreSource === 'liked';
-            selectedGenre = isDeselect ? null : genre;
+            selectedGenre = (selectedGenre === genre && selectedGenreSource === 'liked') ? null : genre;
             selectedGenreSource = selectedGenre ? 'liked' : null;
             dashboardTableState = selectedGenre ? { source: 'genre-liked', value: selectedGenre } : { source: null, value: null };
-            if (isDeselect) {
-              clearGlobalFilter();
-            } else {
-              globalChartFilter = { type: 'genre', value: selectedGenre };
-              updateFilterBadge();
+            genreLikedChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
+              l === selectedGenre ? '#E6B91E' : 'rgba(230,185,30,0.6)'
+            );
+            genreLikedChartInstance.update('none');
+            if (genreChartInstance) {
+              genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)');
+              genreChartInstance.update('none');
             }
-            setTimeout(() => { updateSummary(); renderGenreTable(); }, 0);
+            renderGenreTable();
           },
           onHover: (evt, elements) => {
             evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
@@ -3059,7 +2981,7 @@
       return;
     }
 
-    const summaryShows = getChartShows();
+    const summaryShows = getSummaryShows();
     const total = summaryShows.length;
     const seriesCount = summaryShows.filter(s => s.type === 'series').length;
     const varietyCount = summaryShows.filter(s => s.type === 'variety').length;
