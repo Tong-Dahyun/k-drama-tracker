@@ -203,11 +203,61 @@
     margin-bottom: 20px;
   }
 
-  .summary-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  /* ---------- Summary layout: 2-column top + 3-part bottom ---------- */
+  .summary-layout {
+    display: flex;
     gap: 16px;
-    max-width: 900px;
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .summary-left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1 1 320px;
+    min-width: 280px;
+  }
+
+  .summary-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .summary-right {
+    flex: 1.5 1 380px;
+    min-width: 300px;
+    margin: 0 !important;
+  }
+
+  .summary-right-chart {
+    height: 240px !important;
+  }
+
+  .genre-section-3 {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .genre-col {
+    flex: 1 1 260px;
+    min-width: 220px;
+  }
+
+  .genre-col-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 12px;
+  }
+
+  .genre-col .genre-chart-wrap {
+    height: 280px;
   }
 
   .summary-card {
@@ -283,8 +333,7 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 22px 22px 14px;
-    margin-top: 20px;
-    max-width: 900px;
+    margin-top: 16px;
   }
 
   .chart-card h3 {
@@ -1347,58 +1396,97 @@
           <button class="pill active" id="slicerSeries" data-summary-type="series">Series</button>
           <button class="pill active" id="slicerVariety" data-summary-type="variety">Variety</button>
         </div>
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="summary-card-head">
-              <div class="summary-icon red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+
+        <!-- แถวบน: ซ้าย = การ์ดสถิติ + Donut/Watchlist | ขวา = กราฟรายปี -->
+        <div class="summary-layout">
+
+          <div class="summary-left">
+            <!-- แถวบน: 2 การ์ดสถิติ -->
+            <div class="summary-grid-2">
+              <div class="summary-card">
+                <div class="summary-card-head">
+                  <div class="summary-icon red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                  </div>
+                  <p class="summary-label">บันทึกแล้วทั้งหมด</p>
+                </div>
+                <p class="summary-value" id="summaryTotal">—</p>
+                <p class="summary-sub" id="summaryTotalBreakdown"></p>
               </div>
-              <p class="summary-label">บันทึกแล้วทั้งหมด</p>
-            </div>
-            <p class="summary-value" id="summaryTotal">—</p>
-            <p class="summary-sub" id="summaryTotalBreakdown"></p>
-          </div>
-          <div class="summary-card">
-            <div class="summary-card-head">
-              <div class="summary-icon mint">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
-              </div>
-              <p class="summary-label">จำนวนเรื่องที่ถูกใจ</p>
-            </div>
-            <p class="summary-value" id="summaryLiked">—</p>
-            <p class="summary-sub" id="summaryLikedBreakdown"></p>
-          </div>
-          <div class="summary-card donut-card">
-            <p class="summary-label">สัดส่วนความชอบ</p>
-            <div class="donut-wrap">
-              <canvas id="likedDonutChart"></canvas>
-              <div class="donut-center" id="donutCenterText" hidden>
-                <span class="donut-center-value" id="donutCenterPct">—</span>
-                <span class="donut-center-label">ชอบ</span>
+              <div class="summary-card">
+                <div class="summary-card-head">
+                  <div class="summary-icon mint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                  </div>
+                  <p class="summary-label">จำนวนเรื่องที่ถูกใจ</p>
+                </div>
+                <p class="summary-value" id="summaryLiked">—</p>
+                <p class="summary-sub" id="summaryLikedBreakdown"></p>
               </div>
             </div>
-            <p class="chart-empty" id="donutChartEmpty" hidden>ยังไม่มีข้อมูล</p>
-            <div class="donut-legend">
-              <span class="legend-item"><i class="legend-dot liked"></i>ชอบ <b id="donutLikedCount">—</b></span>
-              <span class="legend-item"><i class="legend-dot neutral"></i>เฉยๆ <b id="donutNeutralCount">—</b></span>
+
+            <!-- แถวล่าง: Donut + Watchlist -->
+            <div class="summary-grid-2">
+              <div class="summary-card donut-card">
+                <p class="summary-label">สัดส่วนความชอบ</p>
+                <div class="donut-wrap">
+                  <canvas id="likedDonutChart"></canvas>
+                  <div class="donut-center" id="donutCenterText" hidden>
+                    <span class="donut-center-value" id="donutCenterPct">—</span>
+                    <span class="donut-center-label">ชอบ</span>
+                  </div>
+                </div>
+                <p class="chart-empty" id="donutChartEmpty" hidden>ยังไม่มีข้อมูล</p>
+                <div class="donut-legend">
+                  <span class="legend-item"><i class="legend-dot liked"></i>ชอบ <b id="donutLikedCount">—</b></span>
+                  <span class="legend-item"><i class="legend-dot neutral"></i>เฉยๆ <b id="donutNeutralCount">—</b></span>
+                </div>
+              </div>
+              <div class="summary-card donut-card">
+                <p class="summary-label">รอดูอยู่</p>
+                <div class="donut-wrap">
+                  <canvas id="watchlistDonutChart"></canvas>
+                  <div class="donut-center" id="watchlistDonutCenter" hidden>
+                    <span class="donut-center-value" id="watchlistDonutTotal">—</span>
+                    <span class="donut-center-label">เรื่อง</span>
+                  </div>
+                </div>
+                <p class="chart-empty" id="watchlistDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
+                <div class="donut-legend">
+                  <span class="legend-item"><i class="legend-dot" style="background:var(--mint)"></i>พร้อมดู <b id="watchlistReadyCount">—</b></span>
+                  <span class="legend-item"><i class="legend-dot" style="background:var(--gold)"></i>รออกอากาศ <b id="watchlistAiringCount">—</b></span>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- ขวา: กราฟแท่ง+เส้น รายปี -->
+          <div class="summary-right chart-card">
+            <h3>จำนวนเรื่องที่ดู และจำนวนที่ถูกใจ รายปี</h3>
+            <div class="chart-wrap summary-right-chart">
+              <canvas id="yearlyChart"></canvas>
+            </div>
+            <p class="chart-empty" id="yearlyChartEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
+          </div>
+
         </div>
 
+        <!-- แถวล่าง: Top10ดูเยอะ | Top10ถูกใจ | Table -->
         <div class="chart-card">
-          <h3>จำนวนเรื่องที่ดู และจำนวนที่ถูกใจ รายปี</h3>
-          <div class="chart-wrap">
-            <canvas id="yearlyChart"></canvas>
-          </div>
-          <p class="chart-empty" id="yearlyChartEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
-        </div>
-
-        <div class="chart-card">
-          <h3>Top 10 แนวที่ดูเยอะที่สุด</h3>
-          <div class="genre-card-body">
-            <div class="genre-chart-wrap">
-              <canvas id="genreChart"></canvas>
-              <p class="chart-empty" id="genreChartEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
+          <div class="genre-section-3">
+            <div class="genre-col">
+              <h3 class="genre-col-title">Top 10 แนวที่ดูเยอะที่สุด</h3>
+              <div class="genre-chart-wrap">
+                <canvas id="genreChart"></canvas>
+                <p class="chart-empty" id="genreChartEmpty" hidden>ยังไม่มีข้อมูล</p>
+              </div>
+            </div>
+            <div class="genre-col">
+              <h3 class="genre-col-title">Top 10 แนวที่ถูกใจมากที่สุด</h3>
+              <div class="genre-chart-wrap">
+                <canvas id="genreLikedChart"></canvas>
+                <p class="chart-empty" id="genreLikedChartEmpty" hidden>ยังไม่มีข้อมูล</p>
+              </div>
             </div>
             <div class="genre-table-wrap">
               <p class="genre-table-title" id="genreTableTitle">คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง</p>
@@ -2439,9 +2527,69 @@
     }
   }
 
-  // ---------- กราฟ Top 10 แนวที่ดูเยอะที่สุด + ตารางรายชื่อตามแนวที่เลือก ----------
+  // ---------- Donut chart จำนวนที่รอดู (Watchlist) ----------
+  let watchlistDonutInstance = null;
+
+  function renderWatchlistDonut() {
+    const canvas = document.getElementById('watchlistDonutChart');
+    const emptyMsg = document.getElementById('watchlistDonutEmpty');
+    const centerEl = document.getElementById('watchlistDonutCenter');
+    const totalEl = document.getElementById('watchlistDonutTotal');
+    const readyEl = document.getElementById('watchlistReadyCount');
+    const airingEl = document.getElementById('watchlistAiringCount');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') {
+      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
+      return;
+    }
+
+    const total = pending.length;
+    if (!pendingLoaded || total === 0) {
+      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
+      emptyMsg.textContent = 'ยังไม่มีรายการที่อยากดู';
+      readyEl.textContent = '—'; airingEl.textContent = '—';
+      if (watchlistDonutInstance) { watchlistDonutInstance.destroy(); watchlistDonutInstance = null; }
+      return;
+    }
+
+    canvas.hidden = false; centerEl.hidden = false; emptyMsg.hidden = true;
+    const readyCount = pending.filter(s => s.finished).length;
+    const airingCount = total - readyCount;
+    totalEl.textContent = total;
+    readyEl.textContent = readyCount;
+    airingEl.textContent = airingCount;
+
+    if (watchlistDonutInstance) watchlistDonutInstance.destroy();
+    try {
+      watchlistDonutInstance = new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['พร้อมดู', 'รออกอากาศ'],
+          datasets: [{ data: [readyCount, airingCount],
+            backgroundColor: ['#46D369', '#E6B91E'],
+            borderColor: '#1F1F1F', borderWidth: 2, hoverOffset: 4 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '72%',
+          plugins: {
+            legend: { display: false },
+            tooltip: { backgroundColor: '#1F1F1F', borderColor: '#3A3A3A', borderWidth: 1,
+              titleColor: '#FFFFFF', bodyColor: '#B3B3B3' }
+          }
+        }
+      });
+    } catch (err) {
+      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
+      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
+    }
+  }
+
+  // ---------- กราฟ Top 10 แนวที่ดูเยอะที่สุด + Top 10 ถูกใจมากที่สุด + ตาราง ----------
   let genreChartInstance = null;
+  let genreLikedChartInstance = null;
   let selectedGenre = null;
+  let selectedGenreSource = null; // 'watched' | 'liked'
 
   function getTopGenres(n) {
     const summaryShows = getSummaryShows();
@@ -2472,9 +2620,13 @@
     }
 
     const summaryShows = getSummaryShows();
-    const list = summaryShows.filter(s => s.genres.includes(selectedGenre));
+    // liked chart → แสดงเฉพาะที่ถูกใจ | watched chart → แสดงทั้งหมด
+    const list = selectedGenreSource === 'liked'
+      ? summaryShows.filter(s => s.genres.includes(selectedGenre) && s.liked)
+      : summaryShows.filter(s => s.genres.includes(selectedGenre));
 
-    titleEl.textContent = `แนว "${selectedGenre}" — ${list.length} เรื่อง`;
+    const sourceLabel = selectedGenreSource === 'liked' ? ' (เฉพาะที่ถูกใจ)' : '';
+    titleEl.textContent = `แนว "${selectedGenre}" — ${list.length} เรื่อง${sourceLabel}`;
 
     if (list.length === 0) {
       tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในแนวนี้</td></tr>';
@@ -2575,12 +2727,19 @@
             if (!elements.length) return;
             const idx = elements[0].index;
             const genre = labels[idx];
-            selectedGenre = (selectedGenre === genre) ? null : genre;
-            // อัปเดตสีแท่ง in-place ไม่ต้อง destroy/recreate → ไม่กระพริบ
+            selectedGenre = (selectedGenre === genre && selectedGenreSource === 'watched') ? null : genre;
+            selectedGenreSource = selectedGenre ? 'watched' : null;
+            // อัปเดตสีแท่ง in-place ไม่กระพริบ
             genreChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
               l === selectedGenre ? '#E50914' : 'rgba(229,9,20,0.55)'
             );
-            genreChartInstance.update('none'); // 'none' = ไม่เล่น animation ตอน update สี
+            genreChartInstance.update('none');
+            // รีเซ็ตสีของ liked chart ถ้ามี
+            if (genreLikedChartInstance) {
+              const likedLabels = genreLikedChartInstance.data.labels;
+              genreLikedChartInstance.data.datasets[0].backgroundColor = likedLabels.map(() => 'rgba(230,185,30,0.6)');
+              genreLikedChartInstance.update('none');
+            }
             renderGenreTable();
           },
           onHover: (evt, elements) => {
@@ -2592,6 +2751,121 @@
       console.error('สร้างกราฟแนวไม่สำเร็จ:', err);
       canvas.hidden = true;
       emptyMsg.hidden = false;
+      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
+    }
+  }
+
+  // ---------- กราฟ Top 10 แนวที่ถูกใจมากที่สุด (% liked per genre) ----------
+  function getTopGenresLiked(n) {
+    const summaryShows = getSummaryShows();
+    const total = {};
+    const liked = {};
+    summaryShows.forEach(s => {
+      s.genres.forEach(g => {
+        if (!g) return;
+        total[g] = (total[g] || 0) + 1;
+        if (s.liked) liked[g] = (liked[g] || 0) + 1;
+      });
+    });
+    return Object.keys(total)
+      .filter(g => total[g] >= 3) // กรองแนวที่มีน้อยกว่า 3 เรื่องออก (% ไม่น่าเชื่อถือ)
+      .map(g => ({ genre: g, pct: Math.round(((liked[g] || 0) / total[g]) * 100), count: total[g] }))
+      .sort((a, b) => b.pct - a.pct || b.count - a.count)
+      .slice(0, n);
+  }
+
+  function renderGenreLikedChart() {
+    const canvas = document.getElementById('genreLikedChart');
+    const emptyMsg = document.getElementById('genreLikedChartEmpty');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') {
+      canvas.hidden = true; emptyMsg.hidden = false;
+      emptyMsg.textContent = 'โหลดไลบรารีไม่สำเร็จ';
+      return;
+    }
+
+    const topData = getTopGenresLiked(10);
+
+    if (!diaryLoaded || topData.length === 0) {
+      canvas.hidden = true; emptyMsg.hidden = false;
+      emptyMsg.textContent = 'ยังไม่มีข้อมูลเพียงพอ (ต้องการอย่างน้อย 3 เรื่องต่อแนว)';
+      if (genreLikedChartInstance) { genreLikedChartInstance.destroy(); genreLikedChartInstance = null; }
+      return;
+    }
+
+    const labels = topData.map(d => d.genre);
+    const pcts = topData.map(d => d.pct);
+    const barColors = labels.map(l => l === selectedGenre ? '#E6B91E' : 'rgba(230,185,30,0.6)');
+
+    canvas.hidden = false; emptyMsg.hidden = true;
+
+    if (genreLikedChartInstance) genreLikedChartInstance.destroy();
+
+    try {
+      genreLikedChartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: '% ถูกใจ',
+            data: pcts,
+            backgroundColor: barColors,
+            hoverBackgroundColor: '#E6B91E',
+            borderRadius: 6,
+            maxBarThickness: 22
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1F1F1F', borderColor: '#3A3A3A', borderWidth: 1,
+              titleColor: '#FFFFFF', bodyColor: '#B3B3B3',
+              callbacks: {
+                label: ctx => `${ctx.parsed.x}% (${topData[ctx.dataIndex].count} เรื่อง)`
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: 0, max: 100,
+              ticks: { color: '#B3B3B3', callback: v => v + '%' },
+              grid: { color: 'rgba(255,255,255,0.06)' }
+            },
+            y: {
+              ticks: { color: '#B3B3B3', font: { family: 'Sarabun' } },
+              grid: { display: false }
+            }
+          },
+          onClick: (evt, elements) => {
+            if (!elements.length) return;
+            const idx = elements[0].index;
+            const genre = labels[idx];
+            selectedGenre = (selectedGenre === genre && selectedGenreSource === 'liked') ? null : genre;
+            selectedGenreSource = selectedGenre ? 'liked' : null;
+            genreLikedChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
+              l === selectedGenre ? '#E6B91E' : 'rgba(230,185,30,0.6)'
+            );
+            genreLikedChartInstance.update('none');
+            // รีเซ็ตสีของ watched chart
+            if (genreChartInstance) {
+              const watchedLabels = genreChartInstance.data.labels;
+              genreChartInstance.data.datasets[0].backgroundColor = watchedLabels.map(() => 'rgba(229,9,20,0.55)');
+              genreChartInstance.update('none');
+            }
+            renderGenreTable();
+          },
+          onHover: (evt, elements) => {
+            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+          }
+        }
+      });
+    } catch (err) {
+      console.error('สร้างกราฟถูกใจไม่สำเร็จ:', err);
+      canvas.hidden = true; emptyMsg.hidden = false;
       emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
     }
   }
@@ -2609,7 +2883,9 @@
       summaryLikedBreakdown.textContent = '';
       renderYearlyChart();
       renderLikedDonutChart();
+      renderWatchlistDonut();
       renderGenreChart();
+      renderGenreLikedChart();
       renderGenreTable();
       return;
     }
@@ -2629,7 +2905,9 @@
 
     renderYearlyChart();
     renderLikedDonutChart();
+    renderWatchlistDonut();
     renderGenreChart();
+    renderGenreLikedChart();
     renderGenreTable();
 
   }
