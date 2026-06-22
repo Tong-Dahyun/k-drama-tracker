@@ -1999,9 +1999,22 @@
     yearFilter.innerHTML = '<option value="all">ทุกปี</option>' +
       years.map(y => `<option value="${y}">${y}</option>`).join('');
 
-    const genres = [...new Set(shows.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
+    // populate genre filter ตาม activeType ที่เลือกอยู่
+    updateGenreDropdown();
+  }
+
+  function updateGenreDropdown() {
+    const filteredShows = activeType === 'all' ? shows : shows.filter(s => s.type === activeType);
+    const genres = [...new Set(filteredShows.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
+    const prev = genreFilter.value;
     genreFilter.innerHTML = '<option value="all">ทุกแนว</option>' +
       genres.map(g => `<option value="${g}">${g}</option>`).join('');
+    // ถ้า genre ที่เลือกอยู่ยังมีอยู่ใน list ใหม่ ให้คงค่าไว้ ถ้าไม่มีแล้วให้ reset เป็น all
+    genreFilter.value = genres.includes(prev) ? prev : 'all';
+    if (genreFilter.value === 'all' && prev !== 'all') {
+      activeGenre = 'all';
+      render();
+    }
   }
 
   function populateFiltersPending() {
@@ -2009,9 +2022,20 @@
     yearFilterPending.innerHTML = '<option value="all">ทุกปี</option>' +
       years.map(y => `<option value="${y}">${y}</option>`).join('');
 
-    const genres = [...new Set(pending.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
+    updateGenreDropdownPending();
+  }
+
+  function updateGenreDropdownPending() {
+    const filteredPending = activeTypePending === 'all' ? pending : pending.filter(s => s.type === activeTypePending);
+    const genres = [...new Set(filteredPending.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
+    const prev = genreFilterPending.value;
     genreFilterPending.innerHTML = '<option value="all">ทุกแนว</option>' +
       genres.map(g => `<option value="${g}">${g}</option>`).join('');
+    genreFilterPending.value = genres.includes(prev) ? prev : 'all';
+    if (genreFilterPending.value === 'all' && prev !== 'all') {
+      activeGenrePending = 'all';
+      renderPending();
+    }
   }
 
   async function loadData() {
@@ -2222,6 +2246,7 @@
     pills.forEach(x => x.classList.remove('active'));
     p.classList.add('active');
     activeType = p.dataset.type;
+    updateGenreDropdown();
     render();
   }));
 
@@ -2233,6 +2258,7 @@
     pillsPending.forEach(x => x.classList.remove('active'));
     p.classList.add('active');
     activeTypePending = p.dataset.ptype;
+    updateGenreDropdownPending();
     renderPending();
   }));
 
