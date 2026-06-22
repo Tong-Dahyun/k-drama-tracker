@@ -227,10 +227,13 @@
   .summary-right {
     margin: 0 !important;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .summary-right-chart {
-    height: 280px !important;
+    flex: 1;
+    min-height: 220px;
   }
 
   @media (max-width: 860px) {
@@ -238,6 +241,7 @@
       grid-template-columns: 1fr;
     }
     .summary-right-chart {
+      flex: none;
       height: 220px !important;
     }
   }
@@ -340,6 +344,8 @@
     border-radius: 16px;
     padding: 22px 22px 14px;
     margin-top: 16px;
+    display: flex;
+    flex-direction: column;
   }
 
   .chart-card h3 {
