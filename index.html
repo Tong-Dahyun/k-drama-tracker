@@ -22,6 +22,8 @@
     --mint-soft: rgba(70,211,105,0.15);
     --gold: #E6B91E;
     --gold-soft: rgba(230,185,30,0.18);
+    --amber: #F97316;
+    --amber-soft: rgba(249,115,22,0.15);
     --text: #FFFFFF;
     --text-soft: #B3B3B3;
     --text-dim: #737373;
@@ -37,7 +39,6 @@
     min-height: 100vh;
   }
 
-  /* ---------- App shell: sidebar (summary/detail nav) + main content ---------- */
   .app-shell {
     display: flex;
     align-items: flex-start;
@@ -82,7 +83,6 @@
     margin: 0 0 8px;
   }
 
-
   .sidebar-header h1 {
     font-family: 'Inter', sans-serif;
     font-weight: 800;
@@ -93,11 +93,8 @@
     line-height: 1.2;
   }
 
-  .sidebar-header .stats {
-    display: none;
-  }
+  .sidebar-header .stats { display: none; }
 
-  /* ---------- Sidebar nav (สรุป / รายละเอียด) ---------- */
   .page-tabs {
     display: flex;
     flex-direction: column;
@@ -166,9 +163,7 @@
     margin-top: 14px;
   }
 
-  .nav-section-label:first-child {
-    margin-top: 0;
-  }
+  .nav-section-label:first-child { margin-top: 0; }
 
   .page-tabs-sub {
     display: flex;
@@ -184,11 +179,8 @@
     color: var(--text-dim);
   }
 
-  .sub-page-tab:hover:not(.active) {
-    color: var(--text-soft);
-  }
+  .sub-page-tab:hover:not(.active) { color: var(--text-soft); }
 
-  /* ---------- View sections (สรุป / รายละเอียด) ---------- */
   .view-section { display: none; }
   .view-section.active { display: block; }
   .page-section { display: none; }
@@ -196,7 +188,7 @@
   .sidebar-controls.page-section { display: none; }
   .sidebar-controls.page-section.active { display: flex; }
 
-  /* ---------- หน้า "สรุป" ---------- */
+  /* ---------- Dashboard ---------- */
   .dashboard-slicer {
     display: flex;
     align-items: center;
@@ -204,7 +196,6 @@
     margin-bottom: 20px;
   }
 
-  /* ---------- Summary layout: CSS Grid 2 columns ---------- */
   .summary-layout {
     display: grid;
     grid-template-columns: 2fr 3fr;
@@ -237,13 +228,8 @@
   }
 
   @media (max-width: 860px) {
-    .summary-layout {
-      grid-template-columns: 1fr;
-    }
-    .summary-right-chart {
-      flex: none;
-      height: 220px !important;
-    }
+    .summary-layout { grid-template-columns: 1fr; }
+    .summary-right-chart { flex: none; height: 220px !important; }
   }
 
   .genre-section-3 {
@@ -253,10 +239,7 @@
     flex-wrap: wrap;
   }
 
-  .genre-col {
-    flex: 1 1 260px;
-    min-width: 220px;
-  }
+  .genre-col { flex: 1 1 260px; min-width: 220px; }
 
   .genre-col-title {
     font-family: 'Inter', sans-serif;
@@ -266,9 +249,7 @@
     margin: 0 0 12px;
   }
 
-  .genre-col .genre-chart-wrap {
-    height: 280px;
-  }
+  .genre-col .genre-chart-wrap { height: 280px; }
 
   .summary-card {
     background: var(--surface);
@@ -298,14 +279,11 @@
     margin-bottom: 0;
   }
 
-  .summary-icon svg {
-    width: 19px;
-    height: 19px;
-  }
-
-  .summary-icon.red  { background: var(--red-soft);  color: var(--red); }
-  .summary-icon.mint { background: var(--mint-soft); color: var(--mint); }
-  .summary-icon.gold { background: var(--gold-soft); color: var(--gold); }
+  .summary-icon svg { width: 19px; height: 19px; }
+  .summary-icon.red  { background: var(--red-soft);   color: var(--red); }
+  .summary-icon.mint { background: var(--mint-soft);  color: var(--mint); }
+  .summary-icon.gold { background: var(--gold-soft);  color: var(--gold); }
+  .summary-icon.amber{ background: var(--amber-soft); color: var(--amber); }
 
   .summary-label {
     font-family: 'Inter', sans-serif;
@@ -382,10 +360,7 @@
     height: 320px;
   }
 
-  .genre-table-wrap {
-    flex: 1 1 280px;
-    min-width: 240px;
-  }
+  .genre-table-wrap { flex: 1 1 280px; min-width: 240px; }
 
   .genre-table-title {
     font-family: 'Sarabun', sans-serif;
@@ -395,10 +370,7 @@
     min-height: 1.3em;
   }
 
-  .genre-table-scroll {
-    max-height: 280px;
-    overflow-y: auto;
-  }
+  .genre-table-scroll { max-height: 280px; overflow-y: auto; }
 
   .genre-table {
     width: 100%;
@@ -428,9 +400,7 @@
     color: var(--text);
   }
 
-  .genre-table tbody tr:last-child td {
-    border-bottom: none;
-  }
+  .genre-table tbody tr:last-child td { border-bottom: none; }
 
   .genre-table-empty-row td {
     color: var(--text-dim);
@@ -445,13 +415,11 @@
     font-size: 0.78rem;
   }
 
-  .liked-tag.liked { color: var(--mint); }
+  .liked-tag.liked   { color: var(--mint); }
   .liked-tag.neutral { color: var(--text-dim); }
+  .liked-tag.dropped { color: var(--amber); }
 
-  .donut-card {
-    display: flex;
-    flex-direction: column;
-  }
+  .donut-card { display: flex; flex-direction: column; }
 
   .donut-wrap {
     position: relative;
@@ -459,9 +427,7 @@
     margin-top: 4px;
   }
 
-  .donut-card .chart-empty {
-    padding: 30px 0;
-  }
+  .donut-card .chart-empty { padding: 30px 0; }
 
   .donut-center {
     position: absolute;
@@ -520,7 +486,7 @@
   .legend-dot.liked   { background: var(--mint); }
   .legend-dot.neutral { background: var(--border); }
 
-  /* ---------- หน้า "รายละเอียด": แท็บย่อย + ตัวกรอง ---------- */
+  /* ---------- Detail topbar ---------- */
   .detail-topbar {
     display: flex;
     align-items: center;
@@ -537,7 +503,6 @@
     background: var(--bg);
   }
 
-  /* ---------- ตัวกรอง (search / filters / sort) ---------- */
   .sidebar-controls {
     display: flex;
     flex-direction: row;
@@ -562,11 +527,7 @@
 
   .search-box::placeholder { color: var(--text-dim); }
 
-  .filter-pills {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
+  .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
 
   .pill {
     font-family: 'Inter', sans-serif;
@@ -613,7 +574,7 @@
     flex-shrink: 0;
   }
 
-  /* ---------- Main content / Grid ---------- */
+  /* ---------- Main content ---------- */
   main {
     flex: 1;
     min-width: 0;
@@ -646,6 +607,11 @@
     transform: translateY(-3px);
     box-shadow: 0 10px 24px rgba(0,0,0,0.45);
     border-color: var(--red);
+  }
+
+  /* Dropped card: amber accent on hover */
+  .ticket.dropped-card:hover {
+    border-color: var(--amber);
   }
 
   @keyframes rise {
@@ -732,8 +698,9 @@
     margin-bottom: 6px;
   }
 
-  .ticket-type.series  { background: var(--mint-soft); color: var(--mint); }
-  .ticket-type.variety { background: var(--gold-soft); color: var(--gold); }
+  .ticket-type.series  { background: var(--mint-soft);  color: var(--mint); }
+  .ticket-type.variety { background: var(--gold-soft);  color: var(--gold); }
+  .ticket-type.dropped { background: var(--amber-soft); color: var(--amber); }
 
   .ticket-title {
     font-family: 'Inter', sans-serif;
@@ -766,7 +733,6 @@
     color: var(--text-soft);
   }
 
-  /* perforation between poster info and the stub */
   .perforation {
     position: relative;
     border-top: 2px dashed var(--border);
@@ -800,7 +766,6 @@
     font-family: 'Inter', sans-serif;
   }
 
-  /* "ชอบ / เฉยๆ" stamp */
   .stamp {
     font-family: 'Inter', sans-serif;
     font-weight: 700;
@@ -817,15 +782,26 @@
     transition: transform .25s;
   }
 
-  .stamp.liked   { color: var(--red); background: var(--red-soft); }
+  .stamp.liked   { color: var(--red);      background: var(--red-soft); }
   .stamp.neutral { color: var(--text-dim); }
+  .stamp.dropped-stamp {
+    color: var(--amber);
+    background: var(--amber-soft);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    width: auto;
+    min-width: 38px;
+    padding: 0 8px;
+    border-radius: 8px;
+    border: 1px solid var(--amber);
+    white-space: nowrap;
+  }
 
   .ticket:hover .stamp { transform: scale(1.08); }
 
-  /* ---------- Watchlist variant: "อยากดู" ---------- */
-  .ticket.watchlist .perforation {
-    border-top-style: dotted;
-  }
+  /* ---------- Watchlist variant ---------- */
+  .ticket.watchlist .perforation { border-top-style: dotted; }
 
   .mark-watched-btn {
     display: block;
@@ -868,7 +844,7 @@
     flex-shrink: 0;
   }
 
-  .watch-status.ready { background: var(--mint-soft); color: var(--mint); }
+  .watch-status.ready  { background: var(--mint-soft); color: var(--mint); }
   .watch-status.ready::before { background: var(--mint); }
 
   .watch-status.airing { background: var(--gold-soft); color: var(--gold); }
@@ -918,10 +894,7 @@
     transition: background .15s, color .15s, border-color .15s;
   }
 
-  .page-btn:hover:not(:disabled) {
-    background: var(--surface);
-    color: var(--text);
-  }
+  .page-btn:hover:not(:disabled) { background: var(--surface); color: var(--text); }
 
   .page-btn.active {
     background: var(--red);
@@ -930,10 +903,7 @@
     font-weight: 700;
   }
 
-  .page-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
+  .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
   .page-info {
     font-family: 'Sarabun', sans-serif;
@@ -955,105 +925,30 @@
     margin-bottom: 18px;
   }
 
-  /* ---------- Responsive: collapse sidebar into a top bar on narrow screens ---------- */
+  /* ---------- Responsive ---------- */
   @media (max-width: 860px) {
-    .app-shell {
-      flex-direction: column;
-    }
-
-    .sidebar {
-      width: 100%;
-      height: auto;
-      position: static;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      padding: 20px 20px 16px;
-    }
-
-    .page-tabs {
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-bottom: 0;
-    }
-
-    .page-tab {
-      border-left: none;
-      border-bottom: 3px solid transparent;
-      border-radius: 0;
-      flex: 1;
-      text-align: center;
-    }
-
-    .page-tabs > .page-tab {
-      justify-content: center;
-    }
-
-    .page-tab.active {
-      border-left-color: transparent;
-      border-bottom-color: var(--red);
-      background: transparent;
-    }
-
-    .chart-card {
-      max-width: none;
-    }
-
-    .chart-card .chart-wrap {
-      height: 240px;
-    }
-
-    .genre-chart-wrap {
-      height: 260px;
-      flex-basis: 100%;
-    }
-
-    .detail-topbar {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 14px;
-      padding-top: 20px;
-      margin-top: -20px;
-    }
-
-    .nav-section-label {
-      flex-basis: 100%;
-      margin-top: 10px;
-    }
-
-    .nav-section-label:first-child {
-      margin-top: 0;
-    }
-
-    .page-tabs-sub {
-      flex-direction: row;
-      flex-basis: 100%;
-      order: 3;
-      gap: 4px;
-      margin-top: 4px;
-    }
-
-    .sub-page-tab {
-      flex: 1;
-      padding-left: 12px;
-    }
-
-    .sidebar-controls {
-      padding-left: 0;
-      border-left: none;
-      border-top: 1px solid var(--border);
-      padding-top: 14px;
-      min-width: 0;
-    }
-
+    .app-shell { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); padding: 20px 20px 16px; }
+    .page-tabs { flex-direction: row; flex-wrap: wrap; gap: 4px; margin-bottom: 0; }
+    .page-tab { border-left: none; border-bottom: 3px solid transparent; border-radius: 0; flex: 1; text-align: center; }
+    .page-tabs > .page-tab { justify-content: center; }
+    .page-tab.active { border-left-color: transparent; border-bottom-color: var(--red); background: transparent; }
+    .chart-card { max-width: none; }
+    .chart-card .chart-wrap { height: 240px; }
+    .genre-chart-wrap { height: 260px; flex-basis: 100%; }
+    .detail-topbar { flex-direction: column; align-items: stretch; gap: 14px; padding-top: 20px; margin-top: -20px; }
+    .nav-section-label { flex-basis: 100%; margin-top: 10px; }
+    .nav-section-label:first-child { margin-top: 0; }
+    .page-tabs-sub { flex-direction: row; flex-basis: 100%; order: 3; gap: 4px; margin-top: 4px; }
+    .sub-page-tab { flex: 1; padding-left: 12px; }
+    .sidebar-controls { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 14px; min-width: 0; }
     .search-box { flex: 1 1 160px; width: auto; }
     .sort-select { width: auto; flex: 0 1 140px; }
     .sidebar-controls .add-entry-btn { width: auto; margin-top: 0; }
-
     main { padding: 20px 16px; }
   }
 
-  /* ---------- Add-entry button + modal ---------- */
+  /* ---------- Add/modal buttons ---------- */
   .add-entry-btn {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
@@ -1103,9 +998,7 @@
     color: var(--text);
   }
 
-  .form-field {
-    margin-bottom: 14px;
-  }
+  .form-field { margin-bottom: 14px; }
 
   .form-field label {
     display: block;
@@ -1127,32 +1020,13 @@
     color: var(--text);
   }
 
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-  .form-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
+  .form-checkbox { display: flex; align-items: center; gap: 8px; }
   .form-checkbox input { width: auto; }
+  .form-checkbox label { margin: 0; font-size: 0.85rem; color: var(--text); }
 
-  .form-checkbox label {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--text);
-  }
-
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 18px;
-  }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 
   .btn-secondary {
     font-family: 'Inter', sans-serif;
@@ -1166,10 +1040,7 @@
     cursor: pointer;
   }
 
-  .like-choice-btn {
-    flex: 1;
-    text-align: center;
-  }
+  .like-choice-btn { flex: 1; text-align: center; }
 
   .like-choice-btn.selected {
     border-color: var(--red);
@@ -1177,16 +1048,11 @@
     background: var(--red-soft);
   }
 
-  .form-status {
-    font-size: 0.8rem;
-    margin-top: 10px;
-    min-height: 1.2em;
-  }
-
-  .form-status.error { color: var(--red); }
+  .form-status { font-size: 0.8rem; margin-top: 10px; min-height: 1.2em; }
+  .form-status.error   { color: var(--red); }
   .form-status.success { color: var(--mint); }
 
-  /* ---------- หน้า Login ---------- */
+  /* ---------- Login ---------- */
   .login-overlay {
     position: fixed;
     inset: 0;
@@ -1227,16 +1093,9 @@
     margin: 0 0 24px;
   }
 
-  .login-box .form-field {
-    text-align: left;
-  }
+  .login-box .form-field { text-align: left; }
+  .login-submit-btn { width: 100%; margin-top: 8px; }
 
-  .login-submit-btn {
-    width: 100%;
-    margin-top: 8px;
-  }
-
-  /* ---------- ปุ่มออกจากระบบ (ติดด้านล่างของแถบซ้าย) ---------- */
   .logout-btn {
     margin-top: auto;
     padding: 10px 12px;
@@ -1250,11 +1109,9 @@
     transition: color .2s;
   }
 
-  .logout-btn:hover {
-    color: var(--text-soft);
-  }
+  .logout-btn:hover { color: var(--text-soft); }
 
-  /* ---------- หน้า Settings > Users ---------- */
+  /* ---------- Users table ---------- */
   .users-topbar {
     display: flex;
     align-items: center;
@@ -1306,13 +1163,8 @@
     vertical-align: middle;
   }
 
-  .users-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  .users-table-wrap .chart-empty {
-    padding: 30px 0;
-  }
+  .users-table tbody tr:last-child td { border-bottom: none; }
+  .users-table-wrap .chart-empty { padding: 30px 0; }
 
   .role-select {
     background: var(--surface-soft);
@@ -1325,10 +1177,7 @@
     cursor: pointer;
   }
 
-  .role-select:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  .role-select:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .active-toggle-btn {
     font-family: 'Inter', sans-serif;
@@ -1342,16 +1191,8 @@
     color: var(--text-dim);
   }
 
-  .active-toggle-btn.active {
-    background: var(--mint-soft);
-    color: var(--mint);
-    border-color: transparent;
-  }
-
-  .active-toggle-btn.inactive {
-    background: var(--surface-soft);
-    color: var(--text-dim);
-  }
+  .active-toggle-btn.active  { background: var(--mint-soft); color: var(--mint); border-color: transparent; }
+  .active-toggle-btn.inactive { background: var(--surface-soft); color: var(--text-dim); }
 
   .table-action-btn {
     font-family: 'Inter', sans-serif;
@@ -1366,24 +1207,11 @@
     white-space: nowrap;
   }
 
-  .table-action-btn:hover {
-    background: var(--surface-soft);
-    color: var(--text);
-  }
+  .table-action-btn:hover { background: var(--surface-soft); color: var(--text); }
+  .table-action-btn.danger:hover { background: var(--red-soft); color: var(--red); border-color: transparent; }
+  .table-action-btn:disabled, .active-toggle-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .table-action-btn.danger:hover {
-    background: var(--red-soft);
-    color: var(--red);
-    border-color: transparent;
-  }
-
-  .table-action-btn:disabled,
-  .active-toggle-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  /* ---------- โหมด Viewer: ซ่อนปุ่มที่เกี่ยวกับการแก้ไขข้อมูลทั้งหมด ---------- */
+  /* ---------- Viewer mode ---------- */
   body.viewer-mode #openAddModal,
   body.viewer-mode .card-menu-btn,
   body.viewer-mode .mark-watched-btn {
@@ -1434,7 +1262,9 @@
         <div class="page-tabs-sub">
           <button class="page-tab sub-page-tab" data-nav="diary">Watched Series</button>
           <button class="page-tab sub-page-tab" data-nav="watchlist">Watchlist</button>
+          <button class="page-tab sub-page-tab" data-nav="dropped">Dropped Series</button>
         </div>
+
         <div class="nav-section-label" id="settingsSectionLabel" hidden><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg></span>Settings</div>
         <div class="page-tabs-sub" id="settingsSubNav" hidden>
           <button class="page-tab sub-page-tab" data-nav="users">Users</button>
@@ -1445,18 +1275,15 @@
     </aside>
 
     <main>
-      <!-- ---------- หน้า "สรุป" — ภาพรวมสถิติจากบันทึกที่ดูแล้ว ---------- -->
+      <!-- Summary -->
       <section class="view-section active" id="view-summary">
         <div class="dashboard-slicer">
           <button class="pill active" id="slicerSeries" data-summary-type="series">Series</button>
           <button class="pill active" id="slicerVariety" data-summary-type="variety">Variety</button>
         </div>
 
-        <!-- แถวบน: ซ้าย = การ์ดสถิติ + Donut/Watchlist | ขวา = กราฟรายปี -->
         <div class="summary-layout">
-
           <div class="summary-left">
-            <!-- แถวบน: 2 การ์ดสถิติ -->
             <div class="summary-grid-2">
               <div class="summary-card">
                 <div class="summary-card-head">
@@ -1480,7 +1307,6 @@
               </div>
             </div>
 
-            <!-- แถวล่าง: Donut + Watchlist -->
             <div class="summary-grid-2">
               <div class="summary-card donut-card">
                 <p class="summary-label">สัดส่วนความชอบ</p>
@@ -1515,7 +1341,6 @@
             </div>
           </div>
 
-          <!-- ขวา: กราฟแท่ง+เส้น รายปี -->
           <div class="summary-right chart-card">
             <h3>จำนวนเรื่องที่ดู และจำนวนที่ถูกใจ รายปี</h3>
             <div class="chart-wrap summary-right-chart">
@@ -1523,10 +1348,8 @@
             </div>
             <p class="chart-empty" id="yearlyChartEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
           </div>
-
         </div>
 
-        <!-- แถวล่าง: Top10ดูเยอะ | Top10ถูกใจ | Table -->
         <div class="chart-card">
           <div class="genre-section-3">
             <div class="genre-col">
@@ -1547,9 +1370,7 @@
               <p class="genre-table-title" id="genreTableTitle">คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง</p>
               <div class="genre-table-scroll">
                 <table class="genre-table">
-                  <thead>
-                    <tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr>
-                  </thead>
+                  <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
                   <tbody id="genreTableBody"></tbody>
                 </table>
               </div>
@@ -1558,9 +1379,10 @@
         </div>
       </section>
 
-      <!-- ---------- หน้า "รายละเอียด" — ตัวกรอง + การ์ดตั๋ว (แท็บย่อยอยู่ในแถบซ้ายแล้ว) ---------- -->
+      <!-- Detail: Watched / Watchlist / Dropped -->
       <section class="view-section" id="view-detail">
         <div class="detail-topbar">
+          <!-- controls: Watched -->
           <div class="sidebar-controls page-section active" id="controls-diary">
             <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
             <div class="filter-pills">
@@ -1568,12 +1390,8 @@
               <button class="pill" data-type="series">ซีรีส์</button>
               <button class="pill" data-type="variety">วาไรตี้</button>
             </div>
-            <select id="yearFilter" class="sort-select">
-              <option value="all">ทุกปี</option>
-            </select>
-            <select id="genreFilter" class="sort-select">
-              <option value="all">ทุกแนว</option>
-            </select>
+            <select id="yearFilter" class="sort-select"><option value="all">ทุกปี</option></select>
+            <select id="genreFilter" class="sort-select"><option value="all">ทุกแนว</option></select>
             <select id="sort" class="sort-select">
               <option value="year-desc">ปีล่าสุดก่อน</option>
               <option value="recently-watched" selected>ล่าสุดที่ดู</option>
@@ -1582,6 +1400,7 @@
             </select>
           </div>
 
+          <!-- controls: Watchlist -->
           <div class="sidebar-controls page-section" id="controls-watchlist">
             <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่องที่อยากดู...">
             <div class="filter-pills">
@@ -1589,12 +1408,8 @@
               <button class="pill" data-ptype="series">ซีรีส์</button>
               <button class="pill" data-ptype="variety">วาไรตี้</button>
             </div>
-            <select id="yearFilterPending" class="sort-select">
-              <option value="all">ทุกปี</option>
-            </select>
-            <select id="genreFilterPending" class="sort-select">
-              <option value="all">ทุกแนว</option>
-            </select>
+            <select id="yearFilterPending" class="sort-select"><option value="all">ทุกปี</option></select>
+            <select id="genreFilterPending" class="sort-select"><option value="all">ทุกแนว</option></select>
             <select id="sortPending" class="sort-select">
               <option value="year-desc">ปีล่าสุดก่อน</option>
               <option value="ready-first">จบแล้วก่อน</option>
@@ -1602,44 +1417,50 @@
             </select>
             <button class="add-entry-btn" id="openAddModal">+ เพิ่มเรื่อง</button>
           </div>
+
+          <!-- controls: Dropped -->
+          <div class="sidebar-controls page-section" id="controls-dropped">
+            <input type="text" id="searchDropped" class="search-box" placeholder="ค้นหาชื่อเรื่องที่ดรอป...">
+            <select id="yearFilterDropped" class="sort-select"><option value="all">ทุกปี</option></select>
+            <select id="genreFilterDropped" class="sort-select"><option value="all">ทุกแนว</option></select>
+            <select id="sortDropped" class="sort-select">
+              <option value="no-desc" selected>ล่าสุดที่ดรอป</option>
+              <option value="year-desc">ปีล่าสุดก่อน</option>
+              <option value="title">ชื่อ A-Z</option>
+              <option value="ep-desc">ดูได้ไกลสุดก่อน</option>
+            </select>
+          </div>
         </div>
 
         <section class="page-section active" id="page-diary">
           <div class="grid" id="grid"></div>
           <div class="pagination" id="paginationDiary"></div>
-          <div class="empty" id="empty" hidden>
-            <div class="stamp-big">SOLD OUT</div>
-            <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
-          </div>
+          <div class="empty" id="empty" hidden><div class="stamp-big">SOLD OUT</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
         </section>
 
         <section class="page-section" id="page-watchlist">
           <div class="grid" id="gridPending"></div>
           <div class="pagination" id="paginationWatchlist"></div>
-          <div class="empty" id="emptyPending" hidden>
-            <div class="stamp-big">SOLD OUT</div>
-            <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
-          </div>
+          <div class="empty" id="emptyPending" hidden><div class="stamp-big">SOLD OUT</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
+        </section>
+
+        <section class="page-section" id="page-dropped">
+          <div class="grid" id="gridDropped"></div>
+          <div class="pagination" id="paginationDropped"></div>
+          <div class="empty" id="emptyDropped" hidden><div class="stamp-big">SOLD OUT</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
         </section>
       </section>
 
-      <!-- ---------- หน้า "Settings > Users" — จัดการผู้ใช้งาน (Admin เท่านั้น) ---------- -->
+      <!-- Settings > Users -->
       <section class="view-section" id="view-users">
         <div class="users-topbar">
           <h2 class="users-heading">จัดการผู้ใช้งาน</h2>
           <button class="add-entry-btn" id="openAddUserModal">+ เพิ่มผู้ใช้</button>
         </div>
-
         <div class="users-table-wrap">
           <table class="users-table">
             <thead>
-              <tr>
-                <th>Username</th>
-                <th>สิทธิ์การแก้ไข</th>
-                <th>สถานะ</th>
-                <th>Reset</th>
-                <th>ลบ</th>
-              </tr>
+              <tr><th>Username</th><th>สิทธิ์การแก้ไข</th><th>สถานะ</th><th>Reset</th><th>ลบ</th></tr>
             </thead>
             <tbody id="usersTableBody"></tbody>
           </table>
@@ -1649,39 +1470,19 @@
     </main>
   </div>
 
+  <!-- Modal: Add to Watchlist -->
   <div class="modal-overlay" id="addModalOverlay" hidden>
     <div class="modal-box">
       <h3>เพิ่มเรื่องที่อยากดู</h3>
       <form id="addPendingForm">
-        <div class="form-field">
-          <label for="newTitle">ชื่อเรื่อง *</label>
-          <input type="text" id="newTitle" required placeholder="เช่น Crash Landing on You">
-        </div>
+        <div class="form-field"><label for="newTitle">ชื่อเรื่อง *</label><input type="text" id="newTitle" required placeholder="เช่น Crash Landing on You"></div>
         <div class="form-row">
-          <div class="form-field">
-            <label for="newType">ประเภท</label>
-            <select id="newType">
-              <option value="Series">ซีรีส์</option>
-              <option value="Variety">วาไรตี้</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="newYear">ปีที่ออกอากาศ</label>
-            <input type="number" id="newYear" placeholder="2026" min="1990" max="2100">
-          </div>
+          <div class="form-field"><label for="newType">ประเภท</label><select id="newType"><option value="Series">ซีรีส์</option><option value="Variety">วาไรตี้</option></select></div>
+          <div class="form-field"><label for="newYear">ปีที่ออกอากาศ</label><input type="number" id="newYear" placeholder="2026" min="1990" max="2100"></div>
         </div>
-        <div class="form-field">
-          <label for="newGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label>
-          <input type="text" id="newGenres" placeholder="โรแมนติก, คอมเมดี้">
-        </div>
-        <div class="form-field">
-          <label for="newEpisodes">จำนวนตอน</label>
-          <input type="number" id="newEpisodes" placeholder="16" min="0">
-        </div>
-        <div class="form-checkbox">
-          <input type="checkbox" id="newFinished">
-          <label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label>
-        </div>
+        <div class="form-field"><label for="newGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="newGenres" placeholder="โรแมนติก, คอมเมดี้"></div>
+        <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
+        <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
         <p class="form-status" id="addFormStatus"></p>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="closeAddModal">ยกเลิก</button>
@@ -1691,6 +1492,7 @@
     </div>
   </div>
 
+  <!-- Modal: Move to Watched -->
   <div class="modal-overlay" id="moveModalOverlay" hidden>
     <div class="modal-box">
       <h3>ดูเรื่องนี้แล้ว?</h3>
@@ -1703,49 +1505,24 @@
         </div>
       </div>
       <p class="form-status" id="moveFormStatus"></p>
-      <div class="modal-actions">
-        <button type="button" class="btn-secondary" id="closeMoveModal">ยกเลิก</button>
-      </div>
+      <div class="modal-actions"><button type="button" class="btn-secondary" id="closeMoveModal">ยกเลิก</button></div>
     </div>
   </div>
 
+  <!-- Modal: Edit (Watched/Watchlist) -->
   <div class="modal-overlay" id="editModalOverlay" hidden>
     <div class="modal-box">
       <h3 id="editModalHeading">แก้ไขข้อมูล</h3>
       <form id="editEntryForm">
-        <div class="form-field">
-          <label for="editTitle">ชื่อเรื่อง *</label>
-          <input type="text" id="editTitle" required>
-        </div>
+        <div class="form-field"><label for="editTitle">ชื่อเรื่อง *</label><input type="text" id="editTitle" required></div>
         <div class="form-row">
-          <div class="form-field">
-            <label for="editType">ประเภท</label>
-            <select id="editType">
-              <option value="Series">ซีรีส์</option>
-              <option value="Variety">วาไรตี้</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="editYear">ปีที่ออกอากาศ</label>
-            <input type="number" id="editYear" min="1990" max="2100">
-          </div>
+          <div class="form-field"><label for="editType">ประเภท</label><select id="editType"><option value="Series">ซีรีส์</option><option value="Variety">วาไรตี้</option></select></div>
+          <div class="form-field"><label for="editYear">ปีที่ออกอากาศ</label><input type="number" id="editYear" min="1990" max="2100"></div>
         </div>
-        <div class="form-field">
-          <label for="editGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label>
-          <input type="text" id="editGenres">
-        </div>
-        <div class="form-field">
-          <label for="editEpisodes">จำนวนตอน</label>
-          <input type="number" id="editEpisodes" min="0">
-        </div>
-        <div class="form-checkbox" id="editLikedRow">
-          <input type="checkbox" id="editLiked">
-          <label for="editLiked">ชอบเรื่องนี้</label>
-        </div>
-        <div class="form-checkbox" id="editFinishedRow">
-          <input type="checkbox" id="editFinished">
-          <label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label>
-        </div>
+        <div class="form-field"><label for="editGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="editGenres"></div>
+        <div class="form-field"><label for="editEpisodes">จำนวนตอน</label><input type="number" id="editEpisodes" min="0"></div>
+        <div class="form-checkbox" id="editLikedRow"><input type="checkbox" id="editLiked"><label for="editLiked">ชอบเรื่องนี้</label></div>
+        <div class="form-checkbox" id="editFinishedRow"><input type="checkbox" id="editFinished"><label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
         <p class="form-status" id="editFormStatus"></p>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="closeEditModal">ยกเลิก</button>
@@ -1755,6 +1532,28 @@
     </div>
   </div>
 
+  <!-- Modal: Edit Dropped -->
+  <div class="modal-overlay" id="editDroppedModalOverlay" hidden>
+    <div class="modal-box">
+      <h3>แก้ไข Dropped Series</h3>
+      <form id="editDroppedForm">
+        <div class="form-field"><label for="editDroppedTitle">ชื่อเรื่อง *</label><input type="text" id="editDroppedTitle" required></div>
+        <div class="form-row">
+          <div class="form-field"><label for="editDroppedYear">ปีที่ออกอากาศ</label><input type="number" id="editDroppedYear" min="1990" max="2100"></div>
+          <div class="form-field"><label for="editDroppedEpisodes">จำนวนตอนทั้งหมด</label><input type="number" id="editDroppedEpisodes" min="0"></div>
+        </div>
+        <div class="form-field"><label for="editDroppedGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedGenres"></div>
+        <div class="form-field"><label for="editDroppedLastEp">ดูถึง ep (Last Episode)</label><input type="number" id="editDroppedLastEp" min="0" placeholder="0"></div>
+        <p class="form-status" id="editDroppedFormStatus"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="closeEditDroppedModal">ยกเลิก</button>
+          <button type="submit" class="add-entry-btn">บันทึกการแก้ไข</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Delete -->
   <div class="modal-overlay" id="deleteModalOverlay" hidden>
     <div class="modal-box">
       <h3>ลบรายการนี้?</h3>
@@ -1768,20 +1567,14 @@
     </div>
   </div>
 
+  <!-- Modal: Add User -->
   <div class="modal-overlay" id="addUserModalOverlay" hidden>
     <div class="modal-box">
       <h3>เพิ่มผู้ใช้ใหม่</h3>
       <form id="addUserForm">
-        <div class="form-field">
-          <label for="newUserUsername">Username *</label>
-          <input type="text" id="newUserUsername" required autocomplete="off">
-        </div>
-        <div class="form-field">
-          <label for="newUserPassword">Password *</label>
-          <input type="text" id="newUserPassword" required autocomplete="off">
-        </div>
-        <div class="form-field">
-          <label for="newUserRole">สิทธิ์การแก้ไข</label>
+        <div class="form-field"><label for="newUserUsername">Username *</label><input type="text" id="newUserUsername" required autocomplete="off"></div>
+        <div class="form-field"><label for="newUserPassword">Password *</label><input type="text" id="newUserPassword" required autocomplete="off"></div>
+        <div class="form-field"><label for="newUserRole">สิทธิ์การแก้ไข</label>
           <select id="newUserRole">
             <option value="Editor" selected>Editor (แก้ไขข้อมูลได้)</option>
             <option value="Viewer">Viewer (ดูอย่างเดียว)</option>
@@ -1797,15 +1590,13 @@
     </div>
   </div>
 
+  <!-- Modal: Reset Password -->
   <div class="modal-overlay" id="resetPasswordModalOverlay" hidden>
     <div class="modal-box">
       <h3>ตั้งรหัสผ่านใหม่</h3>
       <p style="color: var(--text-soft); font-size: 0.85rem; margin: -8px 0 16px;" id="resetPasswordModalTitle"></p>
       <form id="resetPasswordForm">
-        <div class="form-field">
-          <label for="resetNewPassword">รหัสผ่านใหม่ *</label>
-          <input type="text" id="resetNewPassword" required autocomplete="off">
-        </div>
+        <div class="form-field"><label for="resetNewPassword">รหัสผ่านใหม่ *</label><input type="text" id="resetNewPassword" required autocomplete="off"></div>
         <p class="form-status" id="resetPasswordFormStatus"></p>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="closeResetPasswordModal">ยกเลิก</button>
@@ -1815,6 +1606,7 @@
     </div>
   </div>
 
+  <!-- Modal: Delete User -->
   <div class="modal-overlay" id="deleteUserModalOverlay" hidden>
     <div class="modal-box">
       <h3>ลบผู้ใช้นี้?</h3>
@@ -1828,15 +1620,13 @@
     </div>
   </div>
 
+  <!-- Modal: Admin Reauth -->
   <div class="modal-overlay" id="adminReauthModalOverlay" hidden>
     <div class="modal-box">
       <h3>ยืนยันรหัสผ่าน Admin</h3>
       <p style="color: var(--text-soft); font-size: 0.85rem; margin: -8px 0 16px;">กรุณายืนยันรหัสผ่านของคุณอีกครั้งก่อนจัดการผู้ใช้งาน</p>
       <form id="adminReauthForm">
-        <div class="form-field">
-          <label for="adminReauthPassword">Password</label>
-          <input type="password" id="adminReauthPassword" required autocomplete="current-password">
-        </div>
+        <div class="form-field"><label for="adminReauthPassword">Password</label><input type="password" id="adminReauthPassword" required autocomplete="current-password"></div>
         <p class="form-status" id="adminReauthFormStatus"></p>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="closeAdminReauthModal">ยกเลิก</button>
@@ -1847,177 +1637,62 @@
   </div>
 
 <script>
-  // ---------------------------------------------------------------
-  // เชื่อมกับ Google Sheet ของคุณ
-  //
-  // หัวคอลัมน์ในชีตของคุณ (ตามที่ใช้จริง):
-  //   Series Name | ประเภท | แนว / หมวด | ปีที่ออกอากาศ | จำนวนตอน | ความชอบส่วนตัว
-  //   - ประเภท ใส่ "Series" หรือ "Variety" (หรือ "ซีรีส์" / "วาไรตี้" ก็ได้)
-  //   - แนว / หมวด ถ้ามีหลายแนว ใส่คั่นด้วย comma ในเซลล์เดียว เช่น "คอมเมดี้, ฮีลลิ่ง"
-  //   - ความชอบส่วนตัว เป็น checkbox: ติ๊ก = ชอบ, ไม่ติ๊ก = เฉยๆ
-  //
-  // ไปที่ File > Share > Publish to web เลือกชีตที่ต้องการ
-  // เลือกรูปแบบเป็น "Comma-separated values (.csv)" แล้วกด Publish
-  // คัดลอกลิงก์ที่ได้มาวางแทนค่าด้านล่างนี้ (อยู่ในเครื่องหมาย "")
-  // ---------------------------------------------------------------
-  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=0&single=true&output=csv";
-
-  // ---------------------------------------------------------------
-  // ลิงก์ CSV ของชีต "Variety" (สำหรับรายการวาไรตี้)
-  // หัวคอลัมน์: ลำดับ | Variety Name | ประเภท | แนว / หมวด | ปีที่ออกอากาศ | จำนวนตอน | ความชอบส่วนตัว
-  // วิธีหาลิงก์: ไปที่แท็บ Variety ใน Google Sheet > File > Share > Publish to web
-  // เลือก sheet เป็น "Variety" (ไม่ใช่ Entire Document) รูปแบบ CSV แล้วกด Publish
-  // คัดลอกลิงก์มาวางแทนค่าด้านล่างนี้
-  // ---------------------------------------------------------------
+  // ============================================================
+  // CSV URLs
+  // ============================================================
+  const SHEET_CSV_URL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=0&single=true&output=csv";
   const VARIETY_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=1521235531&single=true&output=csv";
-
-  // ---------------------------------------------------------------
-  // ลิงก์ CSV ของชีต "Pending Series" (สนใจแต่ยังไม่ดู)
-  // หัวคอลัมน์: ชื่อเรื่อง | ประเภท | แนว / หมวด | ปีที่ออกอากาศ | จำนวนตอน | จบแล้ว
-  //   - จบแล้ว: TRUE = ออกอากาศจบครบทุกตอนแล้ว (พร้อมดูยกชุด), FALSE = ยังไม่จบ/ยังไม่เริ่มฉาย
-  // วิธีหาลิงก์: ไปที่แท็บ Pending Series ใน Google Sheet > File > Share > Publish to web
-  // เลือก sheet เป็น "Pending Series" รูปแบบ CSV แล้วกด Publish แล้ววางลิงก์แทนค่าด้านล่างนี้
-  // ---------------------------------------------------------------
   const PENDING_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=1095542226&single=true&output=csv";
-
-  // ---------------------------------------------------------------
-  // URL ของ Google Apps Script Web App — ใช้สำหรับ "เขียน" ข้อมูลกลับเข้า
-  // ชีต Pending Series เวลามีคนเพิ่มเรื่องจากฟอร์มในเว็บ (ปุ่ม "+ เพิ่มเรื่อง")
-  // วิธีหา URL: เปิด Google Sheet > Extensions > Apps Script > วางโค้ด Code.gs ที่ Claude เตรียมไว้
-  // จากนั้น Deploy > New deployment > Web app (Execute as: Me, Who has access: Anyone)
-  // คัดลอก URL ที่ลงท้ายด้วย /exec มาวางแทนค่าด้านล่างนี้
-  // ถ้าเว้นว่างไว้ ปุ่ม "+ เพิ่มเรื่อง" จะยังกดได้ แต่จะไม่ถูกบันทึกลง Google Sheet จริง
-  // ---------------------------------------------------------------
+  const DROPPED_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWE1Hq0Yq6FUQ2NPNl79nB9u4jzo2N55_pa0ggYb6Wbgpl3EpAvhyMIH2TRHmg9x6xffGjuZYizCK8/pub?gid=1288126718&single=true&output=csv";
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQrn0UcU8xYlVb0YksP1jp0q6Q2JTYzd_nvpRdLfmoyjdOIOWB-uLjdYtKSY-X1IIn/exec";
 
-  // ข้อมูลตัวอย่าง — ใช้แสดงตอนยังไม่ได้ใส่ลิงก์ Google Sheet ด้านบน หรือดึงข้อมูลจากชีตไม่สำเร็จ
+  // ============================================================
+  // State
+  // ============================================================
   const fallbackShows = [
-    {
-      title: "Teach You a Lesson",
-      type: "series",
-      year: 2026,
-      episodes: 10,
-      genres: ["อาชญากรรม", "ดราม่าสังคม", "กฎหมาย"],
-      liked: true,
-      no: 1
-    },
-    {
-      title: "The WONDERfools",
-      type: "series",
-      year: 2026,
-      episodes: 8,
-      genres: ["คอมเมดี้", "ซูเปอร์ฮีโร่", "แอ็กชัน"],
-      liked: false,
-      no: 2
-    },
-    {
-      title: "Sold Out on You",
-      type: "series",
-      year: 2026,
-      episodes: 12,
-      genres: ["โรแมนติกคอมเมดี้", "ฮีลลิ่ง"],
-      liked: true,
-      no: 3
-    }
+    { title:"Teach You a Lesson", type:"series", year:2026, episodes:10, genres:["อาชญากรรม","ดราม่าสังคม","กฎหมาย"], liked:true, no:1 },
+    { title:"The WONDERfools",    type:"series", year:2026, episodes:8,  genres:["คอมเมดี้","ซูเปอร์ฮีโร่","แอ็กชัน"], liked:false, no:2 },
+    { title:"Sold Out on You",    type:"series", year:2026, episodes:12, genres:["โรแมนติกคอมเมดี้","ฮีลลิ่ง"], liked:true, no:3 }
   ];
 
-  let shows = [];
-  let usingFallback = true;
-  let diaryLoaded = false;
-  let pending = [];
-  let usingFallbackPending = true;
-  let pendingLoaded = false;
+  let shows = [], usingFallback = true, diaryLoaded = false;
+  let pending = [], usingFallbackPending = true, pendingLoaded = false;
+  let dropped = [], droppedLoaded = false;
 
-  const grid = document.getElementById('grid');
-  const emptyState = document.getElementById('empty');
-  const searchInput = document.getElementById('search');
-  const sortSelect = document.getElementById('sort');
-  const yearFilter = document.getElementById('yearFilter');
-  const genreFilter = document.getElementById('genreFilter');
-  const pills = document.querySelectorAll('#controls-diary .pill');
-  const statsEl = document.getElementById('stats');
-
+  const grid        = document.getElementById('grid');
   const gridPending = document.getElementById('gridPending');
+  const gridDropped = document.getElementById('gridDropped');
+  const emptyState        = document.getElementById('empty');
   const emptyStatePending = document.getElementById('emptyPending');
+  const emptyStateDropped = document.getElementById('emptyDropped');
+  const searchInput        = document.getElementById('search');
   const searchInputPending = document.getElementById('searchPending');
+  const searchInputDropped = document.getElementById('searchDropped');
+  const sortSelect        = document.getElementById('sort');
   const sortSelectPending = document.getElementById('sortPending');
+  const sortSelectDropped = document.getElementById('sortDropped');
+  const yearFilter        = document.getElementById('yearFilter');
+  const genreFilter       = document.getElementById('genreFilter');
   const yearFilterPending = document.getElementById('yearFilterPending');
-  const genreFilterPending = document.getElementById('genreFilterPending');
+  const genreFilterPending= document.getElementById('genreFilterPending');
+  const yearFilterDropped = document.getElementById('yearFilterDropped');
+  const genreFilterDropped= document.getElementById('genreFilterDropped');
+  const pills        = document.querySelectorAll('#controls-diary .pill');
   const pillsPending = document.querySelectorAll('#controls-watchlist .pill');
-
+  const statsEl = document.getElementById('stats');
   const navItems = document.querySelectorAll('.page-tabs-sub > .page-tab[data-nav]');
 
-  let activeType = 'all';
-  let activeYear = 'all';
-  let activeGenre = 'all';
-
-  let activeTypePending = 'all';
-  let activeYearPending = 'all';
-  let activeGenrePending = 'all';
+  let activeType = 'all', activeYear = 'all', activeGenre = 'all';
+  let activeTypePending = 'all', activeYearPending = 'all', activeGenrePending = 'all';
+  let activeYearDropped = 'all', activeGenreDropped = 'all';
 
   const PAGE_SIZE = 48;
-  let currentPage = 1;
-  let currentPagePending = 1;
-
-  // ---------- Slicer ของหน้า Dashboard: Series / Variety ----------
+  let currentPage = 1, currentPagePending = 1, currentPageDropped = 1;
   let summaryTypeFilter = { series: true, variety: true };
 
-  function getSummaryShows() {
-    return shows.filter(s => summaryTypeFilter[s.type]);
-  }
-
-
-  function updateStats() {
-    if (!statsEl) return;
-    const diaryActive = document.getElementById('page-diary').classList.contains('active');
-    if (!diaryActive) return;
-    if (!diaryLoaded) {
-      statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
-      return;
-    }
-    const total = shows.length;
-    if (total === 0) {
-      statsEl.textContent = 'ยังไม่มีรายการ — เริ่มเพิ่มเรื่องแรกของคุณได้เลย';
-      return;
-    }
-    const seriesCount = shows.filter(s => s.type === 'series').length;
-    const varietyCount = shows.filter(s => s.type === 'variety').length;
-    const likedCount = shows.filter(s => s.liked).length;
-    const likedSeries = shows.filter(s => s.type === 'series' && s.liked).length;
-    const likedVariety = shows.filter(s => s.type === 'variety' && s.liked).length;
-    let text = `บันทึกแล้ว ${total} เรื่อง (ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}) · ชอบ ${likedCount} เรื่อง (ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety})`;
-    if (usingFallback) {
-      text += ' · กำลังแสดงข้อมูลตัวอย่าง (ยังไม่เชื่อม Google Sheet)';
-    }
-    statsEl.textContent = text;
-  }
-
-  function updateStatsPending() {
-    if (!statsEl) return;
-    const watchlistActive = document.getElementById('page-watchlist').classList.contains('active');
-    if (!watchlistActive) return;
-    if (!pendingLoaded) {
-      statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
-      return;
-    }
-    const total = pending.length;
-    if (total === 0) {
-      statsEl.textContent = 'ยังไม่มีรายการที่อยากดู — เริ่มเพิ่มเรื่องแรกได้เลย';
-      return;
-    }
-    const seriesCount = pending.filter(s => s.type === 'series').length;
-    const varietyCount = pending.filter(s => s.type === 'variety').length;
-    const readyCount = pending.filter(s => s.finished).length;
-    const readySeries = pending.filter(s => s.type === 'series' && s.finished).length;
-    const readyVariety = pending.filter(s => s.type === 'variety' && s.finished).length;
-    let text = `สนใจอยู่ ${total} เรื่อง (ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}) · จบแล้วพร้อมดู ${readyCount} เรื่อง (ซีรีส์ ${readySeries} · วาไรตี้ ${readyVariety})`;
-    if (usingFallbackPending) {
-      text += ' · ยังไม่เชื่อม Google Sheet (ใส่ลิงก์ PENDING_CSV_URL ในโค้ด)';
-    }
-    statsEl.textContent = text;
-  }
-
-  // แปลงแถวจาก Google Sheet (CSV) ให้เป็นรูปแบบเดียวกับ fallbackShows
+  // ============================================================
+  // Row parsers
+  // ============================================================
   function rowToShow(row) {
     const typeRaw = (row['ประเภท'] || '').trim().toLowerCase();
     return {
@@ -2031,7 +1706,6 @@
     };
   }
 
-  // แปลงแถวจากชีต "Pending Series" (สนใจแต่ยังไม่ดู)
   function rowToPending(row) {
     const typeRaw = (row['ประเภท'] || '').trim().toLowerCase();
     return {
@@ -2044,176 +1718,184 @@
     };
   }
 
-  // เติม dropdown ปีและแนว/หมวด ตามข้อมูลที่โหลดมาจริง
-  function populateFilters() {
-    const years = [...new Set(shows.map(s => s.year).filter(Boolean))].sort((a, b) => b - a);
-    yearFilter.innerHTML = '<option value="all">ทุกปี</option>' +
-      years.map(y => `<option value="${y}">${y}</option>`).join('');
+  function rowToDropped(row) {
+    return {
+      title: (row['Series Name'] || row['ชื่อเรื่อง'] || '').trim(),
+      type: 'series',
+      year: Number(row['ปีที่ออกอากาศ']) || '',
+      episodes: Number(row['จำนวนตอน']) || 0,
+      genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
+      lastEp: Number(row['Last Episode']) || 0,
+      no: Number(row['ลำดับ']) || 0
+    };
+  }
 
-    // populate genre filter ตาม activeType ที่เลือกอยู่
+  // ============================================================
+  // Load data
+  // ============================================================
+  async function loadData() {
+    const urls = [SHEET_CSV_URL, VARIETY_CSV_URL].filter(u => u.trim());
+    if (urls.length === 0) {
+      shows = fallbackShows; usingFallback = true; diaryLoaded = true;
+      updateStats(); populateFilters(); render(); updateSummary(); return;
+    }
+    statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
+    try {
+      const allRows = [];
+      for (const url of urls) {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('โหลดไม่สำเร็จ');
+        const csvText = await res.text();
+        const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+        allRows.push(...parsed.data.map(rowToShow).filter(s => s.title));
+      }
+      if (allRows.length === 0) throw new Error('ไม่พบข้อมูล');
+      shows = allRows; usingFallback = false;
+    } catch (err) {
+      console.error(err); shows = fallbackShows; usingFallback = true;
+    }
+    diaryLoaded = true;
+    updateStats(); populateFilters(); render(); updateSummary();
+  }
+
+  async function loadPending() {
+    if (!PENDING_CSV_URL.trim()) {
+      pending = []; usingFallbackPending = true; pendingLoaded = true;
+      updateStatsPending(); populateFiltersPending(); renderPending(); return;
+    }
+    try {
+      const res = await fetch(PENDING_CSV_URL);
+      if (!res.ok) throw new Error();
+      const csvText = await res.text();
+      const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+      const rows = parsed.data.map(rowToPending).filter(s => s.title);
+      if (rows.length === 0) throw new Error();
+      pending = rows; usingFallbackPending = false;
+    } catch (err) {
+      pending = []; usingFallbackPending = true;
+    }
+    pendingLoaded = true;
+    updateStatsPending(); populateFiltersPending(); renderPending();
+  }
+
+  async function loadDropped() {
+    if (!DROPPED_CSV_URL.trim()) {
+      dropped = []; droppedLoaded = true;
+      populateFiltersDropped(); renderDropped(); return;
+    }
+    try {
+      const res = await fetch(DROPPED_CSV_URL);
+      if (!res.ok) throw new Error();
+      const csvText = await res.text();
+      const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+      const rows = parsed.data.map(rowToDropped).filter(s => s.title);
+      dropped = rows;
+    } catch (err) {
+      console.error('โหลด Dropped Series ไม่สำเร็จ:', err);
+      dropped = [];
+    }
+    droppedLoaded = true;
+    populateFiltersDropped(); renderDropped();
+  }
+
+  // ============================================================
+  // Populate filters
+  // ============================================================
+  function populateFilters() {
+    const years = [...new Set(shows.map(s => s.year).filter(Boolean))].sort((a,b) => b-a);
+    yearFilter.innerHTML = '<option value="all">ทุกปี</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
     updateGenreDropdown();
   }
 
   function updateGenreDropdown() {
     const filteredShows = activeType === 'all' ? shows : shows.filter(s => s.type === activeType);
-    const genres = [...new Set(filteredShows.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
+    const genres = [...new Set(filteredShows.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
     const prev = genreFilter.value;
-    genreFilter.innerHTML = '<option value="all">ทุกแนว</option>' +
-      genres.map(g => `<option value="${g}">${g}</option>`).join('');
-    // ถ้า genre ที่เลือกอยู่ยังมีอยู่ใน list ใหม่ ให้คงค่าไว้ ถ้าไม่มีแล้วให้ reset เป็น all
+    genreFilter.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
     genreFilter.value = genres.includes(prev) ? prev : 'all';
-    if (genreFilter.value === 'all' && prev !== 'all') {
-      activeGenre = 'all';
-      render();
-    }
+    if (genreFilter.value === 'all' && prev !== 'all') { activeGenre = 'all'; render(); }
   }
 
   function populateFiltersPending() {
-    const years = [...new Set(pending.map(s => s.year).filter(Boolean))].sort((a, b) => b - a);
-    yearFilterPending.innerHTML = '<option value="all">ทุกปี</option>' +
-      years.map(y => `<option value="${y}">${y}</option>`).join('');
-
+    const years = [...new Set(pending.map(s => s.year).filter(Boolean))].sort((a,b) => b-a);
+    yearFilterPending.innerHTML = '<option value="all">ทุกปี</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
     updateGenreDropdownPending();
   }
 
   function updateGenreDropdownPending() {
     const filteredPending = activeTypePending === 'all' ? pending : pending.filter(s => s.type === activeTypePending);
-    const genres = [...new Set(filteredPending.flatMap(s => s.genres))].sort((a, b) => a.localeCompare(b, 'th'));
+    const genres = [...new Set(filteredPending.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
     const prev = genreFilterPending.value;
-    genreFilterPending.innerHTML = '<option value="all">ทุกแนว</option>' +
-      genres.map(g => `<option value="${g}">${g}</option>`).join('');
+    genreFilterPending.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
     genreFilterPending.value = genres.includes(prev) ? prev : 'all';
-    if (genreFilterPending.value === 'all' && prev !== 'all') {
-      activeGenrePending = 'all';
-      renderPending();
-    }
+    if (genreFilterPending.value === 'all' && prev !== 'all') { activeGenrePending = 'all'; renderPending(); }
   }
 
-  async function loadData() {
-    const urls = [SHEET_CSV_URL, VARIETY_CSV_URL].filter(u => u.trim());
-
-    if (urls.length === 0) {
-      shows = fallbackShows;
-      usingFallback = true;
-      diaryLoaded = true;
-      updateStats();
-      populateFilters();
-      render();
-      updateSummary();
-      return;
-    }
-
-    statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
-
-    try {
-      const allRows = [];
-      for (const url of urls) {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('โหลดข้อมูลไม่สำเร็จ');
-        const csvText = await res.text();
-        const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
-        allRows.push(...parsed.data.map(rowToShow).filter(s => s.title));
-      }
-
-      if (allRows.length === 0) throw new Error('ไม่พบข้อมูลในชีต');
-
-      shows = allRows;
-      usingFallback = false;
-    } catch (err) {
-      console.error('โหลดจาก Google Sheet ไม่สำเร็จ ใช้ข้อมูลตัวอย่างแทน:', err);
-      shows = fallbackShows;
-      usingFallback = true;
-    }
-
-    diaryLoaded = true;
-    updateStats();
-    populateFilters();
-    render();
-    updateSummary();
+  function populateFiltersDropped() {
+    const years = [...new Set(dropped.map(s => s.year).filter(Boolean))].sort((a,b) => b-a);
+    yearFilterDropped.innerHTML = '<option value="all">ทุกปี</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
+    const genres = [...new Set(dropped.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
+    const prev = genreFilterDropped.value;
+    genreFilterDropped.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
+    genreFilterDropped.value = genres.includes(prev) ? prev : 'all';
   }
 
-  async function loadPending() {
-    if (!PENDING_CSV_URL.trim()) {
-      pending = [];
-      usingFallbackPending = true;
-      pendingLoaded = true;
-      updateStatsPending();
-      populateFiltersPending();
-      renderPending();
-      return;
-    }
+  // ============================================================
+  // Stats
+  // ============================================================
+  function getSummaryShows() { return shows.filter(s => summaryTypeFilter[s.type]); }
 
-    try {
-      const res = await fetch(PENDING_CSV_URL);
-      if (!res.ok) throw new Error('โหลดข้อมูลไม่สำเร็จ');
-      const csvText = await res.text();
-      const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
-      const rows = parsed.data.map(rowToPending).filter(s => s.title);
-
-      if (rows.length === 0) throw new Error('ไม่พบข้อมูลในชีต');
-
-      pending = rows;
-      usingFallbackPending = false;
-    } catch (err) {
-      console.error('โหลด Pending Series จาก Google Sheet ไม่สำเร็จ:', err);
-      pending = [];
-      usingFallbackPending = true;
-    }
-
-    pendingLoaded = true;
-    updateStatsPending();
-    populateFiltersPending();
-    renderPending();
+  function updateStats() {
+    if (!statsEl) return;
+    if (!diaryLoaded) { statsEl.textContent = 'กำลังโหลดข้อมูล...'; return; }
+    const total = shows.length;
+    if (total === 0) { statsEl.textContent = 'ยังไม่มีรายการ'; return; }
+    const seriesCount  = shows.filter(s => s.type === 'series').length;
+    const varietyCount = shows.filter(s => s.type === 'variety').length;
+    const likedCount   = shows.filter(s => s.liked).length;
+    statsEl.textContent = `บันทึกแล้ว ${total} เรื่อง (ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}) · ชอบ ${likedCount} เรื่อง`;
   }
 
+  function updateStatsPending() {
+    if (!statsEl) return;
+    if (!pendingLoaded) { statsEl.textContent = 'กำลังโหลดข้อมูล...'; return; }
+    const total = pending.length;
+    statsEl.textContent = total === 0 ? 'ยังไม่มีรายการที่อยากดู' : `สนใจอยู่ ${total} เรื่อง`;
+  }
+
+  // ============================================================
+  // Render: Watched
+  // ============================================================
   function render() {
-    if (!diaryLoaded) {
-      grid.innerHTML = '';
-      emptyState.hidden = true;
-      document.getElementById('paginationDiary').innerHTML = '';
-      return;
-    }
-
+    if (!diaryLoaded) { grid.innerHTML = ''; emptyState.hidden = true; document.getElementById('paginationDiary').innerHTML = ''; return; }
     const query = searchInput.value.trim().toLowerCase();
-
     let filtered = shows.filter(s => {
-      const matchesType = activeType === 'all' || s.type === activeType;
-      const matchesQuery = !query || s.title.toLowerCase().includes(query);
-      const matchesYear = activeYear === 'all' || String(s.year) === activeYear;
-      const matchesGenre = activeGenre === 'all' || s.genres.includes(activeGenre);
-      return matchesType && matchesQuery && matchesYear && matchesGenre;
+      return (activeType === 'all' || s.type === activeType)
+          && (!query || s.title.toLowerCase().includes(query))
+          && (activeYear === 'all' || String(s.year) === activeYear)
+          && (activeGenre === 'all' || s.genres.includes(activeGenre));
     });
-
     const sortBy = sortSelect.value;
-    filtered = filtered.slice().sort((a, b) => {
-      if (sortBy === 'liked-first')       return (b.liked === true ? 1 : 0) - (a.liked === true ? 1 : 0);
-      if (sortBy === 'year-desc')         return b.year - a.year;
-      if (sortBy === 'recently-watched')  return (b.no || 0) - (a.no || 0);
-      if (sortBy === 'title')             return a.title.localeCompare(b.title);
+    filtered.sort((a,b) => {
+      if (sortBy === 'liked-first')      return (b.liked?1:0)-(a.liked?1:0);
+      if (sortBy === 'year-desc')        return b.year-a.year;
+      if (sortBy === 'recently-watched') return (b.no||0)-(a.no||0);
+      if (sortBy === 'title')            return a.title.localeCompare(b.title);
       return 0;
     });
-
     grid.innerHTML = '';
-
-    if (filtered.length === 0) {
-      emptyState.hidden = false;
-      document.getElementById('paginationDiary').innerHTML = '';
-      return;
-    }
+    if (filtered.length === 0) { emptyState.hidden = false; document.getElementById('paginationDiary').innerHTML = ''; return; }
     emptyState.hidden = true;
-
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     if (currentPage > totalPages) currentPage = totalPages;
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const pageItems = filtered.slice(start, start + PAGE_SIZE);
-
-    pageItems.forEach((s, i) => {
+    const pageItems = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+    pageItems.forEach((s,i) => {
       const card = document.createElement('article');
       card.className = 'ticket';
-      card.style.animationDelay = `${i * 0.03}s`;
+      card.style.animationDelay = `${i*0.03}s`;
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-type ${s.type}">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span>
+          <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
           <button class="card-menu-btn" data-title="${s.title}">⋮</button>
           <div class="card-menu" hidden>
             <button class="menu-edit edit-diary-btn" data-title="${s.title}">แก้ไข</button>
@@ -2221,183 +1903,214 @@
           </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
-          <div class="ticket-genres">${s.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag">${g}</span>`).join('')}</div>
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
           <span class="ticket-meta">${s.episodes} ตอน</span>
-          <div class="stamp ${s.liked ? 'liked' : 'neutral'}">${s.liked ? '♥' : '♡'}</div>
-        </div>
-      `;
+          <div class="stamp ${s.liked?'liked':'neutral'}">${s.liked?'♥':'♡'}</div>
+        </div>`;
       grid.appendChild(card);
     });
-
-    renderPaginationControls('paginationDiary', currentPage, totalPages, filtered.length, (page) => {
-      currentPage = page;
-      window.scrollTo(0, 0);
-      render();
-    });
+    renderPaginationControls('paginationDiary', currentPage, totalPages, filtered.length, p => { currentPage=p; window.scrollTo(0,0); render(); });
   }
 
+  // ============================================================
+  // Render: Watchlist
+  // ============================================================
   function renderPending() {
-    if (!pendingLoaded) {
-      gridPending.innerHTML = '';
-      emptyStatePending.hidden = true;
-      document.getElementById('paginationWatchlist').innerHTML = '';
-      return;
-    }
-
+    if (!pendingLoaded) { gridPending.innerHTML=''; emptyStatePending.hidden=true; document.getElementById('paginationWatchlist').innerHTML=''; return; }
     const query = searchInputPending.value.trim().toLowerCase();
-
     let filtered = pending.filter(s => {
-      const matchesType = activeTypePending === 'all' || s.type === activeTypePending;
-      const matchesQuery = !query || s.title.toLowerCase().includes(query);
-      const matchesYear = activeYearPending === 'all' || String(s.year) === activeYearPending;
-      const matchesGenre = activeGenrePending === 'all' || s.genres.includes(activeGenrePending);
-      return matchesType && matchesQuery && matchesYear && matchesGenre;
+      return (activeTypePending==='all'||s.type===activeTypePending)
+          && (!query||s.title.toLowerCase().includes(query))
+          && (activeYearPending==='all'||String(s.year)===activeYearPending)
+          && (activeGenrePending==='all'||s.genres.includes(activeGenrePending));
     });
-
     const sortBy = sortSelectPending.value;
-    filtered = filtered.slice().sort((a, b) => {
-      if (sortBy === 'ready-first') return (b.finished === true ? 1 : 0) - (a.finished === true ? 1 : 0);
-      if (sortBy === 'year-desc')   return b.year - a.year;
-      if (sortBy === 'title')       return a.title.localeCompare(b.title);
+    filtered.sort((a,b) => {
+      if (sortBy==='ready-first') return (b.finished?1:0)-(a.finished?1:0);
+      if (sortBy==='year-desc')   return b.year-a.year;
+      if (sortBy==='title')       return a.title.localeCompare(b.title);
       return 0;
     });
-
     gridPending.innerHTML = '';
-
-    if (filtered.length === 0) {
-      emptyStatePending.hidden = false;
-      document.getElementById('paginationWatchlist').innerHTML = '';
-      return;
-    }
+    if (filtered.length===0) { emptyStatePending.hidden=false; document.getElementById('paginationWatchlist').innerHTML=''; return; }
     emptyStatePending.hidden = true;
-
-    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-    if (currentPagePending > totalPages) currentPagePending = totalPages;
-    const start = (currentPagePending - 1) * PAGE_SIZE;
-    const pageItems = filtered.slice(start, start + PAGE_SIZE);
-
-    pageItems.forEach((s, i) => {
+    const totalPages = Math.ceil(filtered.length/PAGE_SIZE);
+    if (currentPagePending>totalPages) currentPagePending=totalPages;
+    const pageItems = filtered.slice((currentPagePending-1)*PAGE_SIZE, currentPagePending*PAGE_SIZE);
+    pageItems.forEach((s,i) => {
       const card = document.createElement('article');
       card.className = 'ticket watchlist';
-      card.style.animationDelay = `${i * 0.03}s`;
+      card.style.animationDelay = `${i*0.03}s`;
       card.dataset.title = s.title;
-      const statusClass = s.finished ? 'ready' : 'airing';
-      const statusLabel = s.finished ? 'จบแล้ว พร้อมดูยกชุด' : 'กำลังออกอากาศ';
+      const statusClass = s.finished?'ready':'airing';
+      const statusLabel = s.finished?'จบแล้ว พร้อมดูยกชุด':'กำลังออกอากาศ';
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-type ${s.type}">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span>
+          <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
           <button class="card-menu-btn" data-title="${s.title}">⋮</button>
           <div class="card-menu" hidden>
             <button class="menu-edit edit-pending-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-pending-btn" data-title="${s.title}">ลบ</button>
           </div>
           <h2 class="ticket-title">${s.title}</h2>
-          ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
-          <div class="ticket-genres">${s.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>
+          ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag">${g}</span>`).join('')}</div>
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
-          <span class="ticket-meta">${s.episodes ? s.episodes + ' ตอน' : ''}</span>
+          <span class="ticket-meta">${s.episodes?s.episodes+' ตอน':''}</span>
           <span class="watch-status ${statusClass}">${statusLabel}</span>
         </div>
-        <button class="mark-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>
-      `;
+        <button class="mark-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
       gridPending.appendChild(card);
     });
-
-    renderPaginationControls('paginationWatchlist', currentPagePending, totalPages, filtered.length, (page) => {
-      currentPagePending = page;
-      window.scrollTo(0, 0);
-      renderPending();
-    });
+    renderPaginationControls('paginationWatchlist', currentPagePending, totalPages, filtered.length, p => { currentPagePending=p; window.scrollTo(0,0); renderPending(); });
   }
 
-  searchInput.addEventListener('input', () => { currentPage = 1; render(); });
-  sortSelect.addEventListener('change', () => { currentPage = 1; render(); });
-  yearFilter.addEventListener('change', () => { activeYear = yearFilter.value; currentPage = 1; render(); });
-  genreFilter.addEventListener('change', () => { activeGenre = genreFilter.value; currentPage = 1; render(); });
+  // ============================================================
+  // Render: Dropped
+  // ============================================================
+  function renderDropped() {
+    if (!droppedLoaded) { gridDropped.innerHTML=''; emptyStateDropped.hidden=true; document.getElementById('paginationDropped').innerHTML=''; return; }
+    const query = searchInputDropped.value.trim().toLowerCase();
+    let filtered = dropped.filter(s => {
+      return (!query || s.title.toLowerCase().includes(query))
+          && (activeYearDropped==='all' || String(s.year)===activeYearDropped)
+          && (activeGenreDropped==='all' || s.genres.includes(activeGenreDropped));
+    });
+    const sortBy = sortSelectDropped.value;
+    filtered.sort((a,b) => {
+      if (sortBy==='no-desc')   return (b.no||0)-(a.no||0);
+      if (sortBy==='year-desc') return b.year-a.year;
+      if (sortBy==='title')     return a.title.localeCompare(b.title);
+      if (sortBy==='ep-desc')   return (b.lastEp||0)-(a.lastEp||0);
+      return 0;
+    });
+    gridDropped.innerHTML = '';
+    if (filtered.length===0) { emptyStateDropped.hidden=false; document.getElementById('paginationDropped').innerHTML=''; return; }
+    emptyStateDropped.hidden = true;
+    const totalPages = Math.ceil(filtered.length/PAGE_SIZE);
+    if (currentPageDropped>totalPages) currentPageDropped=totalPages;
+    const pageItems = filtered.slice((currentPageDropped-1)*PAGE_SIZE, currentPageDropped*PAGE_SIZE);
+    pageItems.forEach((s,i) => {
+      const card = document.createElement('article');
+      card.className = 'ticket dropped-card';
+      card.style.animationDelay = `${i*0.03}s`;
+      const epLabel = s.lastEp
+        ? (s.episodes ? `ep ${s.lastEp} / ${s.episodes}` : `ep ${s.lastEp}`)
+        : (s.episodes ? `0 / ${s.episodes} ตอน` : '');
+      card.innerHTML = `
+        <div class="ticket-main">
+          <span class="ticket-type dropped">ดรอป</span>
+          <button class="card-menu-btn" data-title="${s.title}">⋮</button>
+          <div class="card-menu" hidden>
+            <button class="menu-edit edit-dropped-btn" data-title="${s.title}">แก้ไข</button>
+            <button class="menu-delete delete-dropped-btn" data-title="${s.title}">ลบ</button>
+          </div>
+          <h2 class="ticket-title">${s.title}</h2>
+          ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag">${g}</span>`).join('')}</div>
+        </div>
+        <div class="perforation"></div>
+        <div class="ticket-stub">
+          <span class="ticket-meta">ดูถึง</span>
+          <div class="stamp dropped-stamp">${epLabel || '—'}</div>
+        </div>`;
+      gridDropped.appendChild(card);
+    });
+    renderPaginationControls('paginationDropped', currentPageDropped, totalPages, filtered.length, p => { currentPageDropped=p; window.scrollTo(0,0); renderDropped(); });
+  }
+
+  // ============================================================
+  // Filter event listeners
+  // ============================================================
+  searchInput.addEventListener('input', () => { currentPage=1; render(); });
+  sortSelect.addEventListener('change', () => { currentPage=1; render(); });
+  yearFilter.addEventListener('change', () => { activeYear=yearFilter.value; currentPage=1; render(); });
+  genreFilter.addEventListener('change', () => { activeGenre=genreFilter.value; currentPage=1; render(); });
   pills.forEach(p => p.addEventListener('click', () => {
     pills.forEach(x => x.classList.remove('active'));
     p.classList.add('active');
-    activeType = p.dataset.type;
-    currentPage = 1;
-    updateGenreDropdown();
-    render();
+    activeType = p.dataset.type; currentPage=1;
+    updateGenreDropdown(); render();
   }));
 
-  searchInputPending.addEventListener('input', () => { currentPagePending = 1; renderPending(); });
-  sortSelectPending.addEventListener('change', () => { currentPagePending = 1; renderPending(); });
-  yearFilterPending.addEventListener('change', () => { activeYearPending = yearFilterPending.value; currentPagePending = 1; renderPending(); });
-  genreFilterPending.addEventListener('change', () => { activeGenrePending = genreFilterPending.value; currentPagePending = 1; renderPending(); });
+  searchInputPending.addEventListener('input', () => { currentPagePending=1; renderPending(); });
+  sortSelectPending.addEventListener('change', () => { currentPagePending=1; renderPending(); });
+  yearFilterPending.addEventListener('change', () => { activeYearPending=yearFilterPending.value; currentPagePending=1; renderPending(); });
+  genreFilterPending.addEventListener('change', () => { activeGenrePending=genreFilterPending.value; currentPagePending=1; renderPending(); });
   pillsPending.forEach(p => p.addEventListener('click', () => {
     pillsPending.forEach(x => x.classList.remove('active'));
     p.classList.add('active');
-    activeTypePending = p.dataset.ptype;
-    currentPagePending = 1;
-    updateGenreDropdownPending();
-    renderPending();
+    activeTypePending=p.dataset.ptype; currentPagePending=1;
+    updateGenreDropdownPending(); renderPending();
   }));
 
-  // ---------- Pagination controls ----------
+  searchInputDropped.addEventListener('input', () => { currentPageDropped=1; renderDropped(); });
+  sortSelectDropped.addEventListener('change', () => { currentPageDropped=1; renderDropped(); });
+  yearFilterDropped.addEventListener('change', () => { activeYearDropped=yearFilterDropped.value; currentPageDropped=1; renderDropped(); });
+  genreFilterDropped.addEventListener('change', () => { activeGenreDropped=genreFilterDropped.value; currentPageDropped=1; renderDropped(); });
+
+  // ============================================================
+  // Pagination
+  // ============================================================
   function renderPaginationControls(containerId, page, totalPages, totalItems, onPageChange) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    if (totalPages <= 1) { container.innerHTML = ''; return; }
-    const startItem = (page - 1) * PAGE_SIZE + 1;
-    const endItem = Math.min(page * PAGE_SIZE, totalItems);
-    let html = `<span class="page-info">${startItem}–${endItem} จาก ${totalItems} เรื่อง</span>`;
-    html += `<button class="page-btn" ${page === 1 ? 'disabled' : ''} data-pg="prev">‹</button>`;
-    const pages = new Set([1, totalPages, page, page - 1, page + 1].filter(p => p >= 1 && p <= totalPages));
-    let prev = 0;
-    [...pages].sort((a, b) => a - b).forEach(p => {
-      if (prev && p - prev > 1) html += `<span class="page-info">…</span>`;
-      html += `<button class="page-btn ${p === page ? 'active' : ''}" data-pg="${p}">${p}</button>`;
-      prev = p;
+    if (totalPages<=1) { container.innerHTML=''; return; }
+    const startItem=(page-1)*PAGE_SIZE+1, endItem=Math.min(page*PAGE_SIZE,totalItems);
+    let html=`<span class="page-info">${startItem}–${endItem} จาก ${totalItems} เรื่อง</span>`;
+    html+=`<button class="page-btn" ${page===1?'disabled':''} data-pg="prev">‹</button>`;
+    const pages=new Set([1,totalPages,page,page-1,page+1].filter(p=>p>=1&&p<=totalPages));
+    let prev=0;
+    [...pages].sort((a,b)=>a-b).forEach(p=>{
+      if(prev&&p-prev>1) html+=`<span class="page-info">…</span>`;
+      html+=`<button class="page-btn ${p===page?'active':''}" data-pg="${p}">${p}</button>`;
+      prev=p;
     });
-    html += `<button class="page-btn" ${page === totalPages ? 'disabled' : ''} data-pg="next">›</button>`;
-    container.innerHTML = html;
-    container.querySelectorAll('.page-btn:not(:disabled)').forEach(btn => {
-      btn.addEventListener('click', () => {
-        let target = btn.dataset.pg;
-        if (target === 'prev') target = page - 1;
-        else if (target === 'next') target = page + 1;
-        else target = Number(target);
+    html+=`<button class="page-btn" ${page===totalPages?'disabled':''} data-pg="next">›</button>`;
+    container.innerHTML=html;
+    container.querySelectorAll('.page-btn:not(:disabled)').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        let target=btn.dataset.pg;
+        if(target==='prev') target=page-1; else if(target==='next') target=page+1; else target=Number(target);
         onPageChange(target);
       });
     });
   }
 
+  // ============================================================
+  // Reset filters
+  // ============================================================
   function resetDiaryFilters() {
-    searchInput.value = '';
-    sortSelect.value = 'recently-watched';
-    yearFilter.value = 'all';
-    genreFilter.value = 'all';
-    activeType = 'all';
-    activeYear = 'all';
-    activeGenre = 'all';
-    currentPage = 1;
-    pills.forEach(x => x.classList.remove('active'));
+    searchInput.value=''; sortSelect.value='recently-watched';
+    yearFilter.value='all'; genreFilter.value='all';
+    activeType='all'; activeYear='all'; activeGenre='all'; currentPage=1;
+    pills.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-diary .pill[data-type="all"]').classList.add('active');
   }
 
   function resetPendingFilters() {
-    searchInputPending.value = '';
-    sortSelectPending.value = 'year-desc';
-    yearFilterPending.value = 'all';
-    genreFilterPending.value = 'all';
-    activeTypePending = 'all';
-    activeYearPending = 'all';
-    activeGenrePending = 'all';
-    currentPagePending = 1;
-    pillsPending.forEach(x => x.classList.remove('active'));
+    searchInputPending.value=''; sortSelectPending.value='year-desc';
+    yearFilterPending.value='all'; genreFilterPending.value='all';
+    activeTypePending='all'; activeYearPending='all'; activeGenrePending='all'; currentPagePending=1;
+    pillsPending.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-watchlist .pill[data-ptype="all"]').classList.add('active');
   }
 
-  // ---------- Slicer หน้า Dashboard: Series / Variety (เลือกได้หลายตัว, ปิดพร้อมกันทั้งคู่ไม่ได้) ----------
-  const slicerSeriesBtn = document.getElementById('slicerSeries');
+  function resetDroppedFilters() {
+    searchInputDropped.value=''; sortSelectDropped.value='no-desc';
+    yearFilterDropped.value='all'; genreFilterDropped.value='all';
+    activeYearDropped='all'; activeGenreDropped='all'; currentPageDropped=1;
+  }
+
+  // ============================================================
+  // Slicer
+  // ============================================================
+  const slicerSeriesBtn  = document.getElementById('slicerSeries');
   const slicerVarietyBtn = document.getElementById('slicerVariety');
 
   function refreshSlicerButtons() {
@@ -2407,27 +2120,20 @@
 
   function toggleSummaryType(type) {
     const next = { ...summaryTypeFilter, [type]: !summaryTypeFilter[type] };
-    if (!next.series && !next.variety) {
-      summaryTypeFilter = { series: true, variety: true };
-    } else {
-      summaryTypeFilter = next;
-    }
-    refreshSlicerButtons();
-    updateSummary();
+    summaryTypeFilter = (!next.series && !next.variety) ? { series:true, variety:true } : next;
+    refreshSlicerButtons(); updateSummary();
   }
 
-  slicerSeriesBtn.addEventListener('click', () => toggleSummaryType('series'));
+  slicerSeriesBtn.addEventListener('click',  () => toggleSummaryType('series'));
   slicerVarietyBtn.addEventListener('click', () => toggleSummaryType('variety'));
 
-  // ---------- เมนูย่อยใน sidebar: Summary / บันทึกที่ดูแล้ว / อยากดู ----------
-  // "Dashboard" และ "Series & Variety" เป็นแค่หัวข้อ คลิกไม่ได้ — คลิกได้เฉพาะเมนูย่อยเท่านั้น
-  // ไฮไลต์สีแดง: ติดเฉพาะปุ่มที่ถูกคลิกจริงเพียงปุ่มเดียวเท่านั้น
+  // ============================================================
+  // Nav
+  // ============================================================
   navItems.forEach(tab => tab.addEventListener('click', () => {
     navItems.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-
-    window.scrollTo(0, 0);
-
+    window.scrollTo(0,0);
     document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
 
     if (tab.dataset.nav === 'summary') {
@@ -2443,1660 +2149,769 @@
       if (tab.dataset.nav === 'diary') {
         document.getElementById('page-diary').classList.add('active');
         document.getElementById('controls-diary').classList.add('active');
-        resetDiaryFilters();
-        updateStats();
-        render();
-      } else {
+        resetDiaryFilters(); updateStats(); render();
+      } else if (tab.dataset.nav === 'watchlist') {
         document.getElementById('page-watchlist').classList.add('active');
         document.getElementById('controls-watchlist').classList.add('active');
-        resetPendingFilters();
-        updateStatsPending();
-        renderPending();
+        resetPendingFilters(); updateStatsPending(); renderPending();
+      } else if (tab.dataset.nav === 'dropped') {
+        document.getElementById('page-dropped').classList.add('active');
+        document.getElementById('controls-dropped').classList.add('active');
+        resetDroppedFilters();
+        if (!droppedLoaded) loadDropped(); else renderDropped();
       }
     }
   }));
 
-  // ---------- อัปเดตการ์ดสถิติในหน้า "สรุป" (อิงจากบันทึกที่ดูแล้วเท่านั้น) ----------
+  // ============================================================
+  // Dashboard charts
+  // ============================================================
   let yearlyChartInstance = null;
 
   function renderYearlyChart() {
     const canvas = document.getElementById('yearlyChart');
     const emptyMsg = document.getElementById('yearlyChartEmpty');
     if (!canvas) return;
-
-    if (typeof Chart === 'undefined') {
-      // Chart.js โหลดจาก CDN ไม่สำเร็จ (เช่น เน็ตหลุด หรือลิงก์ใช้ไม่ได้)
-      canvas.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'โหลดไลบรารีสำหรับวาดกราฟไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง';
-      return;
-    }
-
+    if (typeof Chart === 'undefined') { canvas.hidden=true; emptyMsg.hidden=false; return; }
     const summaryShows = getSummaryShows();
-    const years = [...new Set(summaryShows.map(s => s.year).filter(Boolean))].sort((a, b) => a - b);
-
-    if (!diaryLoaded || years.length === 0) {
-      canvas.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ';
-      if (yearlyChartInstance) {
-        yearlyChartInstance.destroy();
-        yearlyChartInstance = null;
-      }
-      return;
+    const years = [...new Set(summaryShows.map(s=>s.year).filter(Boolean))].sort((a,b)=>a-b);
+    if (!diaryLoaded||years.length===0) {
+      canvas.hidden=true; emptyMsg.hidden=false;
+      if (yearlyChartInstance) { yearlyChartInstance.destroy(); yearlyChartInstance=null; } return;
     }
-
-    canvas.hidden = false;
-    emptyMsg.hidden = true;
-
-    const watchedCounts = years.map(y => summaryShows.filter(s => s.year === y).length);
-    const likedCounts = years.map(y => summaryShows.filter(s => s.year === y && s.liked).length);
-
-    // ทำให้แกน y ทั้งสองฝั่งใช้สเกลเดียวกัน (ค่าสูงสุดเท่ากัน) เพื่อให้เทียบสัดส่วนแท่ง/เส้นได้ตรงๆ
-    const rawMax = Math.max(1, ...watchedCounts, ...likedCounts);
-    const sharedAxisMax = Math.ceil((rawMax * 1.1) / 10) * 10 || 10;
-
-    if (yearlyChartInstance) {
-      yearlyChartInstance.destroy();
-    }
-
+    canvas.hidden=false; emptyMsg.hidden=true;
+    const watchedCounts = years.map(y=>summaryShows.filter(s=>s.year===y).length);
+    const likedCounts   = years.map(y=>summaryShows.filter(s=>s.year===y&&s.liked).length);
+    const rawMax = Math.max(1,...watchedCounts,...likedCounts);
+    const sharedAxisMax = Math.ceil((rawMax*1.1)/10)*10||10;
+    if (yearlyChartInstance) yearlyChartInstance.destroy();
     try {
       yearlyChartInstance = new Chart(canvas.getContext('2d'), {
-        data: {
-          labels: years,
-          datasets: [
-            {
-              type: 'bar',
-              label: 'จำนวนที่ดู',
-              data: watchedCounts,
-              backgroundColor: 'rgba(229,9,20,0.75)',
-              hoverBackgroundColor: 'rgba(229,9,20,0.95)',
-              borderRadius: 6,
-              maxBarThickness: 48,
-              yAxisID: 'yWatched',
-              order: 2
-            },
-            {
-              type: 'line',
-              label: 'จำนวนที่ถูกใจ',
-              data: likedCounts,
-              borderColor: '#46D369',
-              backgroundColor: '#46D369',
-              pointBackgroundColor: '#46D369',
-              pointBorderColor: '#141414',
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              borderWidth: 2,
-              tension: 0.3,
-              yAxisID: 'yLiked',
-              order: 1
-            }
-          ]
-        },
+        data: { labels: years, datasets: [
+          { type:'bar',  label:'จำนวนที่ดู',    data:watchedCounts, backgroundColor:'rgba(229,9,20,0.75)', hoverBackgroundColor:'rgba(229,9,20,0.95)', borderRadius:6, maxBarThickness:48, yAxisID:'yWatched', order:2 },
+          { type:'line', label:'จำนวนที่ถูกใจ', data:likedCounts,   borderColor:'#46D369', backgroundColor:'#46D369', pointBackgroundColor:'#46D369', pointBorderColor:'#141414', pointRadius:4, pointHoverRadius:6, borderWidth:2, tension:0.3, yAxisID:'yLiked', order:1 }
+        ]},
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          onClick: (evt, elements) => {
-            if (!elements.length) return;
-            const idx = elements[0].index;
-            const year = years[idx];
-            if (dashboardTableState.source === 'year' && dashboardTableState.value === year) {
-              dashboardTableState = { source: null, value: null };
-            } else {
-              dashboardTableState = { source: 'year', value: year };
-              selectedGenre = null; selectedGenreSource = null;
-              if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
-              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
-            }
+          responsive:true, maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          onClick:(evt,elements) => {
+            if(!elements.length) return;
+            const year=years[elements[0].index];
+            dashboardTableState=dashboardTableState.source==='year'&&dashboardTableState.value===year?{source:null,value:null}:{source:'year',value:year};
+            selectedGenre=null; selectedGenreSource=null;
+            if(genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor=genreChartInstance.data.labels.map(()=>'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
+            if(genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor=genreLikedChartInstance.data.labels.map(()=>'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
             renderGenreTable();
           },
-          onHover: (evt, elements) => {
-            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-          },
+          onHover:(evt,elements)=>{ evt.native.target.style.cursor=elements.length?'pointer':'default'; },
           plugins: {
-            legend: {
-              labels: { color: '#B3B3B3', font: { family: 'Inter' } }
-            },
-            tooltip: {
-              backgroundColor: '#1F1F1F',
-              borderColor: '#3A3A3A',
-              borderWidth: 1,
-              titleColor: '#FFFFFF',
-              bodyColor: '#B3B3B3'
-            }
+            legend:{labels:{color:'#B3B3B3',font:{family:'Inter'}}},
+            tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}
           },
-          scales: {
-            x: {
-              ticks: { color: '#B3B3B3', font: { family: 'Inter' } },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              title: { display: true, text: 'ปีที่ออกอากาศ', color: '#B3B3B3' }
-            },
-            yWatched: {
-              position: 'left',
-              min: 0,
-              max: sharedAxisMax,
-              ticks: { color: '#B3B3B3', precision: 0 },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              title: { display: true, text: 'จำนวนที่ดู (เรื่อง)', color: '#B3B3B3' }
-            },
-            yLiked: {
-              position: 'right',
-              min: 0,
-              max: sharedAxisMax,
-              ticks: { color: '#B3B3B3', precision: 0 },
-              grid: { drawOnChartArea: false },
-              title: { display: true, text: 'จำนวนที่ถูกใจ (เรื่อง)', color: '#B3B3B3' }
-            }
+          scales:{
+            x:{ ticks:{color:'#B3B3B3',font:{family:'Inter'}}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:true,text:'ปีที่ออกอากาศ',color:'#B3B3B3'} },
+            yWatched:{ position:'left',  min:0,max:sharedAxisMax, ticks:{color:'#B3B3B3',precision:0}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:true,text:'จำนวนที่ดู (เรื่อง)',color:'#B3B3B3'} },
+            yLiked:  { position:'right', min:0,max:sharedAxisMax, ticks:{color:'#B3B3B3',precision:0}, grid:{drawOnChartArea:false}, title:{display:true,text:'จำนวนที่ถูกใจ (เรื่อง)',color:'#B3B3B3'} }
           }
         }
       });
-    } catch (err) {
-      console.error('สร้างกราฟไม่สำเร็จ:', err);
-      canvas.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
-    }
+    } catch(err) { canvas.hidden=true; emptyMsg.hidden=false; }
   }
 
   let likedDonutChartInstance = null;
-
   function renderLikedDonutChart() {
-    const canvas = document.getElementById('likedDonutChart');
-    const emptyMsg = document.getElementById('donutChartEmpty');
-    const centerText = document.getElementById('donutCenterText');
-    const centerPctEl = document.getElementById('donutCenterPct');
-    const legendLiked = document.getElementById('donutLikedCount');
-    const legendNeutral = document.getElementById('donutNeutralCount');
+    const canvas=document.getElementById('likedDonutChart'), emptyMsg=document.getElementById('donutChartEmpty');
+    const centerText=document.getElementById('donutCenterText'), centerPctEl=document.getElementById('donutCenterPct');
+    const legendLiked=document.getElementById('donutLikedCount'), legendNeutral=document.getElementById('donutNeutralCount');
     if (!canvas) return;
-
-    if (typeof Chart === 'undefined') {
-      canvas.hidden = true;
-      centerText.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'โหลดไลบรารีสำหรับวาดกราฟไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง';
-      return;
+    if (typeof Chart==='undefined') { canvas.hidden=true; centerText.hidden=true; emptyMsg.hidden=false; return; }
+    const summaryShows=getSummaryShows(), total=summaryShows.length;
+    if (!diaryLoaded||total===0) {
+      canvas.hidden=true; centerText.hidden=true; emptyMsg.hidden=false; emptyMsg.textContent='ยังไม่มีข้อมูล';
+      legendLiked.textContent='—'; legendNeutral.textContent='—';
+      if(likedDonutChartInstance){likedDonutChartInstance.destroy();likedDonutChartInstance=null;} return;
     }
-
-    const summaryShows = getSummaryShows();
-    const total = summaryShows.length;
-
-    if (!diaryLoaded || total === 0) {
-      canvas.hidden = true;
-      centerText.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'ยังไม่มีข้อมูล';
-      legendLiked.textContent = '—';
-      legendNeutral.textContent = '—';
-      if (likedDonutChartInstance) {
-        likedDonutChartInstance.destroy();
-        likedDonutChartInstance = null;
-      }
-      return;
-    }
-
-    canvas.hidden = false;
-    centerText.hidden = false;
-    emptyMsg.hidden = true;
-
-    const likedCount = summaryShows.filter(s => s.liked).length;
-    const neutralCount = total - likedCount;
-    const pct = Math.round((likedCount / total) * 100);
-
-    centerPctEl.textContent = pct + '%';
-    legendLiked.textContent = likedCount;
-    legendNeutral.textContent = neutralCount;
-
-    if (likedDonutChartInstance) {
-      likedDonutChartInstance.destroy();
-    }
-
+    canvas.hidden=false; centerText.hidden=false; emptyMsg.hidden=true;
+    const likedCount=summaryShows.filter(s=>s.liked).length, neutralCount=total-likedCount;
+    const pct=Math.round((likedCount/total)*100);
+    centerPctEl.textContent=pct+'%'; legendLiked.textContent=likedCount; legendNeutral.textContent=neutralCount;
+    if(likedDonutChartInstance) likedDonutChartInstance.destroy();
     try {
-      likedDonutChartInstance = new Chart(canvas.getContext('2d'), {
-        type: 'doughnut',
-        data: {
-          labels: ['ชอบ', 'เฉยๆ'],
-          datasets: [{
-            data: [likedCount, neutralCount],
-            backgroundColor: ['#46D369', '#3A3A3A'],
-            borderColor: '#1F1F1F',
-            borderWidth: 2,
-            hoverOffset: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '72%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#1F1F1F',
-              borderColor: '#3A3A3A',
-              borderWidth: 1,
-              titleColor: '#FFFFFF',
-              bodyColor: '#B3B3B3'
-            },
-            onClick: (evt, elements) => {
-              if (!elements.length) return;
-              const idx = elements[0].index;
-              const src = idx === 0 ? 'liked-yes' : 'liked-no';
-              if (dashboardTableState.source === src) {
-                dashboardTableState = { source: null, value: null };
-              } else {
-                dashboardTableState = { source: src, value: null };
-                selectedGenre = null; selectedGenreSource = null;
-                if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
-                if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
-              }
-              renderGenreTable();
-            },
-            onHover: (evt, elements) => {
-              evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-            }
-          }
-        }
+      likedDonutChartInstance=new Chart(canvas.getContext('2d'),{
+        type:'doughnut',
+        data:{labels:['ชอบ','เฉยๆ'],datasets:[{data:[likedCount,neutralCount],backgroundColor:['#46D369','#3A3A3A'],borderColor:'#1F1F1F',borderWidth:2,hoverOffset:4}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}}}
       });
-    } catch (err) {
-      console.error('สร้างกราฟโดนัทไม่สำเร็จ:', err);
-      canvas.hidden = true;
-      centerText.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
-    }
+    } catch(err){canvas.hidden=true;centerText.hidden=true;emptyMsg.hidden=false;}
   }
 
-  // ---------- Donut chart จำนวนที่รอดู (Watchlist) ----------
-  let watchlistDonutInstance = null;
-
+  let watchlistDonutInstance=null;
   function renderWatchlistDonut() {
-    const canvas = document.getElementById('watchlistDonutChart');
-    const emptyMsg = document.getElementById('watchlistDonutEmpty');
-    const centerEl = document.getElementById('watchlistDonutCenter');
-    const totalEl = document.getElementById('watchlistDonutTotal');
-    const readyEl = document.getElementById('watchlistReadyCount');
-    const airingEl = document.getElementById('watchlistAiringCount');
-    if (!canvas) return;
-
-    // กรองตาม slicer Series/Variety เหมือนกับ chart อื่นใน Dashboard
-    const filteredPending = pending.filter(s => summaryTypeFilter[s.type]);
-
-    if (typeof Chart === 'undefined') {
-      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
-      return;
+    const canvas=document.getElementById('watchlistDonutChart'), emptyMsg=document.getElementById('watchlistDonutEmpty');
+    const centerEl=document.getElementById('watchlistDonutCenter'), totalEl=document.getElementById('watchlistDonutTotal');
+    const readyEl=document.getElementById('watchlistReadyCount'), airingEl=document.getElementById('watchlistAiringCount');
+    if(!canvas) return;
+    const filteredPending=pending.filter(s=>summaryTypeFilter[s.type]);
+    if(typeof Chart==='undefined'){canvas.hidden=true;centerEl.hidden=true;emptyMsg.hidden=false;return;}
+    const total=filteredPending.length;
+    if(!pendingLoaded||total===0){
+      canvas.hidden=true;centerEl.hidden=true;emptyMsg.hidden=false;emptyMsg.textContent='ยังไม่มีรายการที่อยากดู';
+      readyEl.textContent='—';airingEl.textContent='—';
+      if(watchlistDonutInstance){watchlistDonutInstance.destroy();watchlistDonutInstance=null;}return;
     }
-
-    const total = filteredPending.length;
-    if (!pendingLoaded || total === 0) {
-      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
-      emptyMsg.textContent = 'ยังไม่มีรายการที่อยากดู';
-      readyEl.textContent = '—'; airingEl.textContent = '—';
-      if (watchlistDonutInstance) { watchlistDonutInstance.destroy(); watchlistDonutInstance = null; }
-      return;
-    }
-
-    canvas.hidden = false; centerEl.hidden = false; emptyMsg.hidden = true;
-    const readyCount = filteredPending.filter(s => s.finished).length;
-    const airingCount = total - readyCount;
-    totalEl.textContent = total;
-    readyEl.textContent = readyCount;
-    airingEl.textContent = airingCount;
-
-    if (watchlistDonutInstance) watchlistDonutInstance.destroy();
+    canvas.hidden=false;centerEl.hidden=false;emptyMsg.hidden=true;
+    const readyCount=filteredPending.filter(s=>s.finished).length,airingCount=total-readyCount;
+    totalEl.textContent=total;readyEl.textContent=readyCount;airingEl.textContent=airingCount;
+    if(watchlistDonutInstance) watchlistDonutInstance.destroy();
     try {
-      watchlistDonutInstance = new Chart(canvas.getContext('2d'), {
-        type: 'doughnut',
-        data: {
-          labels: ['พร้อมดู', 'รออกอากาศ'],
-          datasets: [{ data: [readyCount, airingCount],
-            backgroundColor: ['#46D369', '#E6B91E'],
-            borderColor: '#1F1F1F', borderWidth: 2, hoverOffset: 4 }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '72%',
-          plugins: {
-            legend: { display: false },
-            tooltip: { backgroundColor: '#1F1F1F', borderColor: '#3A3A3A', borderWidth: 1,
-              titleColor: '#FFFFFF', bodyColor: '#B3B3B3' }
-          },
-          onClick: (evt, elements) => {
-            if (!elements.length) return;
-            const idx = elements[0].index;
-            const src = idx === 0 ? 'watchlist-ready' : 'watchlist-airing';
-            if (dashboardTableState.source === src) {
-              dashboardTableState = { source: null, value: null };
-            } else {
-              dashboardTableState = { source: src, value: null };
-              selectedGenre = null; selectedGenreSource = null;
-              if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
-              if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
-            }
+      watchlistDonutInstance=new Chart(canvas.getContext('2d'),{
+        type:'doughnut',
+        data:{labels:['พร้อมดู','รออกอากาศ'],datasets:[{data:[readyCount,airingCount],backgroundColor:['#46D369','#E6B91E'],borderColor:'#1F1F1F',borderWidth:2,hoverOffset:4}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'72%',
+          plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}},
+          onClick:(evt,elements)=>{
+            if(!elements.length) return;
+            const src=elements[0].index===0?'watchlist-ready':'watchlist-airing';
+            dashboardTableState=dashboardTableState.source===src?{source:null,value:null}:{source:src,value:null};
+            selectedGenre=null;selectedGenreSource=null;
+            if(genreChartInstance){genreChartInstance.data.datasets[0].backgroundColor=genreChartInstance.data.labels.map(()=>'rgba(229,9,20,0.55)');genreChartInstance.update('none');}
+            if(genreLikedChartInstance){genreLikedChartInstance.data.datasets[0].backgroundColor=genreLikedChartInstance.data.labels.map(()=>'rgba(70,211,105,0.55)');genreLikedChartInstance.update('none');}
             renderGenreTable();
           },
-          onHover: (evt, elements) => {
-            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-          }
+          onHover:(evt,elements)=>{evt.native.target.style.cursor=elements.length?'pointer':'default';}
         }
       });
-    } catch (err) {
-      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
-      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
-    }
+    } catch(err){canvas.hidden=true;centerEl.hidden=true;emptyMsg.hidden=false;}
   }
 
-  // ---------- กราฟ Top 10 แนวที่ดูเยอะที่สุด + Top 10 ถูกใจมากที่สุด + ตาราง ----------
-  let genreChartInstance = null;
-  let genreLikedChartInstance = null;
-  let selectedGenre = null;
-  let selectedGenreSource = null; // 'watched' | 'liked'
-
-  // state กลางสำหรับควบคุม Table ด้านล่าง
-  // source: 'genre-watched'|'genre-liked'|'liked-yes'|'liked-no'|'watchlist-ready'|'watchlist-airing'|'year'
-  let dashboardTableState = { source: null, value: null };
+  let genreChartInstance=null, genreLikedChartInstance=null;
+  let selectedGenre=null, selectedGenreSource=null;
+  let dashboardTableState={source:null,value:null};
 
   function getTopGenres(n) {
-    const summaryShows = getSummaryShows();
-    const counts = {};
-    summaryShows.forEach(s => {
-      s.genres.forEach(g => {
-        if (!g) return;
-        counts[g] = (counts[g] || 0) + 1;
-      });
-    });
-    return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, n);
+    const summaryShows=getSummaryShows(), counts={};
+    summaryShows.forEach(s=>s.genres.forEach(g=>{if(!g)return;counts[g]=(counts[g]||0)+1;}));
+    return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  }
+
+  function getTopGenresLiked(n) {
+    const summaryShows=getSummaryShows(), liked={}, total={};
+    summaryShows.forEach(s=>s.genres.forEach(g=>{if(!g)return;total[g]=(total[g]||0)+1;if(s.liked)liked[g]=(liked[g]||0)+1;}));
+    return Object.keys(liked).map(g=>({genre:g,count:liked[g],total:total[g]||0})).sort((a,b)=>b.count-a.count).slice(0,n);
   }
 
   function renderGenreTable() {
-    const tbody = document.getElementById('genreTableBody');
-    const titleEl = document.getElementById('genreTableTitle');
-    if (!tbody) return;
-
-    const scrollWrap = tbody.closest('.genre-table-scroll');
-    if (scrollWrap) scrollWrap.scrollTop = 0;
-
-    const { source, value } = dashboardTableState;
-
-    if (!source) {
-      tbody.innerHTML = '';
-      titleEl.textContent = 'คลิกข้อมูลในกราฟเพื่อดูรายชื่อเรื่อง';
-      return;
-    }
-
-    const summaryShows = getSummaryShows();
-    let list = [], title = '', isPending = false;
-
-    if (source === 'genre-watched') {
-      list = summaryShows.filter(s => s.genres.includes(value));
-      title = `แนว "${value}" — ${list.length} เรื่อง`;
-    } else if (source === 'genre-liked') {
-      list = summaryShows.filter(s => s.genres.includes(value) && s.liked);
-      title = `แนว "${value}" — ${list.length} เรื่อง (เฉพาะที่ถูกใจ)`;
-    } else if (source === 'liked-yes') {
-      list = summaryShows.filter(s => s.liked);
-      title = `เรื่องที่ถูกใจ — ${list.length} เรื่อง`;
-    } else if (source === 'liked-no') {
-      list = summaryShows.filter(s => !s.liked);
-      title = `เรื่องที่เฉยๆ — ${list.length} เรื่อง`;
-    } else if (source === 'watchlist-ready') {
-      list = pending.filter(s => summaryTypeFilter[s.type] && s.finished);
-      title = `รอดูอยู่ (จบแล้ว พร้อมดู) — ${list.length} เรื่อง`;
-      isPending = true;
-    } else if (source === 'watchlist-airing') {
-      list = pending.filter(s => summaryTypeFilter[s.type] && !s.finished);
-      title = `รอดูอยู่ (กำลังออกอากาศ) — ${list.length} เรื่อง`;
-      isPending = true;
-    } else if (source === 'year') {
-      list = summaryShows.filter(s => s.year === value);
-      title = `ปี ${value} — ${list.length} เรื่อง`;
-    }
-
-    titleEl.textContent = title;
-
-    if (list.length === 0) {
-      tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';
-      return;
-    }
-
-    if (isPending) {
-      tbody.innerHTML = list.map(s => `
-        <tr>
-          <td>${s.title}</td>
-          <td>${s.finished
-            ? '<span class="liked-tag liked">✓ พร้อมดู</span>'
-            : '<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td>
-        </tr>
-      `).join('');
+    const tbody=document.getElementById('genreTableBody'), titleEl=document.getElementById('genreTableTitle');
+    if(!tbody) return;
+    const scrollWrap=tbody.closest('.genre-table-scroll');
+    if(scrollWrap) scrollWrap.scrollTop=0;
+    const {source,value}=dashboardTableState;
+    if(!source){tbody.innerHTML='';titleEl.textContent='คลิกข้อมูลในกราฟเพื่อดูรายชื่อเรื่อง';return;}
+    const summaryShows=getSummaryShows();
+    let list=[],title='',isPending=false;
+    if(source==='genre-watched')      {list=summaryShows.filter(s=>s.genres.includes(value));title=`แนว "${value}" — ${list.length} เรื่อง`;}
+    else if(source==='genre-liked')   {list=summaryShows.filter(s=>s.genres.includes(value)&&s.liked);title=`แนว "${value}" — ${list.length} เรื่อง (เฉพาะที่ถูกใจ)`;}
+    else if(source==='liked-yes')     {list=summaryShows.filter(s=>s.liked);title=`เรื่องที่ถูกใจ — ${list.length} เรื่อง`;}
+    else if(source==='liked-no')      {list=summaryShows.filter(s=>!s.liked);title=`เรื่องที่เฉยๆ — ${list.length} เรื่อง`;}
+    else if(source==='watchlist-ready') {list=pending.filter(s=>summaryTypeFilter[s.type]&&s.finished);title=`รอดูอยู่ (จบแล้ว) — ${list.length} เรื่อง`;isPending=true;}
+    else if(source==='watchlist-airing'){list=pending.filter(s=>summaryTypeFilter[s.type]&&!s.finished);title=`รอดูอยู่ (กำลังออกอากาศ) — ${list.length} เรื่อง`;isPending=true;}
+    else if(source==='year')           {list=summaryShows.filter(s=>s.year===value);title=`ปี ${value} — ${list.length} เรื่อง`;}
+    titleEl.textContent=title;
+    if(list.length===0){tbody.innerHTML='<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';return;}
+    if(isPending){
+      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
     } else {
-      tbody.innerHTML = list.map(s => `
-        <tr>
-          <td>${s.title}</td>
-          <td>${s.liked
-            ? '<span class="liked-tag liked">♥ ชอบ</span>'
-            : '<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td>
-        </tr>
-      `).join('');
+      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
     }
   }
 
   function renderGenreChart() {
-    const canvas = document.getElementById('genreChart');
-    const emptyMsg = document.getElementById('genreChartEmpty');
-    if (!canvas) return;
-
-    if (typeof Chart === 'undefined') {
-      canvas.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'โหลดไลบรารีสำหรับวาดกราฟไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง';
-      return;
-    }
-
-    const topGenres = getTopGenres(10);
-
-    if (!diaryLoaded || topGenres.length === 0) {
-      canvas.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ';
-      if (genreChartInstance) {
-        genreChartInstance.destroy();
-        genreChartInstance = null;
-      }
-      return;
-    }
-
-    // ถ้าแนวที่เคยเลือกไว้ไม่ติด Top 10 ของชุดข้อมูลปัจจุบันแล้ว (เช่นสลับ slicer) ให้ล้างการเลือก
-    const labels = topGenres.map(g => g[0]);
-    if (selectedGenre && !labels.includes(selectedGenre)) {
-      selectedGenre = null;
-    }
-
-    canvas.hidden = false;
-    emptyMsg.hidden = true;
-
-    const data = topGenres.map(g => g[1]);
-    const barColors = labels.map(l => l === selectedGenre ? '#E50914' : 'rgba(229,9,20,0.55)');
-
-    if (genreChartInstance) {
-      genreChartInstance.destroy();
-    }
-
+    const canvas=document.getElementById('genreChart'), emptyMsg=document.getElementById('genreChartEmpty');
+    if(!canvas) return;
+    if(typeof Chart==='undefined'){canvas.hidden=true;emptyMsg.hidden=false;return;}
+    const topGenres=getTopGenres(10);
+    if(!diaryLoaded||topGenres.length===0){canvas.hidden=true;emptyMsg.hidden=false;if(genreChartInstance){genreChartInstance.destroy();genreChartInstance=null;}return;}
+    const labels=topGenres.map(g=>g[0]);
+    if(selectedGenre&&!labels.includes(selectedGenre)) selectedGenre=null;
+    canvas.hidden=false;emptyMsg.hidden=true;
+    const data=topGenres.map(g=>g[1]);
+    const barColors=labels.map(l=>l===selectedGenre?'#E50914':'rgba(229,9,20,0.55)');
+    if(genreChartInstance) genreChartInstance.destroy();
     try {
-      genreChartInstance = new Chart(canvas.getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: 'จำนวนเรื่อง',
-            data,
-            backgroundColor: barColors,
-            hoverBackgroundColor: '#E50914',
-            borderRadius: 6,
-            maxBarThickness: 22
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#1F1F1F',
-              borderColor: '#3A3A3A',
-              borderWidth: 1,
-              titleColor: '#FFFFFF',
-              bodyColor: '#B3B3B3'
-            }
-          },
-          scales: {
-            x: {
-              beginAtZero: true,
-              ticks: { color: '#B3B3B3', precision: 0 },
-              grid: { color: 'rgba(255,255,255,0.06)' }
-            },
-            y: {
-              ticks: { color: '#B3B3B3', font: { family: 'Sarabun' } },
-              grid: { display: false }
-            }
-          },
-          onClick: (evt, elements) => {
-            if (!elements.length) return;
-            const idx = elements[0].index;
-            const genre = labels[idx];
-            selectedGenre = (selectedGenre === genre && selectedGenreSource === 'watched') ? null : genre;
-            selectedGenreSource = selectedGenre ? 'watched' : null;
-            dashboardTableState = selectedGenre ? { source: 'genre-watched', value: selectedGenre } : { source: null, value: null };
-            genreChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
-              l === selectedGenre ? '#E50914' : 'rgba(229,9,20,0.55)'
-            );
+      genreChartInstance=new Chart(canvas.getContext('2d'),{
+        type:'bar',
+        data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:'#E50914',borderRadius:6,maxBarThickness:22}]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}},
+          scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
+          onClick:(evt,elements)=>{
+            if(!elements.length) return;
+            const genre=labels[elements[0].index];
+            selectedGenre=(selectedGenre===genre&&selectedGenreSource==='watched')?null:genre;
+            selectedGenreSource=selectedGenre?'watched':null;
+            dashboardTableState=selectedGenre?{source:'genre-watched',value:selectedGenre}:{source:null,value:null};
+            genreChartInstance.data.datasets[0].backgroundColor=labels.map(l=>l===selectedGenre?'#E50914':'rgba(229,9,20,0.55)');
             genreChartInstance.update('none');
-            if (genreLikedChartInstance) {
-              genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)');
-              genreLikedChartInstance.update('none');
-            }
+            if(genreLikedChartInstance){genreLikedChartInstance.data.datasets[0].backgroundColor=genreLikedChartInstance.data.labels.map(()=>'rgba(70,211,105,0.55)');genreLikedChartInstance.update('none');}
             renderGenreTable();
           },
-          onHover: (evt, elements) => {
-            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-          }
+          onHover:(evt,elements)=>{evt.native.target.style.cursor=elements.length?'pointer':'default';}
         }
       });
-    } catch (err) {
-      console.error('สร้างกราฟแนวไม่สำเร็จ:', err);
-      canvas.hidden = true;
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
-    }
-  }
-
-  // ---------- กราฟ Top 10 แนวที่ถูกใจมากที่สุด (% liked per genre) ----------
-  function getTopGenresLiked(n) {
-    const summaryShows = getSummaryShows();
-    const liked = {};
-    const total = {};
-    summaryShows.forEach(s => {
-      s.genres.forEach(g => {
-        if (!g) return;
-        total[g] = (total[g] || 0) + 1;
-        if (s.liked) liked[g] = (liked[g] || 0) + 1;
-      });
-    });
-    return Object.keys(liked)
-      .map(g => ({ genre: g, count: liked[g], total: total[g] || 0 }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, n);
+    } catch(err){canvas.hidden=true;emptyMsg.hidden=false;}
   }
 
   function renderGenreLikedChart() {
-    const canvas = document.getElementById('genreLikedChart');
-    const emptyMsg = document.getElementById('genreLikedChartEmpty');
-    if (!canvas) return;
-
-    if (typeof Chart === 'undefined') {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      emptyMsg.textContent = 'โหลดไลบรารีไม่สำเร็จ';
-      return;
-    }
-
-    const topData = getTopGenresLiked(10);
-
-    if (!diaryLoaded || topData.length === 0) {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      emptyMsg.textContent = 'ยังไม่มีข้อมูลเพียงพอ (ต้องการอย่างน้อย 3 เรื่องต่อแนว)';
-      if (genreLikedChartInstance) { genreLikedChartInstance.destroy(); genreLikedChartInstance = null; }
-      return;
-    }
-
-    const labels = topData.map(d => d.genre);
-    const pcts = topData.map(d => d.count);
-    const barColors = labels.map(l => l === selectedGenre ? '#46D369' : 'rgba(70,211,105,0.55)');
-
-    canvas.hidden = false; emptyMsg.hidden = true;
-
-    if (genreLikedChartInstance) genreLikedChartInstance.destroy();
-
+    const canvas=document.getElementById('genreLikedChart'), emptyMsg=document.getElementById('genreLikedChartEmpty');
+    if(!canvas) return;
+    if(typeof Chart==='undefined'){canvas.hidden=true;emptyMsg.hidden=false;return;}
+    const topData=getTopGenresLiked(10);
+    if(!diaryLoaded||topData.length===0){canvas.hidden=true;emptyMsg.hidden=false;if(genreLikedChartInstance){genreLikedChartInstance.destroy();genreLikedChartInstance=null;}return;}
+    const labels=topData.map(d=>d.genre), pcts=topData.map(d=>d.count);
+    const barColors=labels.map(l=>l===selectedGenre?'#46D369':'rgba(70,211,105,0.55)');
+    canvas.hidden=false;emptyMsg.hidden=true;
+    if(genreLikedChartInstance) genreLikedChartInstance.destroy();
     try {
-      genreLikedChartInstance = new Chart(canvas.getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: '% ถูกใจ',
-            data: pcts,
-            backgroundColor: barColors,
-            hoverBackgroundColor: '#46D369',
-            borderRadius: 6,
-            maxBarThickness: 22
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#1F1F1F', borderColor: '#3A3A3A', borderWidth: 1,
-              titleColor: '#FFFFFF', bodyColor: '#B3B3B3',
-              callbacks: {
-                label: ctx => `${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`
-              }
-            }
+      genreLikedChartInstance=new Chart(canvas.getContext('2d'),{
+        type:'bar',
+        data:{labels,datasets:[{label:'% ถูกใจ',data:pcts,backgroundColor:barColors,hoverBackgroundColor:'#46D369',borderRadius:6,maxBarThickness:22}]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},
+            tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3',
+              callbacks:{label:ctx=>`${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`}}
           },
-          scales: {
-            x: {
-              min: 0,
-              ticks: { color: '#B3B3B3', precision: 0 },
-              grid: { color: 'rgba(255,255,255,0.06)' }
-            },
-            y: {
-              ticks: { color: '#B3B3B3', font: { family: 'Sarabun' } },
-              grid: { display: false }
-            }
-          },
-          onClick: (evt, elements) => {
-            if (!elements.length) return;
-            const idx = elements[0].index;
-            const genre = labels[idx];
-            selectedGenre = (selectedGenre === genre && selectedGenreSource === 'liked') ? null : genre;
-            selectedGenreSource = selectedGenre ? 'liked' : null;
-            dashboardTableState = selectedGenre ? { source: 'genre-liked', value: selectedGenre } : { source: null, value: null };
-            genreLikedChartInstance.data.datasets[0].backgroundColor = labels.map(l =>
-              l === selectedGenre ? '#46D369' : 'rgba(70,211,105,0.55)'
-            );
+          scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
+          onClick:(evt,elements)=>{
+            if(!elements.length) return;
+            const genre=labels[elements[0].index];
+            selectedGenre=(selectedGenre===genre&&selectedGenreSource==='liked')?null:genre;
+            selectedGenreSource=selectedGenre?'liked':null;
+            dashboardTableState=selectedGenre?{source:'genre-liked',value:selectedGenre}:{source:null,value:null};
+            genreLikedChartInstance.data.datasets[0].backgroundColor=labels.map(l=>l===selectedGenre?'#46D369':'rgba(70,211,105,0.55)');
             genreLikedChartInstance.update('none');
-            if (genreChartInstance) {
-              genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)');
-              genreChartInstance.update('none');
-            }
+            if(genreChartInstance){genreChartInstance.data.datasets[0].backgroundColor=genreChartInstance.data.labels.map(()=>'rgba(229,9,20,0.55)');genreChartInstance.update('none');}
             renderGenreTable();
           },
-          onHover: (evt, elements) => {
-            evt.native.target.style.cursor = elements.length ? 'pointer' : 'default';
-          }
+          onHover:(evt,elements)=>{evt.native.target.style.cursor=elements.length?'pointer':'default';}
         }
       });
-    } catch (err) {
-      console.error('สร้างกราฟถูกใจไม่สำเร็จ:', err);
-      canvas.hidden = true; emptyMsg.hidden = false;
-      emptyMsg.textContent = 'เกิดข้อผิดพลาดขณะสร้างกราฟ';
-    }
+    } catch(err){canvas.hidden=true;emptyMsg.hidden=false;}
   }
 
   function updateSummary() {
-    const summaryTotal = document.getElementById('summaryTotal');
-    const summaryTotalBreakdown = document.getElementById('summaryTotalBreakdown');
-    const summaryLiked = document.getElementById('summaryLiked');
-    const summaryLikedBreakdown = document.getElementById('summaryLikedBreakdown');
-
-    if (!diaryLoaded) {
-      summaryTotal.textContent = '…';
-      summaryLiked.textContent = '…';
-      summaryTotalBreakdown.textContent = 'กำลังโหลดข้อมูล...';
-      summaryLikedBreakdown.textContent = '';
-      renderYearlyChart();
-      renderLikedDonutChart();
-      renderWatchlistDonut();
-      renderGenreChart();
-      renderGenreLikedChart();
-      renderGenreTable();
-      return;
+    const summaryTotal=document.getElementById('summaryTotal'), summaryTotalBreakdown=document.getElementById('summaryTotalBreakdown');
+    const summaryLiked=document.getElementById('summaryLiked'), summaryLikedBreakdown=document.getElementById('summaryLikedBreakdown');
+    if(!diaryLoaded){
+      summaryTotal.textContent='…';summaryLiked.textContent='…';
+      summaryTotalBreakdown.textContent='กำลังโหลดข้อมูล...';summaryLikedBreakdown.textContent='';
+      renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();return;
     }
-
-    const summaryShows = getSummaryShows();
-    const total = summaryShows.length;
-    const seriesCount = summaryShows.filter(s => s.type === 'series').length;
-    const varietyCount = summaryShows.filter(s => s.type === 'variety').length;
-    const likedCount = summaryShows.filter(s => s.liked).length;
-    const likedSeries = summaryShows.filter(s => s.type === 'series' && s.liked).length;
-    const likedVariety = summaryShows.filter(s => s.type === 'variety' && s.liked).length;
-
-    summaryTotal.textContent = total;
-    summaryTotalBreakdown.textContent = `ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}`;
-    summaryLiked.textContent = likedCount;
-    summaryLikedBreakdown.textContent = `ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
-
-    renderYearlyChart();
-    renderLikedDonutChart();
-    renderWatchlistDonut();
-    renderGenreChart();
-    renderGenreLikedChart();
-    renderGenreTable();
-
+    const summaryShows=getSummaryShows();
+    const total=summaryShows.length, seriesCount=summaryShows.filter(s=>s.type==='series').length, varietyCount=summaryShows.filter(s=>s.type==='variety').length;
+    const likedCount=summaryShows.filter(s=>s.liked).length, likedSeries=summaryShows.filter(s=>s.type==='series'&&s.liked).length, likedVariety=summaryShows.filter(s=>s.type==='variety'&&s.liked).length;
+    summaryTotal.textContent=total; summaryTotalBreakdown.textContent=`ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}`;
+    summaryLiked.textContent=likedCount; summaryLikedBreakdown.textContent=`ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
+    renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
   }
 
-  // ---------------------------------------------------------------
-  // ฟอร์ม "+ เพิ่มเรื่อง" — เพิ่มรายการในหน้าเว็บทันที (optimistic update)
-  // แล้วส่งข้อมูลไปบันทึกจริงที่ Google Sheet ผ่าน Apps Script เบื้องหลัง
-  // ---------------------------------------------------------------
-  const openAddModalBtn = document.getElementById('openAddModal');
-  const closeAddModalBtn = document.getElementById('closeAddModal');
-  const addModalOverlay = document.getElementById('addModalOverlay');
-  const addPendingForm = document.getElementById('addPendingForm');
-  const addFormStatus = document.getElementById('addFormStatus');
-  const submitAddBtn = document.getElementById('submitAddBtn');
+  // ============================================================
+  // Modal: Add to Watchlist
+  // ============================================================
+  const openAddModalBtn   = document.getElementById('openAddModal');
+  const closeAddModalBtn  = document.getElementById('closeAddModal');
+  const addModalOverlay   = document.getElementById('addModalOverlay');
+  const addPendingForm    = document.getElementById('addPendingForm');
+  const addFormStatus     = document.getElementById('addFormStatus');
 
-  function openAddModal() {
-    addModalOverlay.hidden = false;
-    addFormStatus.textContent = '';
-    addFormStatus.className = 'form-status';
-    document.getElementById('newTitle').focus();
-  }
+  openAddModalBtn.addEventListener('click', () => { addModalOverlay.hidden=false; addFormStatus.textContent=''; document.getElementById('newTitle').focus(); });
+  closeAddModalBtn.addEventListener('click', () => { addModalOverlay.hidden=true; addPendingForm.reset(); });
+  addModalOverlay.addEventListener('click', e => { if(e.target===addModalOverlay){addModalOverlay.hidden=true;addPendingForm.reset();} });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'&&!addModalOverlay.hidden){addModalOverlay.hidden=true;addPendingForm.reset();} });
 
-  function closeAddModal() {
-    addModalOverlay.hidden = true;
-    addPendingForm.reset();
-  }
-
-  openAddModalBtn.addEventListener('click', openAddModal);
-  closeAddModalBtn.addEventListener('click', closeAddModal);
-  addModalOverlay.addEventListener('click', (e) => {
-    if (e.target === addModalOverlay) closeAddModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !addModalOverlay.hidden) closeAddModal();
-  });
-
-  addPendingForm.addEventListener('submit', async (e) => {
+  addPendingForm.addEventListener('submit', async e => {
     e.preventDefault();
-
-    const title = document.getElementById('newTitle').value.trim();
-    if (!title) return;
-
-    const typeRaw = document.getElementById('newType').value;
-    const year = Number(document.getElementById('newYear').value) || '';
-    const genresStr = document.getElementById('newGenres').value.trim();
-    const episodes = Number(document.getElementById('newEpisodes').value) || 0;
-    const finished = document.getElementById('newFinished').checked;
-
-    const newEntry = {
-      title,
-      type: typeRaw.toLowerCase() === 'variety' ? 'variety' : 'series',
-      year,
-      episodes,
-      genres: genresStr.split(',').map(g => g.trim()).filter(Boolean),
-      finished
-    };
-
-    // 1) แสดงรายการใหม่ในหน้าเว็บทันที โดยไม่ต้องรอ Google Sheet
-    pending = [newEntry, ...pending];
-    usingFallbackPending = false;
-    pendingLoaded = true;
-    populateFiltersPending();
-    renderPending();
-    updateStatsPending();
-    closeAddModal();
-
-    // 2) ส่งข้อมูลไปบันทึกจริงที่ Google Sheet ผ่าน Apps Script เบื้องหลัง
-    if (!APPS_SCRIPT_URL.trim()) {
-      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — รายการนี้แสดงผลชั่วคราวเท่านั้น จะหายไปเมื่อรีเฟรชหน้า');
-      return;
-    }
-
+    const title=document.getElementById('newTitle').value.trim();
+    if(!title) return;
+    const typeRaw=document.getElementById('newType').value;
+    const year=Number(document.getElementById('newYear').value)||'';
+    const genresStr=document.getElementById('newGenres').value.trim();
+    const episodes=Number(document.getElementById('newEpisodes').value)||0;
+    const finished=document.getElementById('newFinished').checked;
+    const newEntry={ title, type:typeRaw.toLowerCase()==='variety'?'variety':'series', year, episodes, genres:genresStr.split(',').map(g=>g.trim()).filter(Boolean), finished };
+    pending=[newEntry,...pending]; usingFallbackPending=false; pendingLoaded=true;
+    populateFiltersPending(); renderPending(); updateStatsPending();
+    addModalOverlay.hidden=true; addPendingForm.reset();
+    if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'addPending',
-          title: newEntry.title,
-          type: typeRaw,
-          genres: genresStr,
-          year: newEntry.year,
-          episodes: newEntry.episodes,
-          finished: newEntry.finished
-        })
-      });
-      // หมายเหตุ: ใช้ mode 'no-cors' เพราะ Apps Script Web App ไม่ส่ง CORS header กลับมา
-      // ทำให้เบราว์เซอร์อ่านผลลัพธ์จริงไม่ได้ (ไม่รู้ว่าสำเร็จหรือ error แน่ชัด)
-      // แต่ request จะถูกส่งไปและ Apps Script จะเขียนข้อมูลเข้าชีตเบื้องหลังตามปกติ
-    } catch (err) {
-      console.error('ส่งข้อมูลไปยัง Apps Script ไม่สำเร็จ:', err);
-    }
+      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'addPending',title:newEntry.title,type:typeRaw,genres:genresStr,year:newEntry.year,episodes:newEntry.episodes,finished:newEntry.finished})});
+    } catch(err){console.error(err);}
   });
 
-  // ---------------------------------------------------------------
-  // ปุ่ม "ดูแล้ว ✓" บนการ์ดในหน้า "อยากดู"
-  // เปิด modal ให้เลือกชอบ/เฉยๆ ก่อน แล้วย้ายเรื่องนั้นไปหน้า "บันทึกที่ดูแล้ว"
-  // (ลบออกจาก Pending Series, เพิ่มเข้า Series หรือ Variety ตามประเภท)
-  // ---------------------------------------------------------------
+  // ============================================================
+  // Modal: Move Watchlist -> Watched
+  // ============================================================
   const moveModalOverlay = document.getElementById('moveModalOverlay');
-  const moveModalTitle = document.getElementById('moveModalTitle');
-  const moveFormStatus = document.getElementById('moveFormStatus');
-  const closeMoveModalBtn = document.getElementById('closeMoveModal');
-  const likeChoiceYes = document.getElementById('likeChoiceYes');
-  const likeChoiceNo = document.getElementById('likeChoiceNo');
-
-  let pendingMoveEntry = null; // เรื่องที่กำลังจะย้าย (รอเลือกชอบ/เฉยๆ)
+  const moveModalTitle   = document.getElementById('moveModalTitle');
+  const closeMoveModalBtn= document.getElementById('closeMoveModal');
+  let pendingMoveEntry = null;
 
   function openMoveModal(entry) {
-    pendingMoveEntry = entry;
-    moveModalTitle.textContent = entry.title;
-    moveFormStatus.textContent = '';
-    likeChoiceYes.classList.remove('selected');
-    likeChoiceNo.classList.remove('selected');
-    moveModalOverlay.hidden = false;
+    pendingMoveEntry=entry; moveModalTitle.textContent=entry.title;
+    document.getElementById('moveFormStatus').textContent='';
+    document.getElementById('likeChoiceYes').classList.remove('selected');
+    document.getElementById('likeChoiceNo').classList.remove('selected');
+    moveModalOverlay.hidden=false;
   }
 
-  function closeMoveModal() {
-    moveModalOverlay.hidden = true;
-    pendingMoveEntry = null;
-  }
+  closeMoveModalBtn.addEventListener('click', () => { moveModalOverlay.hidden=true; pendingMoveEntry=null; });
+  moveModalOverlay.addEventListener('click', e => { if(e.target===moveModalOverlay){moveModalOverlay.hidden=true;pendingMoveEntry=null;} });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'&&!moveModalOverlay.hidden){moveModalOverlay.hidden=true;pendingMoveEntry=null;} });
 
-  closeMoveModalBtn.addEventListener('click', closeMoveModal);
-  moveModalOverlay.addEventListener('click', (e) => {
-    if (e.target === moveModalOverlay) closeMoveModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !moveModalOverlay.hidden) closeMoveModal();
-  });
-
-  // คลิกที่ปุ่ม "ดูแล้ว ✓" บนการ์ด (event delegation เพราะการ์ดถูกสร้างใหม่ทุกครั้งที่ render)
-  gridPending.addEventListener('click', (e) => {
-    const btn = e.target.closest('.mark-watched-btn');
-    if (!btn) return;
-    const title = btn.dataset.title;
-    const entry = pending.find(p => p.title === title);
-    if (entry) openMoveModal(entry);
+  gridPending.addEventListener('click', e => {
+    const btn=e.target.closest('.mark-watched-btn');
+    if(!btn) return;
+    const entry=pending.find(p=>p.title===btn.dataset.title);
+    if(entry) openMoveModal(entry);
   });
 
   async function confirmMove(liked) {
-    if (!pendingMoveEntry) return;
-    const entry = pendingMoveEntry;
-    closeMoveModal();
-
-    // 1) อัปเดตหน้าเว็บทันที (optimistic update) — ลบจาก pending, เพิ่มเข้า shows
-    pending = pending.filter(p => p.title !== entry.title);
-    const maxNo = shows.reduce((m, s) => Math.max(m, s.no || 0), 0);
-    shows = [{ ...entry, liked, no: maxNo + 1 }, ...shows];
-    usingFallback = false;
-    diaryLoaded = true;
-    usingFallbackPending = false;
-    pendingLoaded = true;
-
-    populateFilters();
-    populateFiltersPending();
-    renderPending();
-    updateStatsPending();
-    // หน้า "บันทึกที่ดูแล้ว" จะ render/update สถิติให้ตรง ก็ต่อเมื่อแท็บนั้น active อยู่
-    // แต่เราอัปเดต array ไว้แล้ว พอสลับแท็บไปจะเห็นข้อมูลใหม่ทันที
-    render();
-    updateStats();
-
-    // 2) ส่งไปบันทึกจริงที่ Google Sheet ผ่าน Apps Script เบื้องหลัง
-    if (!APPS_SCRIPT_URL.trim()) {
-      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — การย้ายนี้แสดงผลชั่วคราวเท่านั้น');
-      return;
-    }
-
+    if(!pendingMoveEntry) return;
+    const entry=pendingMoveEntry;
+    moveModalOverlay.hidden=true; pendingMoveEntry=null;
+    pending=pending.filter(p=>p.title!==entry.title);
+    const maxNo=shows.reduce((m,s)=>Math.max(m,s.no||0),0);
+    shows=[{...entry,liked,no:maxNo+1},...shows];
+    usingFallback=false; diaryLoaded=true; usingFallbackPending=false; pendingLoaded=true;
+    populateFilters(); populateFiltersPending(); renderPending(); updateStatsPending(); render(); updateStats();
+    if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'moveToWatched',
-          title: entry.title,
-          type: entry.type === 'variety' ? 'Variety' : 'Series',
-          genres: entry.genres.join(', '),
-          year: entry.year,
-          episodes: entry.episodes,
-          liked: liked
-        })
-      });
-    } catch (err) {
-      console.error('ส่งคำขอย้ายข้อมูลไปยัง Apps Script ไม่สำเร็จ:', err);
-    }
+      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'moveToWatched',title:entry.title,type:entry.type==='variety'?'Variety':'Series',genres:entry.genres.join(', '),year:entry.year,episodes:entry.episodes,liked})});
+    } catch(err){console.error(err);}
   }
 
-  likeChoiceYes.addEventListener('click', () => confirmMove(true));
-  likeChoiceNo.addEventListener('click', () => confirmMove(false));
+  document.getElementById('likeChoiceYes').addEventListener('click', () => confirmMove(true));
+  document.getElementById('likeChoiceNo').addEventListener('click',  () => confirmMove(false));
 
-  // ---------------------------------------------------------------
-  // แก้ไข / ลบ รายการ — ใช้ได้ทั้งหน้า "บันทึกที่ดูแล้ว" และ "อยากดู"
-  // ---------------------------------------------------------------
-  const editModalOverlay = document.getElementById('editModalOverlay');
-  const editModalHeading = document.getElementById('editModalHeading');
-  const editEntryForm = document.getElementById('editEntryForm');
-  const editFormStatus = document.getElementById('editFormStatus');
+  // ============================================================
+  // Edit / Delete modals (Watched + Watchlist)
+  // ============================================================
+  const editModalOverlay  = document.getElementById('editModalOverlay');
+  const editEntryForm     = document.getElementById('editEntryForm');
+  const editModalHeading  = document.getElementById('editModalHeading');
+  const editFormStatus    = document.getElementById('editFormStatus');
   const closeEditModalBtn = document.getElementById('closeEditModal');
-  const editLikedRow = document.getElementById('editLikedRow');
-  const editFinishedRow = document.getElementById('editFinishedRow');
+  const editLikedRow      = document.getElementById('editLikedRow');
+  const editFinishedRow   = document.getElementById('editFinishedRow');
 
-  const deleteModalOverlay = document.getElementById('deleteModalOverlay');
-  const deleteModalTitle = document.getElementById('deleteModalTitle');
-  const deleteFormStatus = document.getElementById('deleteFormStatus');
+  const deleteModalOverlay  = document.getElementById('deleteModalOverlay');
+  const deleteModalTitle    = document.getElementById('deleteModalTitle');
+  const deleteFormStatus    = document.getElementById('deleteFormStatus');
   const closeDeleteModalBtn = document.getElementById('closeDeleteModal');
-  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const confirmDeleteBtn    = document.getElementById('confirmDeleteBtn');
 
-  // เก็บ context ของรายการที่กำลังแก้ไข/ลบอยู่
-  // source: 'diary' | 'pending' — บอกว่ารายการนี้มาจาก array ไหน (shows หรือ pending)
-  let editContext = null;
-  let deleteContext = null;
+  let editContext=null, deleteContext=null;
 
-  function sheetKeyFor(source, type) {
-    if (source === 'pending') return 'pending';
-    return type === 'variety' ? 'variety' : 'series';
+  function sheetKeyFor(source,type) {
+    if(source==='pending') return 'pending';
+    if(source==='dropped') return 'dropped';
+    return type==='variety'?'variety':'series';
   }
 
-  // ---------- เปิด/ปิด modal แก้ไข ----------
-  function openEditModal(entry, source) {
-    editContext = { originalTitle: entry.title, source };
-    editModalHeading.textContent = source === 'pending' ? 'แก้ไขเรื่องที่อยากดู' : 'แก้ไขข้อมูล';
-    document.getElementById('editTitle').value = entry.title;
-    document.getElementById('editType').value = entry.type === 'variety' ? 'Variety' : 'Series';
-    document.getElementById('editYear').value = entry.year || '';
-    document.getElementById('editGenres').value = entry.genres.join(', ');
-    document.getElementById('editEpisodes').value = entry.episodes || '';
-
-    if (source === 'pending') {
-      editLikedRow.style.display = 'none';
-      editFinishedRow.style.display = 'flex';
-      document.getElementById('editFinished').checked = !!entry.finished;
-    } else {
-      editLikedRow.style.display = 'flex';
-      editFinishedRow.style.display = 'none';
-      document.getElementById('editLiked').checked = !!entry.liked;
-    }
-
-    editFormStatus.textContent = '';
-    editModalOverlay.hidden = false;
+  function openEditModal(entry,source) {
+    editContext={originalTitle:entry.title,source};
+    editModalHeading.textContent=source==='pending'?'แก้ไขเรื่องที่อยากดู':'แก้ไขข้อมูล';
+    document.getElementById('editTitle').value=entry.title;
+    document.getElementById('editType').value=entry.type==='variety'?'Variety':'Series';
+    document.getElementById('editYear').value=entry.year||'';
+    document.getElementById('editGenres').value=entry.genres.join(', ');
+    document.getElementById('editEpisodes').value=entry.episodes||'';
+    if(source==='pending'){editLikedRow.style.display='none';editFinishedRow.style.display='flex';document.getElementById('editFinished').checked=!!entry.finished;}
+    else{editLikedRow.style.display='flex';editFinishedRow.style.display='none';document.getElementById('editLiked').checked=!!entry.liked;}
+    editFormStatus.textContent=''; editModalOverlay.hidden=false;
   }
 
-  function closeEditModal() {
-    editModalOverlay.hidden = true;
-    editEntryForm.reset();
-    editContext = null;
-  }
-
+  function closeEditModal() { editModalOverlay.hidden=true; editEntryForm.reset(); editContext=null; }
   closeEditModalBtn.addEventListener('click', closeEditModal);
-  editModalOverlay.addEventListener('click', (e) => {
-    if (e.target === editModalOverlay) closeEditModal();
-  });
+  editModalOverlay.addEventListener('click', e => { if(e.target===editModalOverlay) closeEditModal(); });
 
-  // ---------- เปิด/ปิด modal ลบ ----------
-  function openDeleteModal(entry, source) {
-    deleteContext = { title: entry.title, type: entry.type, source };
-    deleteModalTitle.textContent = entry.title;
-    deleteFormStatus.textContent = '';
-    deleteModalOverlay.hidden = false;
+  function openDeleteModal(entry,source) {
+    deleteContext={title:entry.title,type:entry.type,source};
+    deleteModalTitle.textContent=entry.title; deleteFormStatus.textContent=''; deleteModalOverlay.hidden=false;
   }
 
-  function closeDeleteModal() {
-    deleteModalOverlay.hidden = true;
-    deleteContext = null;
-  }
-
+  function closeDeleteModal() { deleteModalOverlay.hidden=true; deleteContext=null; }
   closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
-  deleteModalOverlay.addEventListener('click', (e) => {
-    if (e.target === deleteModalOverlay) closeDeleteModal();
+  deleteModalOverlay.addEventListener('click', e => { if(e.target===deleteModalOverlay) closeDeleteModal(); });
+
+  document.addEventListener('keydown', e => {
+    if(e.key!=='Escape') return;
+    if(!editModalOverlay.hidden) closeEditModal();
+    if(!deleteModalOverlay.hidden) closeDeleteModal();
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (!editModalOverlay.hidden) closeEditModal();
-    if (!deleteModalOverlay.hidden) closeDeleteModal();
+  function closeAllCardMenus() { document.querySelectorAll('.card-menu').forEach(m=>{m.hidden=true;}); }
+  document.addEventListener('click', e => { if(!e.target.closest('.card-menu-btn')&&!e.target.closest('.card-menu')) closeAllCardMenus(); });
+
+  // Grid: Watched
+  grid.addEventListener('click', e => {
+    const menuBtn=e.target.closest('.card-menu-btn');
+    if(menuBtn){const menu=menuBtn.nextElementSibling;const wasHidden=menu.hidden;closeAllCardMenus();menu.hidden=!wasHidden;return;}
+    const editBtn=e.target.closest('.edit-diary-btn');
+    if(editBtn){closeAllCardMenus();const entry=shows.find(s=>s.title===editBtn.dataset.title);if(entry)openEditModal(entry,'diary');return;}
+    const deleteBtn=e.target.closest('.delete-diary-btn');
+    if(deleteBtn){closeAllCardMenus();const entry=shows.find(s=>s.title===deleteBtn.dataset.title);if(entry)openDeleteModal(entry,'diary');}
   });
 
-  // ---------- เปิด/ปิดเมนู ⋮ บนการ์ด ----------
-  function closeAllCardMenus() {
-    document.querySelectorAll('.card-menu').forEach(m => { m.hidden = true; });
-  }
-
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.card-menu-btn') && !e.target.closest('.card-menu')) {
-      closeAllCardMenus();
-    }
+  // Grid: Watchlist
+  gridPending.addEventListener('click', e => {
+    const menuBtn=e.target.closest('.card-menu-btn');
+    if(menuBtn){const menu=menuBtn.nextElementSibling;const wasHidden=menu.hidden;closeAllCardMenus();menu.hidden=!wasHidden;return;}
+    const editBtn=e.target.closest('.edit-pending-btn');
+    if(editBtn){closeAllCardMenus();const entry=pending.find(p=>p.title===editBtn.dataset.title);if(entry)openEditModal(entry,'pending');return;}
+    const deleteBtn=e.target.closest('.delete-pending-btn');
+    if(deleteBtn){closeAllCardMenus();const entry=pending.find(p=>p.title===deleteBtn.dataset.title);if(entry)openDeleteModal(entry,'pending');}
   });
 
-  // ---------- คลิกปุ่มแก้ไข/ลบ บนการ์ด (event delegation) ----------
-  grid.addEventListener('click', (e) => {
-    const menuBtn = e.target.closest('.card-menu-btn');
-    if (menuBtn) {
-      const menu = menuBtn.nextElementSibling;
-      const wasHidden = menu.hidden;
-      closeAllCardMenus();
-      menu.hidden = !wasHidden;
-      return;
-    }
-
-    const editBtn = e.target.closest('.edit-diary-btn');
-    if (editBtn) {
-      closeAllCardMenus();
-      const entry = shows.find(s => s.title === editBtn.dataset.title);
-      if (entry) openEditModal(entry, 'diary');
-      return;
-    }
-    const deleteBtn = e.target.closest('.delete-diary-btn');
-    if (deleteBtn) {
-      closeAllCardMenus();
-      const entry = shows.find(s => s.title === deleteBtn.dataset.title);
-      if (entry) openDeleteModal(entry, 'diary');
-    }
+  // Grid: Dropped
+  gridDropped.addEventListener('click', e => {
+    const menuBtn=e.target.closest('.card-menu-btn');
+    if(menuBtn){const menu=menuBtn.nextElementSibling;const wasHidden=menu.hidden;closeAllCardMenus();menu.hidden=!wasHidden;return;}
+    const editBtn=e.target.closest('.edit-dropped-btn');
+    if(editBtn){closeAllCardMenus();const entry=dropped.find(d=>d.title===editBtn.dataset.title);if(entry)openEditDroppedModal(entry);return;}
+    const deleteBtn=e.target.closest('.delete-dropped-btn');
+    if(deleteBtn){closeAllCardMenus();const entry=dropped.find(d=>d.title===deleteBtn.dataset.title);if(entry)openDeleteModal(entry,'dropped');}
   });
 
-  gridPending.addEventListener('click', (e) => {
-    const menuBtn = e.target.closest('.card-menu-btn');
-    if (menuBtn) {
-      const menu = menuBtn.nextElementSibling;
-      const wasHidden = menu.hidden;
-      closeAllCardMenus();
-      menu.hidden = !wasHidden;
-      return;
-    }
-
-    const editBtn = e.target.closest('.edit-pending-btn');
-    if (editBtn) {
-      closeAllCardMenus();
-      const entry = pending.find(p => p.title === editBtn.dataset.title);
-      if (entry) openEditModal(entry, 'pending');
-      return;
-    }
-    const deleteBtn = e.target.closest('.delete-pending-btn');
-    if (deleteBtn) {
-      closeAllCardMenus();
-      const entry = pending.find(p => p.title === deleteBtn.dataset.title);
-      if (entry) openDeleteModal(entry, 'pending');
-    }
-  });
-
-  // ---------- ส่งฟอร์มแก้ไข ----------
-  editEntryForm.addEventListener('submit', async (e) => {
+  // Submit edit (Watched/Watchlist)
+  editEntryForm.addEventListener('submit', async e => {
     e.preventDefault();
-    if (!editContext) return;
-
-    const { originalTitle, source } = editContext;
-    const newTitle = document.getElementById('editTitle').value.trim();
-    if (!newTitle) return;
-
-    const typeRaw = document.getElementById('editType').value;
-    const type = typeRaw.toLowerCase() === 'variety' ? 'variety' : 'series';
-    const year = Number(document.getElementById('editYear').value) || '';
-    const genresStr = document.getElementById('editGenres').value.trim();
-    const genres = genresStr.split(',').map(g => g.trim()).filter(Boolean);
-    const episodes = Number(document.getElementById('editEpisodes').value) || 0;
-    const liked = document.getElementById('editLiked').checked;
-    const finished = document.getElementById('editFinished').checked;
-
+    if(!editContext) return;
+    const {originalTitle,source}=editContext;
+    const newTitle=document.getElementById('editTitle').value.trim();
+    if(!newTitle) return;
+    const typeRaw=document.getElementById('editType').value;
+    const type=typeRaw.toLowerCase()==='variety'?'variety':'series';
+    const year=Number(document.getElementById('editYear').value)||'';
+    const genresStr=document.getElementById('editGenres').value.trim();
+    const genres=genresStr.split(',').map(g=>g.trim()).filter(Boolean);
+    const episodes=Number(document.getElementById('editEpisodes').value)||0;
+    const liked=document.getElementById('editLiked').checked;
+    const finished=document.getElementById('editFinished').checked;
     closeEditModal();
-
-    // 1) อัปเดตหน้าเว็บทันที (optimistic update)
-    if (source === 'pending') {
-      pending = pending.map(p => p.title === originalTitle
-        ? { ...p, title: newTitle, type, year, genres, episodes, finished }
-        : p);
-      renderPending();
-      updateStatsPending();
-    } else {
-      shows = shows.map(s => s.title === originalTitle
-        ? { ...s, title: newTitle, type, year, genres, episodes, liked }
-        : s);
-      populateFilters();
-      render();
-      updateStats();
-    }
-
-    // 2) ส่งไปบันทึกจริงที่ Google Sheet เบื้องหลัง
-    if (!APPS_SCRIPT_URL.trim()) {
-      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — การแก้ไขนี้แสดงผลชั่วคราวเท่านั้น');
-      return;
-    }
-
+    if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished}:p);renderPending();updateStatsPending();}
+    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked}:s);populateFilters();render();updateStats();}
+    if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'update',
-          sheet: sheetKeyFor(source, type),
-          originalTitle,
-          title: newTitle,
-          type: typeRaw,
-          genres: genresStr,
-          year,
-          episodes,
-          liked,
-          finished
-        })
-      });
-    } catch (err) {
-      console.error('ส่งคำขอแก้ไขไปยัง Apps Script ไม่สำเร็จ:', err);
-    }
+      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,year,episodes,liked,finished})});
+    } catch(err){console.error(err);}
   });
 
-  // ---------- ยืนยันลบ ----------
+  // Confirm delete
   confirmDeleteBtn.addEventListener('click', async () => {
-    if (!deleteContext) return;
-    const { title, type, source } = deleteContext;
+    if(!deleteContext) return;
+    const {title,type,source}=deleteContext;
     closeDeleteModal();
-
-    // 1) อัปเดตหน้าเว็บทันที (optimistic update)
-    if (source === 'pending') {
-      pending = pending.filter(p => p.title !== title);
-      renderPending();
-      updateStatsPending();
-    } else {
-      shows = shows.filter(s => s.title !== title);
-      populateFilters();
-      render();
-      updateStats();
-    }
-
-    // 2) ลบจริงที่ Google Sheet เบื้องหลัง
-    if (!APPS_SCRIPT_URL.trim()) {
-      console.warn('ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL — การลบนี้แสดงผลชั่วคราวเท่านั้น');
-      return;
-    }
-
+    if(source==='pending'){pending=pending.filter(p=>p.title!==title);renderPending();updateStatsPending();}
+    else if(source==='dropped'){dropped=dropped.filter(d=>d.title!==title);renderDropped();}
+    else{shows=shows.filter(s=>s.title!==title);populateFilters();render();updateStats();}
+    if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'delete',
-          sheet: sheetKeyFor(source, type),
-          title
-        })
-      });
-    } catch (err) {
-      console.error('ส่งคำขอลบไปยัง Apps Script ไม่สำเร็จ:', err);
-    }
+      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'delete',sheet:sheetKeyFor(source,type),title})});
+    } catch(err){console.error(err);}
   });
 
-  // ---------------------------------------------------------------
-  // ระบบ Login — บังเนื้อหาทั้งหมดไว้จนกว่าจะกรอก Username/Password ถูกต้อง
-  // เช็คกับชีต "Accounts" ผ่าน Apps Script (action: 'login')
-  // เก็บสถานะ login ไว้ใน localStorage เพื่อไม่ต้อง login ใหม่ทุกครั้งที่เข้าเว็บ
-  //
-  // หมายเหตุสำคัญ: คำขอนี้ไม่ใช้ mode 'no-cors' เหมือน action อื่นๆ เพราะจำเป็นต้องอ่าน
-  // ผลลัพธ์กลับมาจริงๆ ว่า login ผ่านหรือไม่ (ใช้ Content-Type: text/plain เพื่อเลี่ยงปัญหา
-  // CORS preflight เหมือนเดิม)
-  //
-  // เรื่องสิทธิ์ (Role): Admin (แก้ไขข้อมูล + จัดการผู้ใช้ได้) / Editor (แก้ไขข้อมูลได้) /
-  // Viewer (ดูอย่างเดียว) — เก็บ username+role ไว้ใน localStorage เพื่อข้ามหน้า login รอบถัดไป
-  // แต่ "รหัสผ่าน" จะเก็บไว้ในตัวแปรในหน่วยความจำ (currentPassword) เท่านั้น ไม่ persist ลง
-  // localStorage เพื่อความปลอดภัย — ใช้ยืนยันตัวตนตอนทำรายการที่เกี่ยวกับ Settings > Users
-  // ถ้า refresh หน้าเว็บแล้วตัวแปรนี้หายไป ระบบจะขอให้พิมพ์รหัสผ่านยืนยันอีกครั้งตอนเข้า
-  // หน้า Users ครั้งแรกของรอบนั้น (ไม่ใช่ทุกครั้งที่ใช้งาน)
-  // ---------------------------------------------------------------
+  // ============================================================
+  // Edit Dropped Modal
+  // ============================================================
+  const editDroppedModalOverlay = document.getElementById('editDroppedModalOverlay');
+  const editDroppedForm         = document.getElementById('editDroppedForm');
+  const editDroppedFormStatus   = document.getElementById('editDroppedFormStatus');
+  let editDroppedContext = null;
+
+  function openEditDroppedModal(entry) {
+    editDroppedContext = { originalTitle: entry.title };
+    document.getElementById('editDroppedTitle').value    = entry.title;
+    document.getElementById('editDroppedYear').value     = entry.year || '';
+    document.getElementById('editDroppedEpisodes').value = entry.episodes || '';
+    document.getElementById('editDroppedGenres').value   = entry.genres.join(', ');
+    document.getElementById('editDroppedLastEp').value   = entry.lastEp || '';
+    editDroppedFormStatus.textContent = '';
+    editDroppedModalOverlay.hidden = false;
+  }
+
+  function closeEditDroppedModal() { editDroppedModalOverlay.hidden=true; editDroppedForm.reset(); editDroppedContext=null; }
+  document.getElementById('closeEditDroppedModal').addEventListener('click', closeEditDroppedModal);
+  editDroppedModalOverlay.addEventListener('click', e => { if(e.target===editDroppedModalOverlay) closeEditDroppedModal(); });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'&&!editDroppedModalOverlay.hidden) closeEditDroppedModal(); });
+
+  editDroppedForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    if(!editDroppedContext) return;
+    const {originalTitle}=editDroppedContext;
+    const newTitle=document.getElementById('editDroppedTitle').value.trim();
+    if(!newTitle) return;
+    const year=Number(document.getElementById('editDroppedYear').value)||'';
+    const episodes=Number(document.getElementById('editDroppedEpisodes').value)||0;
+    const genresStr=document.getElementById('editDroppedGenres').value.trim();
+    const genres=genresStr.split(',').map(g=>g.trim()).filter(Boolean);
+    const lastEp=Number(document.getElementById('editDroppedLastEp').value)||0;
+    closeEditDroppedModal();
+    dropped=dropped.map(d=>d.title===originalTitle?{...d,title:newTitle,year,episodes,genres,lastEp}:d);
+    renderDropped();
+    if(!APPS_SCRIPT_URL.trim()) return;
+    try {
+      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'update',sheet:'dropped',originalTitle,title:newTitle,year,episodes,genres:genresStr,lastEp})});
+    } catch(err){console.error(err);}
+  });
+
+  // ============================================================
+  // Login system
+  // ============================================================
   const AUTH_STORAGE_KEY = 'ktracker_auth';
+  const SESSION_PW_KEY   = 'ktracker_session_pw';
 
-  const loginOverlay = document.getElementById('loginOverlay');
-  const loginForm = document.getElementById('loginForm');
+  const loginOverlay    = document.getElementById('loginOverlay');
+  const loginForm       = document.getElementById('loginForm');
   const loginFormStatus = document.getElementById('loginFormStatus');
-  const loginSubmitBtn = document.getElementById('loginSubmitBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
+  const loginSubmitBtn  = document.getElementById('loginSubmitBtn');
+  const logoutBtn       = document.getElementById('logoutBtn');
   const settingsSectionLabel = document.getElementById('settingsSectionLabel');
-  const settingsSubNav = document.getElementById('settingsSubNav');
+  const settingsSubNav       = document.getElementById('settingsSubNav');
 
-  let currentUsername = null;
-  let currentPassword = null; // เก็บใน sessionStorage ด้วย (เฉพาะ Admin) เพื่อไม่ต้องถามรหัสซ้ำหลัง refresh
-  let currentRole = null;
+  let currentUsername=null, currentPassword=null, currentRole=null;
 
-  const SESSION_PW_KEY = 'ktracker_session_pw';
-
-  function rememberSessionPassword(password, role) {
-    currentPassword = password;
-    try {
-      if (role === 'Admin') {
-        sessionStorage.setItem(SESSION_PW_KEY, password);
-      } else {
-        sessionStorage.removeItem(SESSION_PW_KEY);
-      }
-    } catch (err) { /* sessionStorage ใช้ไม่ได้ (เช่น โหมด private) ก็ข้ามไป ไม่ critical */ }
+  function rememberSessionPassword(password,role) {
+    currentPassword=password;
+    try{ if(role==='Admin') sessionStorage.setItem(SESSION_PW_KEY,password); else sessionStorage.removeItem(SESSION_PW_KEY); }catch(err){}
   }
-
-  function restoreSessionPassword() {
-    try {
-      const pw = sessionStorage.getItem(SESSION_PW_KEY);
-      if (pw) currentPassword = pw;
-    } catch (err) { /* ข้ามไป */ }
-  }
-
-  function clearSessionPassword() {
-    currentPassword = null;
-    try { sessionStorage.removeItem(SESSION_PW_KEY); } catch (err) { /* ข้ามไป */ }
-  }
-
-  function getStoredAuth() {
-    try {
-      const raw = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!parsed || !parsed.username) return null;
-      return parsed;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  function setStoredAuth(username, role) {
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ username, role, loggedInAt: Date.now() }));
-  }
-
-  function clearStoredAuth() {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-  }
+  function restoreSessionPassword() { try{ const pw=sessionStorage.getItem(SESSION_PW_KEY); if(pw) currentPassword=pw; }catch(err){} }
+  function clearSessionPassword()   { currentPassword=null; try{ sessionStorage.removeItem(SESSION_PW_KEY); }catch(err){} }
+  function getStoredAuth()  { try{ const raw=localStorage.getItem(AUTH_STORAGE_KEY); if(!raw) return null; const p=JSON.parse(raw); return(p&&p.username)?p:null; }catch(err){return null;} }
+  function setStoredAuth(username,role) { localStorage.setItem(AUTH_STORAGE_KEY,JSON.stringify({username,role,loggedInAt:Date.now()})); }
+  function clearStoredAuth() { localStorage.removeItem(AUTH_STORAGE_KEY); }
 
   function applyRoleVisibility() {
-    document.body.classList.toggle('viewer-mode', currentRole === 'Viewer');
-    const isAdmin = currentRole === 'Admin';
-    settingsSectionLabel.hidden = !isAdmin;
-    settingsSubNav.hidden = !isAdmin;
+    document.body.classList.toggle('viewer-mode',currentRole==='Viewer');
+    const isAdmin=currentRole==='Admin';
+    settingsSectionLabel.hidden=!isAdmin; settingsSubNav.hidden=!isAdmin;
   }
 
   function unlockApp() {
-    loginOverlay.hidden = true;
-    applyRoleVisibility();
-    loadData();
-    loadPending();
+    loginOverlay.hidden=true; applyRoleVisibility();
+    loadData(); loadPending();
+    // Dropped loads lazily when tab is clicked
   }
 
-  loginForm.addEventListener('submit', async (e) => {
+  loginForm.addEventListener('submit', async e => {
     e.preventDefault();
-
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    if (!username || !password) return;
-
-    if (!APPS_SCRIPT_URL.trim()) {
-      loginFormStatus.textContent = 'ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL ในโค้ด ไม่สามารถเข้าสู่ระบบได้';
-      loginFormStatus.className = 'form-status error';
-      return;
-    }
-
-    loginSubmitBtn.disabled = true;
-    loginFormStatus.textContent = 'กำลังตรวจสอบ...';
-    loginFormStatus.className = 'form-status';
-
-    try {
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'login', username, password })
-      });
-      const result = await res.json();
-
-      if (result.ok) {
-        currentUsername = result.username || username;
-        currentRole = result.role || 'Editor';
-        rememberSessionPassword(password, currentRole);
-        setStoredAuth(currentUsername, currentRole);
-        loginFormStatus.textContent = '';
-        loginFormStatus.className = 'form-status';
-        loginForm.reset();
-        unlockApp();
+    const username=document.getElementById('loginUsername').value.trim();
+    const password=document.getElementById('loginPassword').value;
+    if(!username||!password) return;
+    if(!APPS_SCRIPT_URL.trim()){loginFormStatus.textContent='ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL';loginFormStatus.className='form-status error';return;}
+    loginSubmitBtn.disabled=true; loginFormStatus.textContent='กำลังตรวจสอบ...'; loginFormStatus.className='form-status';
+    try{
+      const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',username,password})});
+      const result=await res.json();
+      if(result.ok){
+        currentUsername=result.username||username; currentRole=result.role||'Editor';
+        rememberSessionPassword(password,currentRole); setStoredAuth(currentUsername,currentRole);
+        loginFormStatus.textContent=''; loginForm.reset(); unlockApp();
       } else {
-        loginFormStatus.textContent = result.error || 'Username หรือ Password ไม่ถูกต้อง';
-        loginFormStatus.className = 'form-status error';
+        loginFormStatus.textContent=result.error||'Username หรือ Password ไม่ถูกต้อง'; loginFormStatus.className='form-status error';
       }
-    } catch (err) {
-      console.error('เข้าสู่ระบบไม่สำเร็จ:', err);
-      loginFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
-      loginFormStatus.className = 'form-status error';
-    } finally {
-      loginSubmitBtn.disabled = false;
-    }
+    }catch(err){loginFormStatus.textContent='เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';loginFormStatus.className='form-status error';}
+    finally{loginSubmitBtn.disabled=false;}
   });
 
-  logoutBtn.addEventListener('click', () => {
-    clearStoredAuth();
-    clearSessionPassword();
-    location.reload();
-  });
+  logoutBtn.addEventListener('click',()=>{ clearStoredAuth(); clearSessionPassword(); location.reload(); });
 
-  // เช็คตอนเปิดหน้าเว็บ: ถ้าเคย login ไว้แล้ว (มีอยู่ใน localStorage) ก็เข้าได้เลยไม่ต้อง login ซ้ำ
-  // (role ที่เก็บไว้อาจไม่มีถ้า login ไว้ตั้งแต่ก่อนอัปเดตฟีเจอร์นี้ — จะ fallback เป็น Editor)
-  const existingAuth = getStoredAuth();
-  if (existingAuth) {
-    currentUsername = existingAuth.username;
-    currentRole = existingAuth.role || 'Editor';
-    if (currentRole === 'Admin') restoreSessionPassword();
-    unlockApp();
-  }
+  const existingAuth=getStoredAuth();
+  if(existingAuth){ currentUsername=existingAuth.username; currentRole=existingAuth.role||'Editor'; if(currentRole==='Admin') restoreSessionPassword(); unlockApp(); }
 
-  // ---------------------------------------------------------------
-  // ยืนยันรหัสผ่าน Admin อีกครั้ง — ใช้ก่อนทำรายการใดๆ ในหน้า Settings > Users
-  // ถ้ามี currentPassword ในหน่วยความจำอยู่แล้ว (เพิ่ง login รอบนี้) จะข้ามขั้นตอนนี้ไปเลย
-  // ---------------------------------------------------------------
+  // ============================================================
+  // Admin reauth
+  // ============================================================
   const adminReauthModalOverlay = document.getElementById('adminReauthModalOverlay');
-  const adminReauthForm = document.getElementById('adminReauthForm');
-  const adminReauthFormStatus = document.getElementById('adminReauthFormStatus');
-  let pendingReauthResolve = null;
-  let pendingReauthReject = null;
+  const adminReauthForm         = document.getElementById('adminReauthForm');
+  const adminReauthFormStatus   = document.getElementById('adminReauthFormStatus');
+  let pendingReauthResolve=null, pendingReauthReject=null;
 
   function ensureAdminPassword() {
-    if (currentPassword) return Promise.resolve(currentPassword);
-    return new Promise((resolve, reject) => {
-      pendingReauthResolve = resolve;
-      pendingReauthReject = reject;
-      adminReauthFormStatus.textContent = '';
-      adminReauthFormStatus.className = 'form-status';
-      document.getElementById('adminReauthPassword').value = '';
-      adminReauthModalOverlay.hidden = false;
-      document.getElementById('adminReauthPassword').focus();
+    if(currentPassword) return Promise.resolve(currentPassword);
+    return new Promise((resolve,reject)=>{
+      pendingReauthResolve=resolve; pendingReauthReject=reject;
+      adminReauthFormStatus.textContent=''; adminReauthFormStatus.className='form-status';
+      document.getElementById('adminReauthPassword').value='';
+      adminReauthModalOverlay.hidden=false; document.getElementById('adminReauthPassword').focus();
     });
   }
 
   function closeAdminReauthModal(cancelled) {
-    adminReauthModalOverlay.hidden = true;
-    if (cancelled && pendingReauthReject) {
-      pendingReauthReject(new Error('cancelled'));
-    }
-    pendingReauthResolve = null;
-    pendingReauthReject = null;
+    adminReauthModalOverlay.hidden=true;
+    if(cancelled&&pendingReauthReject) pendingReauthReject(new Error('cancelled'));
+    pendingReauthResolve=null; pendingReauthReject=null;
   }
 
-  document.getElementById('closeAdminReauthModal').addEventListener('click', () => closeAdminReauthModal(true));
-  adminReauthModalOverlay.addEventListener('click', (e) => {
-    if (e.target === adminReauthModalOverlay) closeAdminReauthModal(true);
-  });
+  document.getElementById('closeAdminReauthModal').addEventListener('click',()=>closeAdminReauthModal(true));
+  adminReauthModalOverlay.addEventListener('click',e=>{if(e.target===adminReauthModalOverlay)closeAdminReauthModal(true);});
 
-  adminReauthForm.addEventListener('submit', async (e) => {
+  adminReauthForm.addEventListener('submit',async e=>{
     e.preventDefault();
-    const password = document.getElementById('adminReauthPassword').value;
-    if (!password) return;
-
-    adminReauthFormStatus.textContent = 'กำลังตรวจสอบ...';
-    adminReauthFormStatus.className = 'form-status';
-
-    try {
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'login', username: currentUsername, password })
-      });
-      const result = await res.json();
-
-      if (result.ok && result.role === 'Admin') {
-        rememberSessionPassword(password, 'Admin');
-        adminReauthModalOverlay.hidden = true;
-        if (pendingReauthResolve) {
-          pendingReauthResolve(password);
-          pendingReauthResolve = null;
-          pendingReauthReject = null;
-        }
+    const password=document.getElementById('adminReauthPassword').value;
+    if(!password) return;
+    adminReauthFormStatus.textContent='กำลังตรวจสอบ...'; adminReauthFormStatus.className='form-status';
+    try{
+      const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',username:currentUsername,password})});
+      const result=await res.json();
+      if(result.ok&&result.role==='Admin'){
+        rememberSessionPassword(password,'Admin'); adminReauthModalOverlay.hidden=true;
+        if(pendingReauthResolve){pendingReauthResolve(password);pendingReauthResolve=null;pendingReauthReject=null;}
       } else {
-        adminReauthFormStatus.textContent = result.ok ? 'บัญชีนี้ไม่ใช่ Admin' : (result.error || 'รหัสผ่านไม่ถูกต้อง');
-        adminReauthFormStatus.className = 'form-status error';
+        adminReauthFormStatus.textContent=result.ok?'บัญชีนี้ไม่ใช่ Admin':(result.error||'รหัสผ่านไม่ถูกต้อง');
+        adminReauthFormStatus.className='form-status error';
       }
-    } catch (err) {
-      console.error('ยืนยันตัวตนไม่สำเร็จ:', err);
-      adminReauthFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
-      adminReauthFormStatus.className = 'form-status error';
-    }
+    }catch(err){adminReauthFormStatus.textContent='เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';adminReauthFormStatus.className='form-status error';}
   });
 
-  // เรียก action ที่เกี่ยวกับการจัดการผู้ใช้ทุกตัว ผ่านฟังก์ชันนี้ — แนบ adminUsername/adminPassword
-  // ให้ Apps Script เช็คสิทธิ์ Admin จริงๆ ทุกครั้งก่อนทำรายการ (ไม่ใช่แค่ซ่อนปุ่มในหน้าเว็บ)
-  async function callAdminAction(action, extraPayload) {
-    const password = await ensureAdminPassword();
-    const payload = Object.assign({
-      action: action,
-      adminUsername: currentUsername,
-      adminPassword: password
-    }, extraPayload || {});
-
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
+  async function callAdminAction(action,extraPayload) {
+    const password=await ensureAdminPassword();
+    const payload=Object.assign({action,adminUsername:currentUsername,adminPassword:password},extraPayload||{});
+    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
     return res.json();
   }
 
-  // ---------------------------------------------------------------
-  // หน้า Settings > Users — ตาราง + เพิ่ม/แก้สิทธิ์/รีเซ็ตรหัส/ลบผู้ใช้
-  // ---------------------------------------------------------------
-  let usersList = [];
-  const usersTableBody = document.getElementById('usersTableBody');
+  // ============================================================
+  // Users management
+  // ============================================================
+  let usersList=[];
+  const usersTableBody  = document.getElementById('usersTableBody');
   const usersTableEmpty = document.getElementById('usersTableEmpty');
 
   async function loadUsersTable() {
-    usersTableBody.innerHTML = '';
-    usersTableEmpty.hidden = true;
-
-    try {
-      const result = await callAdminAction('listUsers');
-      if (!result.ok) {
-        usersTableEmpty.hidden = false;
-        usersTableEmpty.textContent = result.error || 'โหลดรายชื่อผู้ใช้ไม่สำเร็จ';
-        return;
-      }
-      usersList = result.users || [];
-      renderUsersTable();
-    } catch (err) {
-      if (err.message !== 'cancelled') console.error('โหลดรายชื่อผู้ใช้ไม่สำเร็จ:', err);
-      usersTableEmpty.hidden = false;
-      usersTableEmpty.textContent = 'โหลดรายชื่อผู้ใช้ไม่สำเร็จ ลองใหม่อีกครั้ง';
-    }
+    usersTableBody.innerHTML=''; usersTableEmpty.hidden=true;
+    try{
+      const result=await callAdminAction('listUsers');
+      if(!result.ok){usersTableEmpty.hidden=false;usersTableEmpty.textContent=result.error||'โหลดรายชื่อผู้ใช้ไม่สำเร็จ';return;}
+      usersList=result.users||[]; renderUsersTable();
+    }catch(err){if(err.message!=='cancelled')console.error(err);usersTableEmpty.hidden=false;usersTableEmpty.textContent='โหลดรายชื่อผู้ใช้ไม่สำเร็จ';}
   }
 
   function renderUsersTable() {
-    if (usersList.length === 0) {
-      usersTableBody.innerHTML = '';
-      usersTableEmpty.hidden = false;
-      usersTableEmpty.textContent = 'ยังไม่มีผู้ใช้งาน';
-      return;
-    }
-    usersTableEmpty.hidden = true;
-
-    usersTableBody.innerHTML = usersList.map(u => {
-      const isSelf = u.username === currentUsername;
-      return `
-        <tr>
-          <td>${u.username}${isSelf ? ' <span style="color:var(--text-dim); font-size:0.75rem;">(คุณ)</span>' : ''}</td>
-          <td>
-            <select class="role-select" data-username="${u.username}" ${isSelf ? 'disabled' : ''}>
-              <option value="Admin" ${u.role === 'Admin' ? 'selected' : ''}>Admin</option>
-              <option value="Editor" ${u.role === 'Editor' ? 'selected' : ''}>Editor</option>
-              <option value="Viewer" ${u.role === 'Viewer' ? 'selected' : ''}>Viewer</option>
-            </select>
-          </td>
-          <td>
-            <button class="active-toggle-btn ${u.active ? 'active' : 'inactive'}" data-username="${u.username}" data-active="${u.active}" ${isSelf ? 'disabled' : ''}>
-              ${u.active ? 'ใช้งานอยู่' : 'ปิดใช้งาน'}
-            </button>
-          </td>
-          <td><button class="table-action-btn reset-pw-btn" data-username="${u.username}">Reset</button></td>
-          <td><button class="table-action-btn danger delete-user-btn" data-username="${u.username}" ${isSelf ? 'disabled' : ''}>ลบ</button></td>
-        </tr>
-      `;
+    if(usersList.length===0){usersTableBody.innerHTML='';usersTableEmpty.hidden=false;usersTableEmpty.textContent='ยังไม่มีผู้ใช้งาน';return;}
+    usersTableEmpty.hidden=true;
+    usersTableBody.innerHTML=usersList.map(u=>{
+      const isSelf=u.username===currentUsername;
+      return `<tr>
+        <td>${u.username}${isSelf?' <span style="color:var(--text-dim);font-size:0.75rem;">(คุณ)</span>':''}</td>
+        <td><select class="role-select" data-username="${u.username}" ${isSelf?'disabled':''}>
+          <option value="Admin" ${u.role==='Admin'?'selected':''}>Admin</option>
+          <option value="Editor" ${u.role==='Editor'?'selected':''}>Editor</option>
+          <option value="Viewer" ${u.role==='Viewer'?'selected':''}>Viewer</option>
+        </select></td>
+        <td><button class="active-toggle-btn ${u.active?'active':'inactive'}" data-username="${u.username}" data-active="${u.active}" ${isSelf?'disabled':''}>${u.active?'ใช้งานอยู่':'ปิดใช้งาน'}</button></td>
+        <td><button class="table-action-btn reset-pw-btn" data-username="${u.username}">Reset</button></td>
+        <td><button class="table-action-btn danger delete-user-btn" data-username="${u.username}" ${isSelf?'disabled':''}>ลบ</button></td>
+      </tr>`;
     }).join('');
   }
 
-  usersTableBody.addEventListener('change', async (e) => {
-    const select = e.target.closest('.role-select');
-    if (!select) return;
-    const username = select.dataset.username;
-    const newRole = select.value;
-    const prevRole = (usersList.find(u => u.username === username) || {}).role;
-    select.disabled = true;
-    try {
-      const result = await callAdminAction('updateUserRole', { targetUsername: username, newRole });
-      if (!result.ok) {
-        alert(result.error || 'อัปเดตสิทธิ์ไม่สำเร็จ');
-        select.value = prevRole;
-      } else {
-        const u = usersList.find(x => x.username === username);
-        if (u) u.role = newRole;
-      }
-    } catch (err) {
-      if (err.message !== 'cancelled') {
-        console.error(err);
-        alert('เชื่อมต่อไม่สำเร็จ');
-      }
-      select.value = prevRole;
-    } finally {
-      select.disabled = false;
-    }
+  usersTableBody.addEventListener('change',async e=>{
+    const select=e.target.closest('.role-select');
+    if(!select) return;
+    const username=select.dataset.username, newRole=select.value;
+    const prevRole=(usersList.find(u=>u.username===username)||{}).role;
+    select.disabled=true;
+    try{
+      const result=await callAdminAction('updateUserRole',{targetUsername:username,newRole});
+      if(!result.ok){alert(result.error||'อัปเดตสิทธิ์ไม่สำเร็จ');select.value=prevRole;}
+      else{const u=usersList.find(x=>x.username===username);if(u)u.role=newRole;}
+    }catch(err){if(err.message!=='cancelled'){console.error(err);alert('เชื่อมต่อไม่สำเร็จ');}select.value=prevRole;}
+    finally{select.disabled=false;}
   });
 
-  usersTableBody.addEventListener('click', async (e) => {
-    const toggleBtn = e.target.closest('.active-toggle-btn');
-    if (toggleBtn) {
-      const username = toggleBtn.dataset.username;
-      const newActive = toggleBtn.dataset.active !== 'true';
-      toggleBtn.disabled = true;
-      try {
-        const result = await callAdminAction('toggleUserActive', { targetUsername: username, newActive });
-        if (!result.ok) {
-          alert(result.error || 'อัปเดตสถานะไม่สำเร็จ');
-        } else {
-          const u = usersList.find(x => x.username === username);
-          if (u) u.active = newActive;
-          renderUsersTable();
-        }
-      } catch (err) {
-        if (err.message !== 'cancelled') {
-          console.error(err);
-          alert('เชื่อมต่อไม่สำเร็จ');
-        }
-      } finally {
-        toggleBtn.disabled = false;
-      }
+  usersTableBody.addEventListener('click',async e=>{
+    const toggleBtn=e.target.closest('.active-toggle-btn');
+    if(toggleBtn){
+      const username=toggleBtn.dataset.username, newActive=toggleBtn.dataset.active!=='true';
+      toggleBtn.disabled=true;
+      try{
+        const result=await callAdminAction('toggleUserActive',{targetUsername:username,newActive});
+        if(!result.ok) alert(result.error||'อัปเดตสถานะไม่สำเร็จ');
+        else{const u=usersList.find(x=>x.username===username);if(u)u.active=newActive;renderUsersTable();}
+      }catch(err){if(err.message!=='cancelled'){console.error(err);alert('เชื่อมต่อไม่สำเร็จ');}}
+      finally{toggleBtn.disabled=false;}
       return;
     }
-
-    const resetBtn = e.target.closest('.reset-pw-btn');
-    if (resetBtn) {
-      openResetPasswordModal(resetBtn.dataset.username);
-      return;
-    }
-
-    const deleteBtn = e.target.closest('.delete-user-btn');
-    if (deleteBtn) {
-      openDeleteUserModal(deleteBtn.dataset.username);
-    }
+    const resetBtn=e.target.closest('.reset-pw-btn');
+    if(resetBtn){openResetPasswordModal(resetBtn.dataset.username);return;}
+    const deleteBtn=e.target.closest('.delete-user-btn');
+    if(deleteBtn) openDeleteUserModal(deleteBtn.dataset.username);
   });
 
-  // ---------- modal: เพิ่มผู้ใช้ใหม่ ----------
-  const addUserModalOverlay = document.getElementById('addUserModalOverlay');
-  const addUserForm = document.getElementById('addUserForm');
-  const addUserFormStatus = document.getElementById('addUserFormStatus');
-
-  document.getElementById('openAddUserModal').addEventListener('click', () => {
-    addUserFormStatus.textContent = '';
-    addUserFormStatus.className = 'form-status';
-    addUserModalOverlay.hidden = false;
-    document.getElementById('newUserUsername').focus();
-  });
-
-  function closeAddUserModal() {
-    addUserModalOverlay.hidden = true;
-    addUserForm.reset();
-  }
-
-  document.getElementById('closeAddUserModal').addEventListener('click', closeAddUserModal);
-  addUserModalOverlay.addEventListener('click', (e) => {
-    if (e.target === addUserModalOverlay) closeAddUserModal();
-  });
-
-  addUserForm.addEventListener('submit', async (e) => {
+  // Add user modal
+  const addUserModalOverlay=document.getElementById('addUserModalOverlay');
+  const addUserForm=document.getElementById('addUserForm');
+  const addUserFormStatus=document.getElementById('addUserFormStatus');
+  document.getElementById('openAddUserModal').addEventListener('click',()=>{addUserFormStatus.textContent='';addUserFormStatus.className='form-status';addUserModalOverlay.hidden=false;document.getElementById('newUserUsername').focus();});
+  function closeAddUserModal(){addUserModalOverlay.hidden=true;addUserForm.reset();}
+  document.getElementById('closeAddUserModal').addEventListener('click',closeAddUserModal);
+  addUserModalOverlay.addEventListener('click',e=>{if(e.target===addUserModalOverlay)closeAddUserModal();});
+  addUserForm.addEventListener('submit',async e=>{
     e.preventDefault();
-    const newUsername = document.getElementById('newUserUsername').value.trim();
-    const newPassword = document.getElementById('newUserPassword').value;
-    const newRole = document.getElementById('newUserRole').value;
-    if (!newUsername || !newPassword) return;
-
-    addUserFormStatus.textContent = 'กำลังบันทึก...';
-    addUserFormStatus.className = 'form-status';
-
-    try {
-      const result = await callAdminAction('addUser', { newUsername, newPassword, newRole });
-      if (result.ok) {
-        closeAddUserModal();
-        loadUsersTable();
-      } else {
-        addUserFormStatus.textContent = result.error || 'เพิ่มผู้ใช้ไม่สำเร็จ';
-        addUserFormStatus.className = 'form-status error';
-      }
-    } catch (err) {
-      if (err.message !== 'cancelled') {
-        console.error(err);
-        addUserFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
-        addUserFormStatus.className = 'form-status error';
-      }
-    }
+    const newUsername=document.getElementById('newUserUsername').value.trim();
+    const newPassword=document.getElementById('newUserPassword').value;
+    const newRole=document.getElementById('newUserRole').value;
+    if(!newUsername||!newPassword) return;
+    addUserFormStatus.textContent='กำลังบันทึก...';addUserFormStatus.className='form-status';
+    try{
+      const result=await callAdminAction('addUser',{newUsername,newPassword,newRole});
+      if(result.ok){closeAddUserModal();loadUsersTable();}
+      else{addUserFormStatus.textContent=result.error||'เพิ่มผู้ใช้ไม่สำเร็จ';addUserFormStatus.className='form-status error';}
+    }catch(err){if(err.message!=='cancelled'){console.error(err);addUserFormStatus.textContent='เชื่อมต่อไม่สำเร็จ';addUserFormStatus.className='form-status error';}}
   });
 
-  // ---------- modal: ตั้งรหัสผ่านใหม่ ----------
-  const resetPasswordModalOverlay = document.getElementById('resetPasswordModalOverlay');
-  const resetPasswordForm = document.getElementById('resetPasswordForm');
-  const resetPasswordFormStatus = document.getElementById('resetPasswordFormStatus');
-  let resetPasswordTargetUsername = null;
-
-  function openResetPasswordModal(username) {
-    resetPasswordTargetUsername = username;
-    document.getElementById('resetPasswordModalTitle').textContent = username;
-    document.getElementById('resetNewPassword').value = '';
-    resetPasswordFormStatus.textContent = '';
-    resetPasswordFormStatus.className = 'form-status';
-    resetPasswordModalOverlay.hidden = false;
-    document.getElementById('resetNewPassword').focus();
-  }
-
-  function closeResetPasswordModal() {
-    resetPasswordModalOverlay.hidden = true;
-  }
-
-  document.getElementById('closeResetPasswordModal').addEventListener('click', closeResetPasswordModal);
-  resetPasswordModalOverlay.addEventListener('click', (e) => {
-    if (e.target === resetPasswordModalOverlay) closeResetPasswordModal();
-  });
-
-  resetPasswordForm.addEventListener('submit', async (e) => {
+  // Reset password modal
+  const resetPasswordModalOverlay=document.getElementById('resetPasswordModalOverlay');
+  const resetPasswordForm=document.getElementById('resetPasswordForm');
+  const resetPasswordFormStatus=document.getElementById('resetPasswordFormStatus');
+  let resetPasswordTargetUsername=null;
+  function openResetPasswordModal(username){resetPasswordTargetUsername=username;document.getElementById('resetPasswordModalTitle').textContent=username;document.getElementById('resetNewPassword').value='';resetPasswordFormStatus.textContent='';resetPasswordFormStatus.className='form-status';resetPasswordModalOverlay.hidden=false;document.getElementById('resetNewPassword').focus();}
+  function closeResetPasswordModal(){resetPasswordModalOverlay.hidden=true;}
+  document.getElementById('closeResetPasswordModal').addEventListener('click',closeResetPasswordModal);
+  resetPasswordModalOverlay.addEventListener('click',e=>{if(e.target===resetPasswordModalOverlay)closeResetPasswordModal();});
+  resetPasswordForm.addEventListener('submit',async e=>{
     e.preventDefault();
-    const newPassword = document.getElementById('resetNewPassword').value;
-    if (!newPassword || !resetPasswordTargetUsername) return;
-
-    resetPasswordFormStatus.textContent = 'กำลังบันทึก...';
-    resetPasswordFormStatus.className = 'form-status';
-
-    try {
-      const result = await callAdminAction('resetUserPassword', {
-        targetUsername: resetPasswordTargetUsername, newPassword
-      });
-      if (result.ok) {
-        closeResetPasswordModal();
-      } else {
-        resetPasswordFormStatus.textContent = result.error || 'รีเซ็ตรหัสผ่านไม่สำเร็จ';
-        resetPasswordFormStatus.className = 'form-status error';
-      }
-    } catch (err) {
-      if (err.message !== 'cancelled') {
-        console.error(err);
-        resetPasswordFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
-        resetPasswordFormStatus.className = 'form-status error';
-      }
-    }
+    const newPassword=document.getElementById('resetNewPassword').value;
+    if(!newPassword||!resetPasswordTargetUsername) return;
+    resetPasswordFormStatus.textContent='กำลังบันทึก...';resetPasswordFormStatus.className='form-status';
+    try{
+      const result=await callAdminAction('resetUserPassword',{targetUsername:resetPasswordTargetUsername,newPassword});
+      if(result.ok) closeResetPasswordModal();
+      else{resetPasswordFormStatus.textContent=result.error||'รีเซ็ตรหัสผ่านไม่สำเร็จ';resetPasswordFormStatus.className='form-status error';}
+    }catch(err){if(err.message!=='cancelled'){console.error(err);resetPasswordFormStatus.textContent='เชื่อมต่อไม่สำเร็จ';resetPasswordFormStatus.className='form-status error';}}
   });
 
-  // ---------- modal: ลบผู้ใช้ ----------
-  const deleteUserModalOverlay = document.getElementById('deleteUserModalOverlay');
-  const deleteUserFormStatus = document.getElementById('deleteUserFormStatus');
-  let deleteUserTargetUsername = null;
-
-  function openDeleteUserModal(username) {
-    deleteUserTargetUsername = username;
-    document.getElementById('deleteUserModalTitle').textContent = username;
-    deleteUserFormStatus.textContent = '';
-    deleteUserFormStatus.className = 'form-status';
-    deleteUserModalOverlay.hidden = false;
-  }
-
-  function closeDeleteUserModal() {
-    deleteUserModalOverlay.hidden = true;
-  }
-
-  document.getElementById('closeDeleteUserModal').addEventListener('click', closeDeleteUserModal);
-  deleteUserModalOverlay.addEventListener('click', (e) => {
-    if (e.target === deleteUserModalOverlay) closeDeleteUserModal();
-  });
-
-  document.getElementById('confirmDeleteUserBtn').addEventListener('click', async () => {
-    if (!deleteUserTargetUsername) return;
-    try {
-      const result = await callAdminAction('deleteUser', { targetUsername: deleteUserTargetUsername });
-      if (result.ok) {
-        closeDeleteUserModal();
-        loadUsersTable();
-      } else {
-        deleteUserFormStatus.textContent = result.error || 'ลบผู้ใช้ไม่สำเร็จ';
-        deleteUserFormStatus.className = 'form-status error';
-      }
-    } catch (err) {
-      if (err.message !== 'cancelled') {
-        console.error(err);
-        deleteUserFormStatus.textContent = 'เชื่อมต่อไม่สำเร็จ ลองใหม่อีกครั้ง';
-        deleteUserFormStatus.className = 'form-status error';
-      }
-    }
+  // Delete user modal
+  const deleteUserModalOverlay=document.getElementById('deleteUserModalOverlay');
+  const deleteUserFormStatus=document.getElementById('deleteUserFormStatus');
+  let deleteUserTargetUsername=null;
+  function openDeleteUserModal(username){deleteUserTargetUsername=username;document.getElementById('deleteUserModalTitle').textContent=username;deleteUserFormStatus.textContent='';deleteUserFormStatus.className='form-status';deleteUserModalOverlay.hidden=false;}
+  function closeDeleteUserModal(){deleteUserModalOverlay.hidden=true;}
+  document.getElementById('closeDeleteUserModal').addEventListener('click',closeDeleteUserModal);
+  deleteUserModalOverlay.addEventListener('click',e=>{if(e.target===deleteUserModalOverlay)closeDeleteUserModal();});
+  document.getElementById('confirmDeleteUserBtn').addEventListener('click',async()=>{
+    if(!deleteUserTargetUsername) return;
+    try{
+      const result=await callAdminAction('deleteUser',{targetUsername:deleteUserTargetUsername});
+      if(result.ok){closeDeleteUserModal();loadUsersTable();}
+      else{deleteUserFormStatus.textContent=result.error||'ลบผู้ใช้ไม่สำเร็จ';deleteUserFormStatus.className='form-status error';}
+    }catch(err){if(err.message!=='cancelled'){console.error(err);deleteUserFormStatus.textContent='เชื่อมต่อไม่สำเร็จ';deleteUserFormStatus.className='form-status error';}}
   });
 </script>
-
 </body>
 </html>
