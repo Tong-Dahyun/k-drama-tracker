@@ -895,6 +895,53 @@
     color: var(--text-soft);
   }
 
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 24px 0 8px;
+    flex-wrap: wrap;
+  }
+
+  .page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-soft);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+
+  .page-btn:hover:not(:disabled) {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .page-btn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .page-info {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0 6px;
+  }
+
   .empty .stamp-big {
     display: inline-block;
     font-family: 'Inter', sans-serif;
@@ -1559,7 +1606,7 @@
 
         <section class="page-section active" id="page-diary">
           <div class="grid" id="grid"></div>
-
+          <div class="pagination" id="paginationDiary"></div>
           <div class="empty" id="empty" hidden>
             <div class="stamp-big">SOLD OUT</div>
             <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
@@ -1568,7 +1615,7 @@
 
         <section class="page-section" id="page-watchlist">
           <div class="grid" id="gridPending"></div>
-
+          <div class="pagination" id="paginationWatchlist"></div>
           <div class="empty" id="emptyPending" hidden>
             <div class="stamp-big">SOLD OUT</div>
             <p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p>
@@ -1908,6 +1955,10 @@
   let activeYearPending = 'all';
   let activeGenrePending = 'all';
 
+  const PAGE_SIZE = 48;
+  let currentPage = 1;
+  let currentPagePending = 1;
+
   // ---------- Slicer ของหน้า Dashboard: Series / Variety ----------
   let summaryTypeFilter = { series: true, variety: true };
 
@@ -2119,6 +2170,7 @@
     if (!diaryLoaded) {
       grid.innerHTML = '';
       emptyState.hidden = true;
+      document.getElementById('paginationDiary').innerHTML = '';
       return;
     }
 
@@ -2145,14 +2197,20 @@
 
     if (filtered.length === 0) {
       emptyState.hidden = false;
+      document.getElementById('paginationDiary').innerHTML = '';
       return;
     }
     emptyState.hidden = true;
 
-    filtered.forEach((s, i) => {
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+    pageItems.forEach((s, i) => {
       const card = document.createElement('article');
       card.className = 'ticket';
-      card.style.animationDelay = `${i * 0.06}s`;
+      card.style.animationDelay = `${i * 0.03}s`;
       card.innerHTML = `
         <div class="ticket-main">
           <span class="ticket-type ${s.type}">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span>
@@ -2173,12 +2231,19 @@
       `;
       grid.appendChild(card);
     });
+
+    renderPaginationControls('paginationDiary', currentPage, totalPages, filtered.length, (page) => {
+      currentPage = page;
+      window.scrollTo(0, 0);
+      render();
+    });
   }
 
   function renderPending() {
     if (!pendingLoaded) {
       gridPending.innerHTML = '';
       emptyStatePending.hidden = true;
+      document.getElementById('paginationWatchlist').innerHTML = '';
       return;
     }
 
@@ -2204,14 +2269,20 @@
 
     if (filtered.length === 0) {
       emptyStatePending.hidden = false;
+      document.getElementById('paginationWatchlist').innerHTML = '';
       return;
     }
     emptyStatePending.hidden = true;
 
-    filtered.forEach((s, i) => {
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    if (currentPagePending > totalPages) currentPagePending = totalPages;
+    const start = (currentPagePending - 1) * PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+    pageItems.forEach((s, i) => {
       const card = document.createElement('article');
       card.className = 'ticket watchlist';
-      card.style.animationDelay = `${i * 0.06}s`;
+      card.style.animationDelay = `${i * 0.03}s`;
       card.dataset.title = s.title;
       const statusClass = s.finished ? 'ready' : 'airing';
       const statusLabel = s.finished ? 'จบแล้ว พร้อมดูยกชุด' : 'กำลังออกอากาศ';
@@ -2236,31 +2307,68 @@
       `;
       gridPending.appendChild(card);
     });
+
+    renderPaginationControls('paginationWatchlist', currentPagePending, totalPages, filtered.length, (page) => {
+      currentPagePending = page;
+      window.scrollTo(0, 0);
+      renderPending();
+    });
   }
 
-  searchInput.addEventListener('input', render);
-  sortSelect.addEventListener('change', render);
-  yearFilter.addEventListener('change', () => { activeYear = yearFilter.value; render(); });
-  genreFilter.addEventListener('change', () => { activeGenre = genreFilter.value; render(); });
+  searchInput.addEventListener('input', () => { currentPage = 1; render(); });
+  sortSelect.addEventListener('change', () => { currentPage = 1; render(); });
+  yearFilter.addEventListener('change', () => { activeYear = yearFilter.value; currentPage = 1; render(); });
+  genreFilter.addEventListener('change', () => { activeGenre = genreFilter.value; currentPage = 1; render(); });
   pills.forEach(p => p.addEventListener('click', () => {
     pills.forEach(x => x.classList.remove('active'));
     p.classList.add('active');
     activeType = p.dataset.type;
+    currentPage = 1;
     updateGenreDropdown();
     render();
   }));
 
-  searchInputPending.addEventListener('input', renderPending);
-  sortSelectPending.addEventListener('change', renderPending);
-  yearFilterPending.addEventListener('change', () => { activeYearPending = yearFilterPending.value; renderPending(); });
-  genreFilterPending.addEventListener('change', () => { activeGenrePending = genreFilterPending.value; renderPending(); });
+  searchInputPending.addEventListener('input', () => { currentPagePending = 1; renderPending(); });
+  sortSelectPending.addEventListener('change', () => { currentPagePending = 1; renderPending(); });
+  yearFilterPending.addEventListener('change', () => { activeYearPending = yearFilterPending.value; currentPagePending = 1; renderPending(); });
+  genreFilterPending.addEventListener('change', () => { activeGenrePending = genreFilterPending.value; currentPagePending = 1; renderPending(); });
   pillsPending.forEach(p => p.addEventListener('click', () => {
     pillsPending.forEach(x => x.classList.remove('active'));
     p.classList.add('active');
     activeTypePending = p.dataset.ptype;
+    currentPagePending = 1;
     updateGenreDropdownPending();
     renderPending();
   }));
+
+  // ---------- Pagination controls ----------
+  function renderPaginationControls(containerId, page, totalPages, totalItems, onPageChange) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (totalPages <= 1) { container.innerHTML = ''; return; }
+    const startItem = (page - 1) * PAGE_SIZE + 1;
+    const endItem = Math.min(page * PAGE_SIZE, totalItems);
+    let html = `<span class="page-info">${startItem}–${endItem} จาก ${totalItems} เรื่อง</span>`;
+    html += `<button class="page-btn" ${page === 1 ? 'disabled' : ''} data-pg="prev">‹</button>`;
+    const pages = new Set([1, totalPages, page, page - 1, page + 1].filter(p => p >= 1 && p <= totalPages));
+    let prev = 0;
+    [...pages].sort((a, b) => a - b).forEach(p => {
+      if (prev && p - prev > 1) html += `<span class="page-info">…</span>`;
+      html += `<button class="page-btn ${p === page ? 'active' : ''}" data-pg="${p}">${p}</button>`;
+      prev = p;
+    });
+    html += `<button class="page-btn" ${page === totalPages ? 'disabled' : ''} data-pg="next">›</button>`;
+    container.innerHTML = html;
+    container.querySelectorAll('.page-btn:not(:disabled)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        let target = btn.dataset.pg;
+        if (target === 'prev') target = page - 1;
+        else if (target === 'next') target = page + 1;
+        else target = Number(target);
+        onPageChange(target);
+      });
+    });
+  }
 
   function resetDiaryFilters() {
     searchInput.value = '';
@@ -2270,6 +2378,7 @@
     activeType = 'all';
     activeYear = 'all';
     activeGenre = 'all';
+    currentPage = 1;
     pills.forEach(x => x.classList.remove('active'));
     document.querySelector('#controls-diary .pill[data-type="all"]').classList.add('active');
   }
@@ -2282,6 +2391,7 @@
     activeTypePending = 'all';
     activeYearPending = 'all';
     activeGenrePending = 'all';
+    currentPagePending = 1;
     pillsPending.forEach(x => x.classList.remove('active'));
     document.querySelector('#controls-watchlist .pill[data-ptype="all"]').classList.add('active');
   }
