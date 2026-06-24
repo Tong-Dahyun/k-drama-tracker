@@ -2557,8 +2557,6 @@
     moveModalChoice = null;
     const btns = document.querySelectorAll('.move-choice-btn');
     btns.forEach(b => { b.classList.remove('selected-liked','selected-neutral','selected-dropped','dimmed'); });
-    // show ปุ่มดูไม่จบกลับมาทุกครั้งที่ reset (openMoveModal จะซ่อนถ้าจำเป็น)
-    document.getElementById('likeChoiceDrop').hidden = false;
     document.getElementById('moveEpField').hidden = true;
     document.getElementById('moveLastEpInput').value = '';
     document.getElementById('moveFormStatus').textContent = '';
@@ -2570,10 +2568,7 @@
     // แสดง hint จำนวนตอนในช่อง ep
     const hint = document.getElementById('moveEpHint');
     hint.textContent = entry.episodes ? `/ ${entry.episodes} ตอน` : '';
-    // reset ก่อน (reset จะ show ปุ่มดูไม่จบกลับมาเสมอ)
     resetMoveModal();
-    // จากนั้นค่อยซ่อนถ้ามาจาก Dropped — ต้องอยู่หลัง resetMoveModal()
-    document.getElementById('likeChoiceDrop').hidden = (pendingMoveSource === 'dropped');
     moveModalOverlay.hidden = false;
   }
 
@@ -2604,6 +2599,8 @@
       // กด neutral → confirm ทันที
       confirmMove('neutral');
     } else if (choice === 'dropped') {
+      // ถ้ามาจาก Dropped อยู่แล้ว → ไม่ทำอะไร (ป้องกันวนกลับ Dropped)
+      if (pendingMoveSource === 'dropped') return;
       btnDrop.classList.add('selected-dropped');
       btnYes.classList.add('dimmed');
       btnNo.classList.add('dimmed');
