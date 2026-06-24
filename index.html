@@ -731,6 +731,13 @@
     padding: 2px 8px;
     border-radius: 5px;
     color: var(--text-soft);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+
+  .genre-tag:hover {
+    background: var(--red-soft);
+    color: var(--red);
   }
 
   .perforation {
@@ -1995,7 +2002,7 @@
           </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag">${g}</span>`).join('')}</div>
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="diary">${g}</span>`).join('')}</div>
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2049,7 +2056,7 @@
           </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag">${g}</span>`).join('')}</div>
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="watchlist">${g}</span>`).join('')}</div>
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2104,7 +2111,7 @@
           </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag">${g}</span>`).join('')}</div>
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="dropped">${g}</span>`).join('')}</div>
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2118,6 +2125,34 @@
   }
 
   // ============================================================
+  // Genre tag click → filter ทันที
+  document.addEventListener('click', e => {
+    const tag = e.target.closest('.genre-tag[data-genre]');
+    if (!tag) return;
+    const genre = tag.dataset.genre;
+    const page  = tag.dataset.page;
+
+    if (page === 'diary') {
+      activeGenre = genre;
+      genreFilter.value = genre;
+      currentPage = 1;
+      render();
+    } else if (page === 'watchlist') {
+      activeGenrePending = genre;
+      genreFilterPending.value = genre;
+      currentPagePending = 1;
+      renderPending();
+    } else if (page === 'dropped') {
+      activeGenreDropped = genre;
+      genreFilterDropped.value = genre;
+      currentPageDropped = 1;
+      renderDropped();
+    }
+
+    // scroll ขึ้นบนสุดให้เห็น filter bar
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
   // Filter event listeners
   // ============================================================
   searchInput.addEventListener('input', () => { currentPage=1; render(); });
