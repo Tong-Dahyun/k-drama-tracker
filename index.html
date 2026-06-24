@@ -2111,7 +2111,7 @@
           <span class="ticket-meta">ดูถึง</span>
           <div class="stamp dropped-stamp">${epLabel || '—'}</div>
         </div>
-        <button class="mark-watched-btn mark-dropped-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
+        <button class="mark-dropped-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
       gridDropped.appendChild(card);
     });
     renderPaginationControls('paginationDropped', currentPageDropped, totalPages, filtered.length, p => { currentPageDropped=p; window.scrollTo(0,0); renderDropped(); });
