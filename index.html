@@ -2018,7 +2018,8 @@
         <div class="ticket-stub">
           <span class="ticket-meta">ดูถึง</span>
           <div class="stamp dropped-stamp">${epLabel || '—'}</div>
-        </div>`;
+        </div>
+        <button class="mark-watched-btn mark-dropped-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
       gridDropped.appendChild(card);
     });
     renderPaginationControls('paginationDropped', currentPageDropped, totalPages, filtered.length, p => { currentPageDropped=p; window.scrollTo(0,0); renderDropped(); });
@@ -2455,6 +2456,7 @@
   const moveModalTitle   = document.getElementById('moveModalTitle');
   const closeMoveModalBtn= document.getElementById('closeMoveModal');
   let pendingMoveEntry = null;
+  let pendingMoveSource = 'pending'; // 'pending' | 'dropped'
 
   function openMoveModal(entry) {
     pendingMoveEntry=entry; moveModalTitle.textContent=entry.title;
@@ -2472,22 +2474,46 @@
     const btn=e.target.closest('.mark-watched-btn');
     if(!btn) return;
     const entry=pending.find(p=>p.title===btn.dataset.title);
-    if(entry) openMoveModal(entry);
+    if(entry) { pendingMoveSource='pending'; openMoveModal(entry); }
+  });
+
+  gridDropped.addEventListener('click', e => {
+    const btn=e.target.closest('.mark-dropped-watched-btn');
+    if(!btn) return;
+    const entry=dropped.find(d=>d.title===btn.dataset.title);
+    if(entry) { pendingMoveSource='dropped'; openMoveModal(entry); }
   });
 
   async function confirmMove(liked) {
     if(!pendingMoveEntry) return;
     const entry=pendingMoveEntry;
+    const source=pendingMoveSource;
     moveModalOverlay.hidden=true; pendingMoveEntry=null;
-    pending=pending.filter(p=>p.title!==entry.title);
+
+    // อัปเดต array ในหน้าเว็บทันที
+    if(source==='dropped') {
+      dropped=dropped.filter(d=>d.title!==entry.title);
+    } else {
+      pending=pending.filter(p=>p.title!==entry.title);
+      usingFallbackPending=false; pendingLoaded=true;
+      populateFiltersPending(); renderPending(); updateStatsPending();
+    }
     const maxNo=shows.reduce((m,s)=>Math.max(m,s.no||0),0);
     shows=[{...entry,liked,no:maxNo+1},...shows];
-    usingFallback=false; diaryLoaded=true; usingFallbackPending=false; pendingLoaded=true;
-    populateFilters(); populateFiltersPending(); renderPending(); updateStatsPending(); render(); updateStats();
+    usingFallback=false; diaryLoaded=true;
+    populateFilters(); render(); updateStats();
+    if(source==='dropped') renderDropped();
+
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'moveToWatched',title:entry.title,type:entry.type==='variety'?'Variety':'Series',genres:entry.genres.join(', '),year:entry.year,episodes:entry.episodes,liked})});
+      if(source==='dropped') {
+        // ส่ง action ใหม่ไป Apps Script
+        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({action:'moveDroppedToWatched',title:entry.title,type:'Series',genres:entry.genres.join(', '),year:entry.year,episodes:entry.episodes,liked})});
+      } else {
+        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({action:'moveToWatched',title:entry.title,type:entry.type==='variety'?'Variety':'Series',genres:entry.genres.join(', '),year:entry.year,episodes:entry.episodes,liked})});
+      }
     } catch(err){console.error(err);}
   }
 
