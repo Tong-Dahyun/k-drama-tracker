@@ -1222,6 +1222,88 @@
     .ticket { animation: none; opacity: 1; transform: none; }
     .ticket:hover, .ticket:hover .stamp { transform: none; }
   }
+
+  /* ---------- Move modal: 3-button row ---------- */
+  .move-three-btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .move-choice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 12px 6px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-soft);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s ease;
+    line-height: 1;
+    opacity: 1;
+  }
+
+  .move-choice-btn:hover { background: var(--surface-soft); }
+
+  .move-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .move-choice-btn.selected-liked {
+    border-color: var(--mint);
+    color: var(--mint);
+    background: var(--mint-soft);
+    transform: scale(1.04);
+  }
+
+  .move-choice-btn.selected-neutral {
+    border-color: var(--text-dim);
+    color: var(--text);
+    background: var(--surface-soft);
+    transform: scale(1.04);
+  }
+
+  .move-choice-btn.selected-dropped {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: var(--amber-soft);
+    transform: scale(1.04);
+  }
+
+  .move-choice-btn.dimmed { opacity: 0.4; transform: scale(0.97); }
+
+  .move-ep-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    margin-bottom: 14px;
+    animation: rise .2s ease;
+  }
+
+  .ep-input {
+    width: 70px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    text-align: center;
+  }
+
 </style>
 </head>
 <body>
@@ -1495,14 +1577,24 @@
   <!-- Modal: Move to Watched -->
   <div class="modal-overlay" id="moveModalOverlay" hidden>
     <div class="modal-box">
-      <h3>ดูเรื่องนี้แล้ว?</h3>
-      <p style="color: var(--text-soft); font-size: 0.85rem; margin: -8px 0 16px;" id="moveModalTitle"></p>
-      <div class="form-field">
-        <label>ความชอบส่วนตัว</label>
-        <div class="form-row">
-          <button type="button" class="btn-secondary like-choice-btn" data-liked="true" id="likeChoiceYes">♥ ชอบ</button>
-          <button type="button" class="btn-secondary like-choice-btn" data-liked="false" id="likeChoiceNo">♡ เฉยๆ</button>
-        </div>
+      <h3>บันทึกผล</h3>
+      <p style="color: var(--text-soft); font-size: 0.85rem; margin: -8px 0 20px;" id="moveModalTitle"></p>
+      <p style="font-family:'Inter',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-bottom:10px;">เลือกผลลัพธ์</p>
+      <div class="move-three-btn-row">
+        <button type="button" class="move-choice-btn move-liked"   id="likeChoiceYes">
+          <span class="move-icon">♥</span>ชอบ
+        </button>
+        <button type="button" class="move-choice-btn move-neutral" id="likeChoiceNo">
+          <span class="move-icon">♡</span>เฉยๆ
+        </button>
+        <button type="button" class="move-choice-btn move-dropped" id="likeChoiceDrop">
+          <span class="move-icon">✕</span>ดูไม่จบ
+        </button>
+      </div>
+      <div class="move-ep-field" id="moveEpField" hidden>
+        <label style="font-size:0.8rem; color:var(--text-soft); white-space:nowrap;">ดูถึง ep</label>
+        <input type="number" id="moveLastEpInput" class="ep-input" min="0" placeholder="0">
+        <span id="moveEpHint" style="font-size:0.75rem; color:var(--text-dim);"></span>
       </div>
       <p class="form-status" id="moveFormStatus"></p>
       <div class="modal-actions"><button type="button" class="btn-secondary" id="closeMoveModal">ยกเลิก</button></div>
@@ -2458,67 +2550,157 @@
   let pendingMoveEntry = null;
   let pendingMoveSource = 'pending'; // 'pending' | 'dropped'
 
-  function openMoveModal(entry) {
-    pendingMoveEntry=entry; moveModalTitle.textContent=entry.title;
-    document.getElementById('moveFormStatus').textContent='';
-    document.getElementById('likeChoiceYes').classList.remove('selected');
-    document.getElementById('likeChoiceNo').classList.remove('selected');
-    moveModalOverlay.hidden=false;
+  // ── state สำหรับ move modal ──
+  let moveModalChoice = null; // 'liked' | 'neutral' | 'dropped'
+
+  function resetMoveModal() {
+    moveModalChoice = null;
+    const btns = document.querySelectorAll('.move-choice-btn');
+    btns.forEach(b => { b.classList.remove('selected-liked','selected-neutral','selected-dropped','dimmed'); });
+    document.getElementById('moveEpField').hidden = true;
+    document.getElementById('moveLastEpInput').value = '';
+    document.getElementById('moveFormStatus').textContent = '';
   }
 
-  closeMoveModalBtn.addEventListener('click', () => { moveModalOverlay.hidden=true; pendingMoveEntry=null; });
-  moveModalOverlay.addEventListener('click', e => { if(e.target===moveModalOverlay){moveModalOverlay.hidden=true;pendingMoveEntry=null;} });
-  document.addEventListener('keydown', e => { if(e.key==='Escape'&&!moveModalOverlay.hidden){moveModalOverlay.hidden=true;pendingMoveEntry=null;} });
+  function openMoveModal(entry) {
+    pendingMoveEntry = entry;
+    moveModalTitle.textContent = entry.title;
+    // แสดง hint จำนวนตอนในช่อง ep
+    const hint = document.getElementById('moveEpHint');
+    hint.textContent = entry.episodes ? `/ ${entry.episodes} ตอน` : '';
+    resetMoveModal();
+    moveModalOverlay.hidden = false;
+  }
 
+  function selectMoveChoice(choice) {
+    moveModalChoice = choice;
+    const btnYes  = document.getElementById('likeChoiceYes');
+    const btnNo   = document.getElementById('likeChoiceNo');
+    const btnDrop = document.getElementById('likeChoiceDrop');
+    const epField = document.getElementById('moveEpField');
+
+    // reset ก่อน
+    [btnYes, btnNo, btnDrop].forEach(b => {
+      b.classList.remove('selected-liked','selected-neutral','selected-dropped','dimmed');
+    });
+
+    if (choice === 'liked') {
+      btnYes.classList.add('selected-liked');
+      btnNo.classList.add('dimmed');
+      btnDrop.classList.add('dimmed');
+      epField.hidden = true;
+      // กด liked → confirm ทันที
+      confirmMove('liked');
+    } else if (choice === 'neutral') {
+      btnNo.classList.add('selected-neutral');
+      btnYes.classList.add('dimmed');
+      btnDrop.classList.add('dimmed');
+      epField.hidden = true;
+      // กด neutral → confirm ทันที
+      confirmMove('neutral');
+    } else if (choice === 'dropped') {
+      btnDrop.classList.add('selected-dropped');
+      btnYes.classList.add('dimmed');
+      btnNo.classList.add('dimmed');
+      epField.hidden = false;
+      document.getElementById('moveLastEpInput').focus();
+      // รอให้กด confirm เองเมื่อกรอก ep แล้ว (Enter หรือ blur)
+    }
+  }
+
+  async function confirmMove(choice) {
+    if (!pendingMoveEntry) return;
+    const entry = pendingMoveEntry;
+    const source = pendingMoveSource;
+    const lastEp = Number(document.getElementById('moveLastEpInput').value) || 0;
+
+    moveModalOverlay.hidden = true;
+    pendingMoveEntry = null;
+    resetMoveModal();
+
+    if (choice === 'dropped') {
+      // ── ย้ายจาก Watchlist → Dropped ──
+      pending = pending.filter(p => p.title !== entry.title);
+      usingFallbackPending = false; pendingLoaded = true;
+      // เพิ่มเข้า dropped array
+      const maxNo = dropped.reduce((m,d) => Math.max(m, d.no||0), 0);
+      dropped = [{ ...entry, lastEp, no: maxNo + 1 }, ...dropped];
+      droppedLoaded = true;
+      populateFiltersPending(); renderPending(); updateStatsPending();
+      renderDropped();
+
+      if (!APPS_SCRIPT_URL.trim()) return;
+      try {
+        await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({ action:'movePendingToDropped', title:entry.title,
+            type:entry.type==='variety'?'Variety':'Series',
+            genres:entry.genres.join(', '), year:entry.year,
+            episodes:entry.episodes, lastEp })});
+      } catch(err) { console.error(err); }
+
+    } else {
+      // ── ย้ายจาก Watchlist/Dropped → Watched ──
+      const liked = (choice === 'liked');
+
+      if (source === 'dropped') {
+        dropped = dropped.filter(d => d.title !== entry.title);
+        renderDropped();
+      } else {
+        pending = pending.filter(p => p.title !== entry.title);
+        usingFallbackPending = false; pendingLoaded = true;
+        populateFiltersPending(); renderPending(); updateStatsPending();
+      }
+
+      const maxNo = shows.reduce((m,s) => Math.max(m, s.no||0), 0);
+      shows = [{ ...entry, liked, no: maxNo + 1 }, ...shows];
+      usingFallback = false; diaryLoaded = true;
+      populateFilters(); render(); updateStats();
+
+      if (!APPS_SCRIPT_URL.trim()) return;
+      try {
+        if (source === 'dropped') {
+          await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
+            body: JSON.stringify({ action:'moveDroppedToWatched', title:entry.title, type:'Series',
+              genres:entry.genres.join(', '), year:entry.year, episodes:entry.episodes, liked })});
+        } else {
+          await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
+            body: JSON.stringify({ action:'moveToWatched', title:entry.title,
+              type:entry.type==='variety'?'Variety':'Series',
+              genres:entry.genres.join(', '), year:entry.year, episodes:entry.episodes, liked })});
+        }
+      } catch(err) { console.error(err); }
+    }
+  }
+
+  // close modal
+  closeMoveModalBtn.addEventListener('click', () => { moveModalOverlay.hidden=true; pendingMoveEntry=null; resetMoveModal(); });
+  moveModalOverlay.addEventListener('click', e => { if(e.target===moveModalOverlay){ moveModalOverlay.hidden=true; pendingMoveEntry=null; resetMoveModal(); } });
+  document.addEventListener('keydown', e => { if(e.key==='Escape'&&!moveModalOverlay.hidden){ moveModalOverlay.hidden=true; pendingMoveEntry=null; resetMoveModal(); } });
+
+  // กด Enter ในช่อง ep → confirm drop
+  document.getElementById('moveLastEpInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmMove('dropped');
+  });
+
+  // click handlers 3 ปุ่ม
+  document.getElementById('likeChoiceYes').addEventListener('click',  () => selectMoveChoice('liked'));
+  document.getElementById('likeChoiceNo').addEventListener('click',   () => selectMoveChoice('neutral'));
+  document.getElementById('likeChoiceDrop').addEventListener('click', () => selectMoveChoice('dropped'));
+
+  // grid event listeners
   gridPending.addEventListener('click', e => {
-    const btn=e.target.closest('.mark-watched-btn');
-    if(!btn) return;
-    const entry=pending.find(p=>p.title===btn.dataset.title);
-    if(entry) { pendingMoveSource='pending'; openMoveModal(entry); }
+    const btn = e.target.closest('.mark-watched-btn');
+    if (!btn) return;
+    const entry = pending.find(p => p.title === btn.dataset.title);
+    if (entry) { pendingMoveSource = 'pending'; openMoveModal(entry); }
   });
 
   gridDropped.addEventListener('click', e => {
-    const btn=e.target.closest('.mark-dropped-watched-btn');
-    if(!btn) return;
-    const entry=dropped.find(d=>d.title===btn.dataset.title);
-    if(entry) { pendingMoveSource='dropped'; openMoveModal(entry); }
+    const btn = e.target.closest('.mark-dropped-watched-btn');
+    if (!btn) return;
+    const entry = dropped.find(d => d.title === btn.dataset.title);
+    if (entry) { pendingMoveSource = 'dropped'; openMoveModal(entry); }
   });
-
-  async function confirmMove(liked) {
-    if(!pendingMoveEntry) return;
-    const entry=pendingMoveEntry;
-    const source=pendingMoveSource;
-    moveModalOverlay.hidden=true; pendingMoveEntry=null;
-
-    // อัปเดต array ในหน้าเว็บทันที
-    if(source==='dropped') {
-      dropped=dropped.filter(d=>d.title!==entry.title);
-    } else {
-      pending=pending.filter(p=>p.title!==entry.title);
-      usingFallbackPending=false; pendingLoaded=true;
-      populateFiltersPending(); renderPending(); updateStatsPending();
-    }
-    const maxNo=shows.reduce((m,s)=>Math.max(m,s.no||0),0);
-    shows=[{...entry,liked,no:maxNo+1},...shows];
-    usingFallback=false; diaryLoaded=true;
-    populateFilters(); render(); updateStats();
-    if(source==='dropped') renderDropped();
-
-    if(!APPS_SCRIPT_URL.trim()) return;
-    try {
-      if(source==='dropped') {
-        // ส่ง action ใหม่ไป Apps Script
-        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body:JSON.stringify({action:'moveDroppedToWatched',title:entry.title,type:'Series',genres:entry.genres.join(', '),year:entry.year,episodes:entry.episodes,liked})});
-      } else {
-        await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body:JSON.stringify({action:'moveToWatched',title:entry.title,type:entry.type==='variety'?'Variety':'Series',genres:entry.genres.join(', '),year:entry.year,episodes:entry.episodes,liked})});
-      }
-    } catch(err){console.error(err);}
-  }
-
-  document.getElementById('likeChoiceYes').addEventListener('click', () => confirmMove(true));
-  document.getElementById('likeChoiceNo').addEventListener('click',  () => confirmMove(false));
 
   // ============================================================
   // Edit / Delete modals (Watched + Watchlist)
