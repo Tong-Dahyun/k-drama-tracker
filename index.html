@@ -2917,6 +2917,9 @@
     moveModalChoice = null;
     const btns = document.querySelectorAll('.move-choice-btn');
     btns.forEach(b => { b.classList.remove('selected-liked','selected-neutral','selected-dropped','dimmed'); });
+    // restore ปุ่มดูไม่จบกลับมาก่อนเสมอ — openMoveModal จะซ่อนถ้าจำเป็น
+    document.getElementById('likeChoiceDrop').hidden = false;
+    document.getElementById('likeChoiceDrop').style.visibility = '';
     document.getElementById('moveEpField').hidden = true;
     document.getElementById('moveLastEpInput').value = '';
     document.getElementById('moveFormStatus').textContent = '';
@@ -2925,10 +2928,14 @@
   function openMoveModal(entry) {
     pendingMoveEntry = entry;
     moveModalTitle.textContent = entry.title;
-    // แสดง hint จำนวนตอนในช่อง ep
     const hint = document.getElementById('moveEpHint');
     hint.textContent = entry.episodes ? `/ ${entry.episodes} ตอน` : '';
+    // reset ก่อน (restore ปุ่มกลับมา)
     resetMoveModal();
+    // ถ้ามาจาก Dropped → ซ่อนปุ่มดูไม่จบ ต้องอยู่หลัง resetMoveModal เสมอ
+    if (pendingMoveSource === 'dropped') {
+      document.getElementById('likeChoiceDrop').hidden = true;
+    }
     moveModalOverlay.hidden = false;
   }
 
