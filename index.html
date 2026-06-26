@@ -1496,6 +1496,109 @@
     .toast { max-width: 100%; }
   }
 
+  /* ---------- Skeleton loading ---------- */
+  .skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 14px;
+  }
+
+  .skeleton-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    height: 188px;
+  }
+
+  .skeleton-body {
+    padding: 14px 14px 10px;
+  }
+
+  .skeleton-line {
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--surface-soft) 25%, #333 50%, var(--surface-soft) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+
+  .skeleton-badge { width: 52px; height: 18px; margin-bottom: 10px; }
+  .skeleton-title { width: 85%; height: 16px; margin-bottom: 6px; }
+  .skeleton-title-2 { width: 60%; height: 16px; margin-bottom: 8px; }
+  .skeleton-year  { width: 36px; height: 12px; margin-bottom: 10px; }
+  .skeleton-tag-row { display: flex; gap: 5px; margin-bottom: 8px; }
+  .skeleton-tag { width: 52px; height: 14px; border-radius: 4px; }
+  .skeleton-tag-2 { width: 40px; }
+
+  .skeleton-stub {
+    border-top: 2px dashed var(--border);
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .skeleton-ep   { width: 36px; height: 12px; }
+  .skeleton-stamp { width: 38px; height: 38px; border-radius: 50%; }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ---------- Error state ---------- */
+  .load-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .load-error-icon {
+    font-size: 2rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--red-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .load-error h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .load-error p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .load-error-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 9px 20px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: background .18s, color .18s;
+    margin-top: 4px;
+  }
+
+  .load-error-btn:hover { background: var(--red-soft); color: var(--red); border-color: transparent; }
+
 </style>
 </head>
 <body>
@@ -2032,7 +2135,10 @@
       shows = fallbackShows; usingFallback = true; diaryLoaded = true;
       updateStats(); populateFilters(); render(); updateSummary(); return;
     }
+    // แสดง skeleton ก่อนโหลด
+    renderSkeleton(grid, 8);
     statsEl.textContent = 'กำลังโหลดข้อมูลจาก Google Sheet...';
+    let loadFailed = false;
     try {
       const allRows = [];
       for (const url of urls) {
@@ -2045,9 +2151,17 @@
       if (allRows.length === 0) throw new Error('ไม่พบข้อมูล');
       shows = allRows; usingFallback = false;
     } catch (err) {
-      console.error(err); shows = fallbackShows; usingFallback = true;
+      console.error(err);
+      loadFailed = true;
+      shows = []; usingFallback = true;
     }
     diaryLoaded = true;
+    clearSkeletonMode(grid);
+    if (loadFailed) {
+      renderLoadError(grid, () => { diaryLoaded = false; loadData(); }, 'โหลด Series ไม่สำเร็จ');
+      showToast('โหลดข้อมูลไม่สำเร็จ กด "ลองใหม่" หรือกด logo เพื่อ refresh', 'error', 5000);
+      updateSummary(); return;
+    }
     updateStats(); populateFilters(); render(); updateSummary();
   }
 
@@ -2056,6 +2170,8 @@
       pending = []; usingFallbackPending = true; pendingLoaded = true;
       updateStatsPending(); populateFiltersPending(); renderPending(); return;
     }
+    renderSkeleton(gridPending, 6);
+    let loadFailed = false;
     try {
       const res = await fetch(PENDING_CSV_URL);
       if (!res.ok) throw new Error();
@@ -2065,9 +2181,15 @@
       if (rows.length === 0) throw new Error();
       pending = rows; usingFallbackPending = false;
     } catch (err) {
+      loadFailed = true;
       pending = []; usingFallbackPending = true;
     }
     pendingLoaded = true;
+    clearSkeletonMode(gridPending);
+    if (loadFailed) {
+      renderLoadError(gridPending, () => { pendingLoaded = false; loadPending(); }, 'โหลด Watchlist ไม่สำเร็จ');
+      return;
+    }
     updateStatsPending(); populateFiltersPending(); renderPending();
   }
 
@@ -2076,6 +2198,8 @@
       dropped = []; droppedLoaded = true;
       populateFiltersDropped(); renderDropped(); return;
     }
+    renderSkeleton(gridDropped, 6);
+    let loadFailed = false;
     try {
       const res = await fetch(DROPPED_CSV_URL);
       if (!res.ok) throw new Error();
@@ -2085,9 +2209,15 @@
       dropped = rows;
     } catch (err) {
       console.error('โหลด Dropped Series ไม่สำเร็จ:', err);
+      loadFailed = true;
       dropped = [];
     }
     droppedLoaded = true;
+    clearSkeletonMode(gridDropped);
+    if (loadFailed) {
+      renderLoadError(gridDropped, () => { droppedLoaded = false; loadDropped(); }, 'โหลด Dropped Series ไม่สำเร็จ');
+      return;
+    }
     populateFiltersDropped(); renderDropped();
   }
 
@@ -2160,7 +2290,7 @@
   // Render: Watched
   // ============================================================
   function render() {
-    if (!diaryLoaded) { grid.innerHTML = ''; emptyState.hidden = true; document.getElementById('paginationDiary').innerHTML = ''; return; }
+    if (!diaryLoaded) { clearSkeletonMode(grid); grid.innerHTML = ''; emptyState.hidden = true; document.getElementById('paginationDiary').innerHTML = ''; return; }
     const query = searchInput.value.trim().toLowerCase();
     let filtered = shows.filter(s => {
       return (activeType === 'all' || s.type === activeType)
@@ -2212,7 +2342,7 @@
   // Render: Watchlist
   // ============================================================
   function renderPending() {
-    if (!pendingLoaded) { gridPending.innerHTML=''; emptyStatePending.hidden=true; document.getElementById('paginationWatchlist').innerHTML=''; return; }
+    if (!pendingLoaded) { clearSkeletonMode(gridPending); gridPending.innerHTML=''; emptyStatePending.hidden=true; document.getElementById('paginationWatchlist').innerHTML=''; return; }
     const query = searchInputPending.value.trim().toLowerCase();
     let filtered = pending.filter(s => {
       return (activeTypePending==='all'||s.type===activeTypePending)
@@ -2267,7 +2397,7 @@
   // Render: Dropped
   // ============================================================
   function renderDropped() {
-    if (!droppedLoaded) { gridDropped.innerHTML=''; emptyStateDropped.hidden=true; document.getElementById('paginationDropped').innerHTML=''; return; }
+    if (!droppedLoaded) { clearSkeletonMode(gridDropped); gridDropped.innerHTML=''; emptyStateDropped.hidden=true; document.getElementById('paginationDropped').innerHTML=''; return; }
     const query = searchInputDropped.value.trim().toLowerCase();
     let filtered = dropped.filter(s => {
       return (!query || s.title.toLowerCase().includes(query))
@@ -3359,6 +3489,63 @@
   });
 
   // ============================================================
+  // ============================================================
+  // Skeleton + Error state helpers
+  // ============================================================
+  function renderSkeleton(gridEl, count = 8) {
+    gridEl.innerHTML = '';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'skeleton-grid';
+    wrapper.style.gridColumn = '1/-1';
+    for (let i = 0; i < count; i++) {
+      wrapper.innerHTML += `
+        <div class="skeleton-card">
+          <div class="skeleton-body">
+            <div class="skeleton-line skeleton-badge"></div>
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-title-2"></div>
+            <div class="skeleton-line skeleton-year"></div>
+            <div class="skeleton-tag-row">
+              <div class="skeleton-line skeleton-tag"></div>
+              <div class="skeleton-line skeleton-tag skeleton-tag-2"></div>
+            </div>
+          </div>
+          <div class="skeleton-stub">
+            <div class="skeleton-line skeleton-ep"></div>
+            <div class="skeleton-line skeleton-stamp"></div>
+          </div>
+        </div>`;
+    }
+    // ใส่ใน grid โดยตรง
+    gridEl.style.display = 'grid';
+    gridEl.style.gridTemplateColumns = 'repeat(auto-fill, minmax(190px, 1fr))';
+    gridEl.style.gap = '14px';
+    gridEl.appendChild(wrapper);
+    // reset grid style หลังจาก render จริง
+    gridEl._skeletonMode = true;
+  }
+
+  function clearSkeletonMode(gridEl) {
+    if (gridEl._skeletonMode) {
+      gridEl.style.display = '';
+      gridEl.style.gridTemplateColumns = '';
+      gridEl.style.gap = '';
+      gridEl._skeletonMode = false;
+    }
+  }
+
+  function renderLoadError(gridEl, retryFn, message = 'โหลดข้อมูลไม่สำเร็จ') {
+    clearSkeletonMode(gridEl);
+    gridEl.innerHTML = `
+      <div class="load-error" style="grid-column:1/-1">
+        <div class="load-error-icon">⚠</div>
+        <h3>${message}</h3>
+        <p>ตรวจสอบการเชื่อมต่อแล้วลองใหม่</p>
+        <button class="load-error-btn" id="retryBtn">↻ ลองใหม่</button>
+      </div>`;
+    gridEl.querySelector('#retryBtn')?.addEventListener('click', retryFn);
+  }
+
   // ============================================================
   // Toast notification
   // ============================================================
