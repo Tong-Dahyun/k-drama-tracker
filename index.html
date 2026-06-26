@@ -2482,7 +2482,13 @@
 
   // Filter event listeners
   // ============================================================
-  searchInput.addEventListener('input', () => { currentPage=1; render(); });
+  // debounce helper
+  function debounce(fn, delay) {
+    let timer;
+    return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+  }
+
+  searchInput.addEventListener('input', debounce(() => { currentPage=1; render(); }, 200));
   sortSelect.addEventListener('change', () => { currentPage=1; render(); });
   yearFilter.addEventListener('change', () => { activeYear=yearFilter.value; currentPage=1; render(); });
   genreFilter.addEventListener('change', () => { activeGenre=genreFilter.value; currentPage=1; render(); });
@@ -2493,7 +2499,7 @@
     updateGenreDropdown(); render();
   }));
 
-  searchInputPending.addEventListener('input', () => { currentPagePending=1; renderPending(); });
+  searchInputPending.addEventListener('input', debounce(() => { currentPagePending=1; renderPending(); }, 200));
   sortSelectPending.addEventListener('change', () => { currentPagePending=1; renderPending(); });
   yearFilterPending.addEventListener('change', () => { activeYearPending=yearFilterPending.value; currentPagePending=1; renderPending(); });
   genreFilterPending.addEventListener('change', () => { activeGenrePending=genreFilterPending.value; currentPagePending=1; renderPending(); });
@@ -2504,7 +2510,7 @@
     updateGenreDropdownPending(); renderPending();
   }));
 
-  searchInputDropped.addEventListener('input', () => { currentPageDropped=1; renderDropped(); });
+  searchInputDropped.addEventListener('input', debounce(() => { currentPageDropped=1; renderDropped(); }, 200));
   sortSelectDropped.addEventListener('change', () => { currentPageDropped=1; renderDropped(); });
   yearFilterDropped.addEventListener('change', () => { activeYearDropped=yearFilterDropped.value; currentPageDropped=1; renderDropped(); });
   genreFilterDropped.addEventListener('change', () => { activeGenreDropped=genreFilterDropped.value; currentPageDropped=1; renderDropped(); });
@@ -3073,19 +3079,7 @@
   document.getElementById('likeChoiceDrop').addEventListener('click', () => selectMoveChoice('dropped'));
 
   // grid event listeners
-  gridPending.addEventListener('click', e => {
-    const btn = e.target.closest('.mark-watched-btn');
-    if (!btn) return;
-    const entry = pending.find(p => p.title === btn.dataset.title);
-    if (entry) { pendingMoveSource = 'pending'; openMoveModal(entry); }
-  });
 
-  gridDropped.addEventListener('click', e => {
-    const btn = e.target.closest('.mark-dropped-watched-btn');
-    if (!btn) return;
-    const entry = dropped.find(d => d.title === btn.dataset.title);
-    if (entry) { pendingMoveSource = 'dropped'; openMoveModal(entry); }
-  });
 
   // ============================================================
   // Edit / Delete modals (Watched + Watchlist)
@@ -3157,24 +3151,28 @@
     if(deleteBtn){closeAllCardMenus();const entry=shows.find(s=>s.title===deleteBtn.dataset.title);if(entry)openDeleteModal(entry,'diary');}
   });
 
-  // Grid: Watchlist
+  // Grid: Watchlist — รวม mark-watched + edit/delete ในที่เดียว
   gridPending.addEventListener('click', e => {
-    const menuBtn=e.target.closest('.card-menu-btn');
-    if(menuBtn){const menu=menuBtn.nextElementSibling;const wasHidden=menu.hidden;closeAllCardMenus();menu.hidden=!wasHidden;return;}
-    const editBtn=e.target.closest('.edit-pending-btn');
-    if(editBtn){closeAllCardMenus();const entry=pending.find(p=>p.title===editBtn.dataset.title);if(entry)openEditModal(entry,'pending');return;}
-    const deleteBtn=e.target.closest('.delete-pending-btn');
-    if(deleteBtn){closeAllCardMenus();const entry=pending.find(p=>p.title===deleteBtn.dataset.title);if(entry)openDeleteModal(entry,'pending');}
+    const menuBtn = e.target.closest('.card-menu-btn');
+    if (menuBtn) { const menu=menuBtn.nextElementSibling; const wasHidden=menu.hidden; closeAllCardMenus(); menu.hidden=!wasHidden; return; }
+    const editBtn = e.target.closest('.edit-pending-btn');
+    if (editBtn) { closeAllCardMenus(); const entry=pending.find(p=>p.title===editBtn.dataset.title); if(entry)openEditModal(entry,'pending'); return; }
+    const deleteBtn = e.target.closest('.delete-pending-btn');
+    if (deleteBtn) { closeAllCardMenus(); const entry=pending.find(p=>p.title===deleteBtn.dataset.title); if(entry)openDeleteModal(entry,'pending'); return; }
+    const watchedBtn = e.target.closest('.mark-watched-btn');
+    if (watchedBtn) { const entry=pending.find(p=>p.title===watchedBtn.dataset.title); if(entry){ pendingMoveSource='pending'; openMoveModal(entry); } }
   });
 
-  // Grid: Dropped
+  // Grid: Dropped — รวม mark-dropped-watched + edit/delete ในที่เดียว
   gridDropped.addEventListener('click', e => {
-    const menuBtn=e.target.closest('.card-menu-btn');
-    if(menuBtn){const menu=menuBtn.nextElementSibling;const wasHidden=menu.hidden;closeAllCardMenus();menu.hidden=!wasHidden;return;}
-    const editBtn=e.target.closest('.edit-dropped-btn');
-    if(editBtn){closeAllCardMenus();const entry=dropped.find(d=>d.title===editBtn.dataset.title);if(entry)openEditDroppedModal(entry);return;}
-    const deleteBtn=e.target.closest('.delete-dropped-btn');
-    if(deleteBtn){closeAllCardMenus();const entry=dropped.find(d=>d.title===deleteBtn.dataset.title);if(entry)openDeleteModal(entry,'dropped');}
+    const menuBtn = e.target.closest('.card-menu-btn');
+    if (menuBtn) { const menu=menuBtn.nextElementSibling; const wasHidden=menu.hidden; closeAllCardMenus(); menu.hidden=!wasHidden; return; }
+    const editBtn = e.target.closest('.edit-dropped-btn');
+    if (editBtn) { closeAllCardMenus(); const entry=dropped.find(d=>d.title===editBtn.dataset.title); if(entry)openEditDroppedModal(entry); return; }
+    const deleteBtn = e.target.closest('.delete-dropped-btn');
+    if (deleteBtn) { closeAllCardMenus(); const entry=dropped.find(d=>d.title===deleteBtn.dataset.title); if(entry)openDeleteModal(entry,'dropped'); return; }
+    const watchedBtn = e.target.closest('.mark-dropped-watched-btn');
+    if (watchedBtn) { const entry=dropped.find(d=>d.title===watchedBtn.dataset.title); if(entry){ pendingMoveSource='dropped'; openMoveModal(entry); } }
   });
 
   // Submit edit (Watched/Watchlist)
