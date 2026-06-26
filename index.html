@@ -1423,6 +1423,79 @@
     text-align: center;
   }
 
+  /* ---------- Toast notification ---------- */
+  #toastContainer {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    min-width: 220px;
+    max-width: 320px;
+    pointer-events: auto;
+    animation: toastIn .28s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  .toast.hiding {
+    animation: toastOut .22s ease forwards;
+  }
+
+  .toast-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toast.success { border-left: 3px solid var(--mint); }
+  .toast.success .toast-icon { background: var(--mint-soft); color: var(--mint); }
+
+  .toast.error { border-left: 3px solid var(--red); }
+  .toast.error .toast-icon { background: var(--red-soft); color: var(--red); }
+
+  .toast.info { border-left: 3px solid var(--gold); }
+  .toast.info .toast-icon { background: var(--gold-soft); color: var(--gold); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(24px) scale(0.95); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to   { opacity: 0; transform: translateX(24px) scale(0.95); }
+  }
+
+  @media (max-width: 860px) {
+    #toastContainer {
+      bottom: 16px;
+      right: 16px;
+      left: 16px;
+    }
+    .toast { max-width: 100%; }
+  }
+
 </style>
 </head>
 <body>
@@ -1451,6 +1524,9 @@
 
   <!-- Drawer overlay -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
+
+  <!-- Toast container -->
+  <div id="toastContainer"></div>
 
   <div class="app-shell">
     <aside class="sidebar">
@@ -2687,6 +2763,7 @@
     pending=[newEntry,...pending]; usingFallbackPending=false; pendingLoaded=true;
     populateFiltersPending(); renderPending(); updateStatsPending();
     addModalOverlay.hidden=true; addPendingForm.reset();
+    showToast(`เพิ่ม "${newEntry.title}" ใน Watchlist แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -2783,6 +2860,7 @@
       droppedLoaded = true;
       populateFiltersPending(); renderPending(); updateStatsPending();
       renderDropped();
+      showToast(`ย้าย "${entry.title}" ไป Dropped แล้ว`, 'info');
 
       if (!APPS_SCRIPT_URL.trim()) return;
       try {
@@ -2810,6 +2888,7 @@
       shows = [{ ...entry, liked, no: maxNo + 1 }, ...shows];
       usingFallback = false; diaryLoaded = true;
       populateFilters(); render(); updateStats();
+      showToast(`ย้าย "${entry.title}" ไป Watched แล้ว ${liked ? '♥' : '♡'}`);
 
       if (!APPS_SCRIPT_URL.trim()) return;
       try {
@@ -2965,6 +3044,7 @@
     closeEditModal();
     if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished}:p);renderPending();updateStatsPending();}
     else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked}:s);populateFilters();render();updateStats();}
+    showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -2980,6 +3060,7 @@
     if(source==='pending'){pending=pending.filter(p=>p.title!==title);renderPending();updateStatsPending();}
     else if(source==='dropped'){dropped=dropped.filter(d=>d.title!==title);renderDropped();}
     else{shows=shows.filter(s=>s.title!==title);populateFilters();render();updateStats();}
+    showToast(`ลบ "${title}" แล้ว`, 'info');
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -3025,6 +3106,7 @@
     closeEditDroppedModal();
     dropped=dropped.map(d=>d.title===originalTitle?{...d,title:newTitle,year,episodes,genres,lastEp}:d);
     renderDropped();
+    showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -3277,6 +3359,34 @@
   });
 
   // ============================================================
+  // ============================================================
+  // Toast notification
+  // ============================================================
+  const TOAST_ICONS = { success: '✓', error: '✕', info: 'i' };
+
+  function showToast(message, type = 'success', duration = 3000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+      <span class="toast-icon">${TOAST_ICONS[type] || 'i'}</span>
+      <span>${message}</span>`;
+    container.appendChild(toast);
+
+    // auto hide
+    const timer = setTimeout(() => {
+      toast.classList.add('hiding');
+      toast.addEventListener('animationend', () => toast.remove(), { once: true });
+    }, duration);
+
+    // กดปิดเองได้
+    toast.addEventListener('click', () => {
+      clearTimeout(timer);
+      toast.classList.add('hiding');
+      toast.addEventListener('animationend', () => toast.remove(), { once: true });
+    });
+  }
+
   // Mobile drawer
   // ============================================================
   const mobileMenuBtn  = document.getElementById('mobileMenuBtn');
