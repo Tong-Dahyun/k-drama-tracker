@@ -1414,6 +1414,8 @@
     animation: rise .2s ease;
   }
 
+  .move-ep-field[hidden] { display: none !important; }
+
   .ep-input {
     width: 70px;
     background: var(--surface);
@@ -2946,13 +2948,15 @@
     if (pendingMoveSource === 'dropped') {
       // ลบปุ่มดูไม่จบออกจาก DOM
       if (_btnDropRef.parentNode === btnRow) btnRow.removeChild(_btnDropRef);
-      // ซ่อนช่อง ep
+      // ซ่อนช่อง ep ให้แน่นอน
       epField.hidden = true;
+      epField.style.display = 'none';
     } else {
       // คืนปุ่มดูไม่จบกลับเข้า DOM (ถ้าหายไป)
       if (!btnRow.contains(_btnDropRef)) btnRow.appendChild(_btnDropRef);
-      // แสดงช่อง ep สำหรับ Watchlist (จะเปิดเมื่อกดดูไม่จบ)
-      epField.hidden = true; // ซ่อนไว้ก่อน รอกดปุ่มดูไม่จบค่อยแสดง
+      // ซ่อนช่อง ep ไว้ก่อน รอกดปุ่มดูไม่จบค่อยแสดง
+      epField.hidden = true;
+      epField.style.display = '';
     }
 
     resetMoveModal();
