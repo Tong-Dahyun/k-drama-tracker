@@ -1344,10 +1344,13 @@
 
   /* ---------- Move modal: 3-button row ---------- */
   .move-three-btn-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
     gap: 8px;
     margin-bottom: 14px;
+  }
+
+  .move-three-btn-row .move-choice-btn {
+    flex: 1;
   }
 
   .move-choice-btn {
@@ -2917,9 +2920,6 @@
     moveModalChoice = null;
     const btns = document.querySelectorAll('.move-choice-btn');
     btns.forEach(b => { b.classList.remove('selected-liked','selected-neutral','selected-dropped','dimmed'); });
-    // restore ปุ่มดูไม่จบกลับมาก่อนเสมอ — openMoveModal จะซ่อนถ้าจำเป็น
-    document.getElementById('likeChoiceDrop').hidden = false;
-    document.getElementById('likeChoiceDrop').style.visibility = '';
     document.getElementById('moveEpField').hidden = true;
     document.getElementById('moveLastEpInput').value = '';
     document.getElementById('moveFormStatus').textContent = '';
@@ -2930,12 +2930,21 @@
     moveModalTitle.textContent = entry.title;
     const hint = document.getElementById('moveEpHint');
     hint.textContent = entry.episodes ? `/ ${entry.episodes} ตอน` : '';
-    // reset ก่อน (restore ปุ่มกลับมา)
-    resetMoveModal();
-    // ถ้ามาจาก Dropped → ซ่อนปุ่มดูไม่จบ ต้องอยู่หลัง resetMoveModal เสมอ
+
+    const btnRow = document.querySelector('.move-three-btn-row');
+    const btnDrop = document.getElementById('likeChoiceDrop');
+
     if (pendingMoveSource === 'dropped') {
-      document.getElementById('likeChoiceDrop').hidden = true;
+      // ลบปุ่มดูไม่จบออกจาก DOM ถ้ายังอยู่
+      if (btnDrop && btnDrop.parentNode === btnRow) btnRow.removeChild(btnDrop);
+    } else {
+      // คืนปุ่มดูไม่จบกลับเข้า DOM ถ้าหายไป
+      if (!document.getElementById('likeChoiceDrop')) {
+        btnRow.appendChild(btnDrop);
+      }
     }
+
+    resetMoveModal();
     moveModalOverlay.hidden = false;
   }
 
