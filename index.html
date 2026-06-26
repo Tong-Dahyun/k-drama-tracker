@@ -2937,9 +2937,11 @@
     if (pendingMoveSource === 'dropped') {
       // ลบปุ่มดูไม่จบออกจาก DOM ถ้ายังอยู่
       if (btnDrop && btnDrop.parentNode === btnRow) btnRow.removeChild(btnDrop);
+      // ซ่อน ep field ด้วย (ไม่จำเป็นสำหรับหน้า Dropped)
+      document.getElementById('moveEpField').hidden = true;
     } else {
       // คืนปุ่มดูไม่จบกลับเข้า DOM ถ้าหายไป
-      if (!document.getElementById('likeChoiceDrop')) {
+      if (btnDrop && !document.getElementById('likeChoiceDrop')) {
         btnRow.appendChild(btnDrop);
       }
     }
@@ -2952,25 +2954,25 @@
     moveModalChoice = choice;
     const btnYes  = document.getElementById('likeChoiceYes');
     const btnNo   = document.getElementById('likeChoiceNo');
-    const btnDrop = document.getElementById('likeChoiceDrop');
+    const btnDrop = document.getElementById('likeChoiceDrop'); // อาจเป็น null ถ้าหน้า Dropped
     const epField = document.getElementById('moveEpField');
 
-    // reset ก่อน
-    [btnYes, btnNo, btnDrop].forEach(b => {
+    // reset ก่อน — null-safe เพราะ btnDrop อาจถูกลบออกจาก DOM
+    [btnYes, btnNo, btnDrop].filter(Boolean).forEach(b => {
       b.classList.remove('selected-liked','selected-neutral','selected-dropped','dimmed');
     });
 
     if (choice === 'liked') {
       btnYes.classList.add('selected-liked');
       btnNo.classList.add('dimmed');
-      btnDrop.classList.add('dimmed');
+      if (btnDrop) btnDrop.classList.add('dimmed');
       epField.hidden = true;
       // กด liked → confirm ทันที
       confirmMove('liked');
     } else if (choice === 'neutral') {
       btnNo.classList.add('selected-neutral');
       btnYes.classList.add('dimmed');
-      btnDrop.classList.add('dimmed');
+      if (btnDrop) btnDrop.classList.add('dimmed');
       epField.hidden = true;
       // กด neutral → confirm ทันที
       confirmMove('neutral');
