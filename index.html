@@ -2942,24 +2942,26 @@
     const hint = document.getElementById('moveEpHint');
     hint.textContent = entry.episodes ? `/ ${entry.episodes} ตอน` : '';
 
+    // reset ก่อน — ต้องอยู่บนสุดก่อน set อะไรทั้งหมด
+    resetMoveModal();
+
     const btnRow = document.querySelector('.move-three-btn-row');
     const epField = document.getElementById('moveEpField');
 
     if (pendingMoveSource === 'dropped') {
       // ลบปุ่มดูไม่จบออกจาก DOM
       if (_btnDropRef.parentNode === btnRow) btnRow.removeChild(_btnDropRef);
-      // ซ่อนช่อง ep ให้แน่นอน
+      // ซ่อนช่อง ep — ต้องอยู่หลัง resetMoveModal
       epField.hidden = true;
       epField.style.display = 'none';
     } else {
       // คืนปุ่มดูไม่จบกลับเข้า DOM (ถ้าหายไป)
       if (!btnRow.contains(_btnDropRef)) btnRow.appendChild(_btnDropRef);
-      // ซ่อนช่อง ep ไว้ก่อน รอกดปุ่มดูไม่จบค่อยแสดง
+      // ช่อง ep ซ่อนไว้ก่อน รอกดดูไม่จบค่อยแสดง
       epField.hidden = true;
-      epField.style.display = '';
+      epField.style.display = 'none';
     }
 
-    resetMoveModal();
     moveModalOverlay.hidden = false;
   }
 
@@ -2990,14 +2992,13 @@
       // กด neutral → confirm ทันที
       confirmMove('neutral');
     } else if (choice === 'dropped') {
-      // ถ้ามาจาก Dropped อยู่แล้ว → ไม่ทำอะไร (ป้องกันวนกลับ Dropped)
       if (pendingMoveSource === 'dropped') return;
       btnDrop.classList.add('selected-dropped');
       btnYes.classList.add('dimmed');
       btnNo.classList.add('dimmed');
       epField.hidden = false;
+      epField.style.display = 'flex';
       document.getElementById('moveLastEpInput').focus();
-      // รอให้กด confirm เองเมื่อกรอก ep แล้ว (Enter หรือ blur)
     }
   }
 
