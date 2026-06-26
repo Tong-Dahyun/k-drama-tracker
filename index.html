@@ -2925,6 +2925,9 @@
     document.getElementById('moveFormStatus').textContent = '';
   }
 
+  // เก็บ reference ปุ่ม drop ไว้ตลอด ไม่ให้ GC เก็บ
+  const _btnDropRef = document.getElementById('likeChoiceDrop');
+
   function openMoveModal(entry) {
     pendingMoveEntry = entry;
     moveModalTitle.textContent = entry.title;
@@ -2932,18 +2935,18 @@
     hint.textContent = entry.episodes ? `/ ${entry.episodes} ตอน` : '';
 
     const btnRow = document.querySelector('.move-three-btn-row');
-    const btnDrop = document.getElementById('likeChoiceDrop');
+    const epField = document.getElementById('moveEpField');
 
     if (pendingMoveSource === 'dropped') {
-      // ลบปุ่มดูไม่จบออกจาก DOM ถ้ายังอยู่
-      if (btnDrop && btnDrop.parentNode === btnRow) btnRow.removeChild(btnDrop);
-      // ซ่อน ep field ด้วย (ไม่จำเป็นสำหรับหน้า Dropped)
-      document.getElementById('moveEpField').hidden = true;
+      // ลบปุ่มดูไม่จบออกจาก DOM
+      if (_btnDropRef.parentNode === btnRow) btnRow.removeChild(_btnDropRef);
+      // ซ่อนช่อง ep
+      epField.hidden = true;
     } else {
-      // คืนปุ่มดูไม่จบกลับเข้า DOM ถ้าหายไป
-      if (btnDrop && !document.getElementById('likeChoiceDrop')) {
-        btnRow.appendChild(btnDrop);
-      }
+      // คืนปุ่มดูไม่จบกลับเข้า DOM (ถ้าหายไป)
+      if (!btnRow.contains(_btnDropRef)) btnRow.appendChild(_btnDropRef);
+      // แสดงช่อง ep สำหรับ Watchlist (จะเปิดเมื่อกดดูไม่จบ)
+      epField.hidden = true; // ซ่อนไว้ก่อน รอกดปุ่มดูไม่จบค่อยแสดง
     }
 
     resetMoveModal();
