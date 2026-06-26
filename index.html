@@ -962,26 +962,95 @@
   }
 
   /* ---------- Responsive ---------- */
+  /* ---------- Mobile hamburger button ---------- */
+  .mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 200;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 1.1rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: background .18s, border-color .18s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  .mobile-menu-btn:hover { background: var(--surface-soft); border-color: var(--red); }
+
+  /* ---------- Drawer overlay ---------- */
+  .drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 150;
+    animation: overlayIn .2s ease forwards;
+  }
+
+  .drawer-overlay.open { display: block; }
+
   @media (max-width: 860px) {
-    .app-shell { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); padding: 20px 20px 16px; }
-    .page-tabs { flex-direction: row; flex-wrap: wrap; gap: 4px; margin-bottom: 0; }
-    .page-tab { border-left: none; border-bottom: 3px solid transparent; border-radius: 0; flex: 1; text-align: center; }
-    .page-tabs > .page-tab { justify-content: center; }
-    .page-tab.active { border-left-color: transparent; border-bottom-color: var(--red); background: transparent; }
-    .chart-card { max-width: none; }
-    .chart-card .chart-wrap { height: 240px; }
-    .genre-chart-wrap { height: 260px; flex-basis: 100%; }
-    .detail-topbar { flex-direction: column; align-items: stretch; gap: 14px; padding-top: 20px; margin-top: -20px; }
-    .nav-section-label { flex-basis: 100%; margin-top: 10px; }
+    /* hamburger button โชว์ */
+    .mobile-menu-btn { display: flex; }
+
+    /* main content เพิ่ม padding บนให้ไม่ทับปุ่ม */
+    main { padding: 68px 16px 20px; }
+
+    /* sidebar กลายเป็น drawer เลื่อนจากซ้าย */
+    .app-shell { display: block; }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 260px;
+      z-index: 160;
+      transform: translateX(-100%);
+      transition: transform .28s cubic-bezier(0.4, 0, 0.2, 1);
+      border-right: 1px solid var(--border);
+      border-bottom: none;
+      padding: 28px 20px;
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    }
+
+    /* layout เหมือน desktop ทุกอย่าง */
+    .page-tabs { flex-direction: column; gap: 2px; }
+    .page-tab { border-left: 3px solid transparent; border-bottom: none; border-radius: 0 8px 8px 0; flex: none; text-align: left; }
+    .page-tabs > .page-tab { justify-content: flex-start; }
+    .page-tab.active { border-left-color: var(--red); border-bottom-color: transparent; background: var(--surface); }
+    .page-tabs-sub { flex-direction: column; gap: 2px; margin: 2px 0 4px; order: unset; flex-basis: auto; }
+    .sub-page-tab { flex: none; padding-left: 30px; }
+    .nav-section-label { flex-basis: auto; margin-top: 14px; }
     .nav-section-label:first-child { margin-top: 0; }
-    .page-tabs-sub { flex-direction: row; flex-basis: 100%; order: 3; gap: 4px; margin-top: 4px; }
-    .sub-page-tab { flex: 1; padding-left: 12px; }
+
+    /* detail topbar */
+    .detail-topbar { flex-direction: column; align-items: stretch; gap: 14px; padding-top: 20px; margin-top: -20px; }
     .sidebar-controls { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 14px; min-width: 0; }
     .search-box { flex: 1 1 160px; width: auto; }
     .sort-select { width: auto; flex: 0 1 140px; }
     .sidebar-controls .add-entry-btn { width: auto; margin-top: 0; }
-    main { padding: 20px 16px; }
+
+    /* charts */
+    .chart-card { max-width: none; }
+    .chart-card .chart-wrap { height: 240px; }
+    .genre-chart-wrap { height: 260px; flex-basis: 100%; }
+    .summary-layout { grid-template-columns: 1fr; }
+    .summary-right-chart { flex: none; height: 220px !important; }
   }
 
   /* ---------- Add/modal buttons ---------- */
@@ -1376,6 +1445,12 @@
       </form>
     </div>
   </div>
+
+  <!-- Mobile hamburger button -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="เปิดเมนู">☰</button>
+
+  <!-- Drawer overlay -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
 
   <div class="app-shell">
     <aside class="sidebar">
@@ -3199,6 +3274,46 @@
       if(result.ok){closeDeleteUserModal();loadUsersTable();}
       else{deleteUserFormStatus.textContent=result.error||'ลบผู้ใช้ไม่สำเร็จ';deleteUserFormStatus.className='form-status error';}
     }catch(err){if(err.message!=='cancelled'){console.error(err);deleteUserFormStatus.textContent='เชื่อมต่อไม่สำเร็จ';deleteUserFormStatus.className='form-status error';}}
+  });
+
+  // ============================================================
+  // Mobile drawer
+  // ============================================================
+  const mobileMenuBtn  = document.getElementById('mobileMenuBtn');
+  const drawerOverlay  = document.getElementById('drawerOverlay');
+  const sidebar        = document.querySelector('.sidebar');
+
+  function openDrawer() {
+    sidebar.classList.add('open');
+    drawerOverlay.classList.add('open');
+    mobileMenuBtn.textContent = '✕';
+    document.body.style.overflow = 'hidden'; // ป้องกัน scroll หลัง drawer
+  }
+
+  function closeDrawer() {
+    sidebar.classList.remove('open');
+    drawerOverlay.classList.remove('open');
+    mobileMenuBtn.textContent = '☰';
+    document.body.style.overflow = '';
+  }
+
+  function toggleDrawer() {
+    sidebar.classList.contains('open') ? closeDrawer() : openDrawer();
+  }
+
+  mobileMenuBtn.addEventListener('click', toggleDrawer);
+  drawerOverlay.addEventListener('click', closeDrawer);
+
+  // กด nav item → ปิด drawer อัตโนมัติ
+  document.querySelectorAll('.page-tab[data-nav]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      if (window.innerWidth <= 860) closeDrawer();
+    });
+  });
+
+  // กด Escape ปิด drawer
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) closeDrawer();
   });
 
   // ============================================================
