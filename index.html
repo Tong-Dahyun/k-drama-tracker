@@ -1048,7 +1048,7 @@
     /* charts */
     .chart-card { max-width: none; }
     .chart-card .chart-wrap { height: 240px; }
-    .genre-chart-wrap { height: 260px; flex-basis: 100%; }
+    .genre-chart-wrap { height: 320px; flex-basis: 100%; }
     .summary-layout { grid-template-columns: 1fr; }
     .summary-right-chart { flex: none; height: 220px !important; }
   }
@@ -2805,8 +2805,21 @@
         type:'bar',
         data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:'#E50914',borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          layout:{padding:{left:0}},
           plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}},
-          scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
+          scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{
+              ticks:{
+                color:'#B3B3B3',
+                font:{family:'Sarabun', size:11},
+                autoSkip:false,
+                maxRotation:0,
+                callback: function(value, index) {
+                  const label = this.getLabelForValue(value);
+                  return label.length > 8 ? label.substring(0,8)+'…' : label;
+                }
+              },
+              grid:{display:false}
+            }},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
             const genre=labels[elements[0].index];
@@ -2839,11 +2852,24 @@
         type:'bar',
         data:{labels,datasets:[{label:'% ถูกใจ',data:pcts,backgroundColor:barColors,hoverBackgroundColor:'#46D369',borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          layout:{padding:{left:0}},
           plugins:{legend:{display:false},
             tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3',
               callbacks:{label:ctx=>`${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`}}
           },
-          scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
+          scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{
+              ticks:{
+                color:'#B3B3B3',
+                font:{family:'Sarabun', size:11},
+                autoSkip:false,
+                maxRotation:0,
+                callback: function(value, index) {
+                  const label = this.getLabelForValue(value);
+                  return label.length > 8 ? label.substring(0,8)+'…' : label;
+                }
+              },
+              grid:{display:false}
+            }},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
             const genre=labels[elements[0].index];
