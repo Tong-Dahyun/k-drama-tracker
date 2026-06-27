@@ -3607,22 +3607,17 @@
   function openDrawer() {
     sidebar.classList.add('open');
     drawerOverlay.classList.add('open');
-    mobileMenuBtn.textContent = '✕';
-    document.body.style.overflow = 'hidden'; // ป้องกัน scroll หลัง drawer
+    document.body.style.overflow = 'hidden';
   }
 
   function closeDrawer() {
     sidebar.classList.remove('open');
     drawerOverlay.classList.remove('open');
-    mobileMenuBtn.textContent = '☰';
     document.body.style.overflow = '';
   }
 
-  function toggleDrawer() {
-    sidebar.classList.contains('open') ? closeDrawer() : openDrawer();
-  }
-
-  mobileMenuBtn.addEventListener('click', toggleDrawer);
+  // ปุ่ม ☰ เปิดอย่างเดียว ไม่ toggle
+  mobileMenuBtn.addEventListener('click', openDrawer);
   drawerOverlay.addEventListener('click', closeDrawer);
 
   // กด nav item → ปิด drawer อัตโนมัติ
