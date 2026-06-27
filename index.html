@@ -29,6 +29,35 @@
     --text-dim: #737373;
   }
 
+  /* ---------- Light mode ---------- */
+  body.light-mode {
+    --bg: #F4F4F4;
+    --surface: #FFFFFF;
+    --surface-soft: #EBEBEB;
+    --border: #D4D4D4;
+    --red-soft: rgba(229,9,20,0.1);
+    --red-muted: rgba(229,9,20,0.25);
+    --mint-soft: rgba(70,211,105,0.12);
+    --gold-soft: rgba(230,185,30,0.12);
+    --amber-soft: rgba(249,115,22,0.12);
+    --text: #141414;
+    --text-soft: #555555;
+    --text-dim: #888888;
+  }
+
+  /* smooth transition เมื่อสลับ mode */
+  body, .sidebar, .ticket, .chart-card, .summary-card,
+  .modal-box, .card-menu, .sort-select, .search-box,
+  .pill, .page-tab, .genre-table, .users-table-wrap {
+    transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+  }
+
+  /* perforation ใน light mode ต้องใช้ bg สีขาว */
+  body.light-mode .perforation::before,
+  body.light-mode .perforation::after {
+    background: var(--bg);
+  }
+
   * { box-sizing: border-box; }
 
   body {
@@ -1604,6 +1633,73 @@
 
   .load-error-btn:hover { background: var(--red-soft); color: var(--red); border-color: transparent; }
 
+  /* ---------- Mode selector ---------- */
+  .mode-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    width: 160px;
+    text-align: left;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .mode-card:hover { border-color: var(--red); }
+
+  .mode-card.active {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px var(--red-soft);
+  }
+
+  .mode-preview {
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    height: 80px;
+  }
+
+  .mode-preview-dark  { background: #141414; }
+  .mode-preview-light { background: #F4F4F4; border: 1px solid #D4D4D4; }
+
+  .mode-preview-bar {
+    height: 8px;
+    border-radius: 4px;
+    width: 60%;
+  }
+
+  .mode-preview-dark  .mode-preview-bar  { background: #E50914; }
+  .mode-preview-light .mode-preview-bar  { background: #E50914; }
+
+  .mode-preview-card {
+    height: 20px;
+    border-radius: 5px;
+  }
+
+  .mode-preview-dark  .mode-preview-card { background: #1F1F1F; }
+  .mode-preview-light .mode-preview-card { background: #FFFFFF; border: 1px solid #D4D4D4; }
+
+  .mode-card-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mode-card-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .mode-card-check {
+    font-size: 0.9rem;
+    color: var(--red);
+  }
+
 </style>
 </head>
 <body>
@@ -1656,9 +1752,10 @@
           <button class="page-tab sub-page-tab" data-nav="dropped">Dropped Series</button>
         </div>
 
-        <div class="nav-section-label" id="settingsSectionLabel" hidden><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg></span>Settings</div>
-        <div class="page-tabs-sub" id="settingsSubNav" hidden>
-          <button class="page-tab sub-page-tab" data-nav="users">Users</button>
+        <div class="nav-section-label" id="settingsSectionLabel"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg></span>Settings</div>
+        <div class="page-tabs-sub" id="settingsSubNav">
+          <button class="page-tab sub-page-tab" data-nav="users" id="navUsers" hidden>Users</button>
+          <button class="page-tab sub-page-tab" data-nav="mode">Mode</button>
         </div>
       </nav>
 
@@ -1841,6 +1938,37 @@
           <div class="pagination" id="paginationDropped"></div>
           <div class="empty" id="emptyDropped" hidden><div class="stamp-big">SOLD OUT</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
         </section>
+      </section>
+
+      <!-- Settings > Mode -->
+      <section class="view-section" id="view-mode">
+        <div class="users-topbar">
+          <h2 class="users-heading">ธีมการแสดงผล</h2>
+        </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <button class="mode-card" id="modeDarkBtn">
+            <div class="mode-preview mode-preview-dark">
+              <div class="mode-preview-bar"></div>
+              <div class="mode-preview-card"></div>
+              <div class="mode-preview-card"></div>
+            </div>
+            <div class="mode-card-label">
+              <span class="mode-card-name">🌙 Dark Mode</span>
+              <span class="mode-card-check" id="modeDarkCheck"></span>
+            </div>
+          </button>
+          <button class="mode-card" id="modeLightBtn">
+            <div class="mode-preview mode-preview-light">
+              <div class="mode-preview-bar"></div>
+              <div class="mode-preview-card"></div>
+              <div class="mode-preview-card"></div>
+            </div>
+            <div class="mode-card-label">
+              <span class="mode-card-name">☀️ Light Mode</span>
+              <span class="mode-card-check" id="modeLightCheck"></span>
+            </div>
+          </button>
+        </div>
       </section>
 
       <!-- Settings > Users -->
@@ -2603,6 +2731,9 @@
     if (tab.dataset.nav === 'summary') {
       document.getElementById('view-summary').classList.add('active');
       updateSummary();
+    } else if (tab.dataset.nav === 'mode') {
+      document.getElementById('view-mode').classList.add('active');
+      updateModeCards();
     } else if (tab.dataset.nav === 'users') {
       document.getElementById('view-users').classList.add('active');
       loadUsersTable();
@@ -3297,8 +3428,12 @@
 
   function applyRoleVisibility() {
     document.body.classList.toggle('viewer-mode',currentRole==='Viewer');
-    const isAdmin=currentRole==='Admin';
-    settingsSectionLabel.hidden=!isAdmin; settingsSubNav.hidden=!isAdmin;
+    const isAdmin = currentRole==='Admin';
+    // Settings section โชว์ทุกคน, Users เฉพาะ Admin
+    settingsSectionLabel.hidden = false;
+    settingsSubNav.hidden = false;
+    const navUsers = document.getElementById('navUsers');
+    if (navUsers) navUsers.hidden = !isAdmin;
   }
 
   function unlockApp() {
@@ -3598,6 +3733,39 @@
       toast.addEventListener('animationend', () => toast.remove(), { once: true });
     });
   }
+
+  // ============================================================
+  // Dark / Light mode
+  // ============================================================
+  const MODE_KEY = 'ktracker_mode';
+
+  function applyMode(mode) {
+    document.body.classList.toggle('light-mode', mode === 'light');
+    try { localStorage.setItem(MODE_KEY, mode); } catch(e) {}
+    updateModeCards();
+  }
+
+  function updateModeCards() {
+    const isLight = document.body.classList.contains('light-mode');
+    const darkBtn    = document.getElementById('modeDarkBtn');
+    const lightBtn   = document.getElementById('modeLightBtn');
+    const darkCheck  = document.getElementById('modeDarkCheck');
+    const lightCheck = document.getElementById('modeLightCheck');
+    if (!darkBtn) return;
+    darkBtn.classList.toggle('active', !isLight);
+    lightBtn.classList.toggle('active', isLight);
+    darkCheck.textContent  = !isLight ? '✓' : '';
+    lightCheck.textContent =  isLight ? '✓' : '';
+  }
+
+  // restore mode จาก localStorage
+  try {
+    const savedMode = localStorage.getItem(MODE_KEY);
+    if (savedMode) applyMode(savedMode);
+  } catch(e) {}
+
+  document.getElementById('modeDarkBtn')?.addEventListener('click',  () => applyMode('dark'));
+  document.getElementById('modeLightBtn')?.addEventListener('click', () => applyMode('light'));
 
   // Mobile drawer
   // ============================================================
