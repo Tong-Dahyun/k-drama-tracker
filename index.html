@@ -2810,13 +2810,19 @@
           scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{
               ticks:{
                 color:'#B3B3B3',
-                font:{family:'Sarabun', size:11},
+                font: function(ctx) {
+                  return { family:'Sarabun', size: window.innerWidth <= 860 ? 10 : 12 };
+                },
                 autoSkip:false,
                 maxRotation:0,
                 callback: function(value, index) {
                   const label = this.getLabelForValue(value);
-                  return label.length > 8 ? label.substring(0,8)+'…' : label;
+                  const maxLen = window.innerWidth <= 860 ? 5 : 12;
+                  return label.length > maxLen ? label.substring(0, maxLen) + '…' : label;
                 }
+              },
+              afterFit: function(axis) {
+                axis.width = window.innerWidth <= 860 ? 56 : 100;
               },
               grid:{display:false}
             }},
@@ -2860,13 +2866,19 @@
           scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{
               ticks:{
                 color:'#B3B3B3',
-                font:{family:'Sarabun', size:11},
+                font: function(ctx) {
+                  return { family:'Sarabun', size: window.innerWidth <= 860 ? 10 : 12 };
+                },
                 autoSkip:false,
                 maxRotation:0,
                 callback: function(value, index) {
                   const label = this.getLabelForValue(value);
-                  return label.length > 8 ? label.substring(0,8)+'…' : label;
+                  const maxLen = window.innerWidth <= 860 ? 5 : 12;
+                  return label.length > maxLen ? label.substring(0, maxLen) + '…' : label;
                 }
+              },
+              afterFit: function(axis) {
+                axis.width = window.innerWidth <= 860 ? 56 : 100;
               },
               grid:{display:false}
             }},
