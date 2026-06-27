@@ -3607,12 +3607,14 @@
   function openDrawer() {
     sidebar.classList.add('open');
     drawerOverlay.classList.add('open');
+    mobileMenuBtn.style.display = 'none';
     document.body.style.overflow = 'hidden';
   }
 
   function closeDrawer() {
     sidebar.classList.remove('open');
     drawerOverlay.classList.remove('open');
+    mobileMenuBtn.style.display = '';
     document.body.style.overflow = '';
   }
 
