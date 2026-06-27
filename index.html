@@ -3425,7 +3425,7 @@
 
   function rememberSessionPassword(password,role) {
     currentPassword=password;
-    try{ if(role==='Admin') sessionStorage.setItem(SESSION_PW_KEY,password); else sessionStorage.removeItem(SESSION_PW_KEY); }catch(err){}
+    try{ sessionStorage.setItem(SESSION_PW_KEY,password); }catch(err){}
   }
   function restoreSessionPassword() { try{ const pw=sessionStorage.getItem(SESSION_PW_KEY); if(pw) currentPassword=pw; }catch(err){} }
   function clearSessionPassword()   { currentPassword=null; try{ sessionStorage.removeItem(SESSION_PW_KEY); }catch(err){} }
@@ -3473,7 +3473,7 @@
   logoutBtn.addEventListener('click',()=>{ clearStoredAuth(); clearSessionPassword(); location.reload(); });
 
   const existingAuth=getStoredAuth();
-  if(existingAuth){ currentUsername=existingAuth.username; currentRole=existingAuth.role||'Editor'; if(currentRole==='Admin') restoreSessionPassword(); unlockApp(); }
+  if(existingAuth){ currentUsername=existingAuth.username; currentRole=existingAuth.role||'Editor'; restoreSessionPassword(); unlockApp(); }
 
   // ============================================================
   // Admin reauth
