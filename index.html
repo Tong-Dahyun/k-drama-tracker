@@ -1048,7 +1048,7 @@
     /* charts */
     .chart-card { max-width: none; }
     .chart-card .chart-wrap { height: 240px; }
-    .genre-chart-wrap { height: 320px; flex-basis: 100%; }
+    .genre-chart-wrap { height: 380px; flex-basis: 100%; }
     .summary-layout { grid-template-columns: 1fr; }
     .summary-right-chart { flex: none; height: 220px !important; }
   }
@@ -2803,7 +2803,7 @@
     try {
       genreChartInstance=new Chart(canvas.getContext('2d'),{
         type:'bar',
-        data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:'#E50914',borderRadius:6,maxBarThickness:22}]},
+        data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:'#E50914',borderRadius:4,maxBarThickness:12,barPercentage:0.6,categoryPercentage:0.7}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
           layout:{padding:{left:0}},
           plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}},
@@ -2856,7 +2856,7 @@
     try {
       genreLikedChartInstance=new Chart(canvas.getContext('2d'),{
         type:'bar',
-        data:{labels,datasets:[{label:'% ถูกใจ',data:pcts,backgroundColor:barColors,hoverBackgroundColor:'#46D369',borderRadius:6,maxBarThickness:22}]},
+        data:{labels,datasets:[{label:'% ถูกใจ',data:pcts,backgroundColor:barColors,hoverBackgroundColor:'#46D369',borderRadius:4,maxBarThickness:12,barPercentage:0.6,categoryPercentage:0.7}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
           layout:{padding:{left:0}},
           plugins:{legend:{display:false},
