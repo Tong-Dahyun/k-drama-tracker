@@ -1604,137 +1604,6 @@
 
   .load-error-btn:hover { background: var(--red-soft); color: var(--red); border-color: transparent; }
 
-  /* ---------- Timeline chart ---------- */
-  .timeline-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-
-  .timeline-header h3 {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0;
-  }
-
-  .timeline-year-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--red);
-    background: var(--red-soft);
-    padding: 3px 10px;
-    border-radius: 6px;
-  }
-
-  .timeline-reset-btn {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all .15s;
-    margin-left: auto;
-  }
-
-  .timeline-reset-btn:hover { color: var(--red); border-color: var(--red); }
-
-  .timeline-grid {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .timeline-chart-col {
-    flex: 1 1 240px;
-    min-width: 200px;
-  }
-
-  .timeline-sub-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-dim);
-    margin: 0 0 10px;
-  }
-
-  .timeline-chart-wrap {
-    position: relative;
-    height: 220px;
-  }
-
-  @media (max-width: 860px) {
-    .timeline-chart-col { flex-basis: 100%; }
-    .timeline-chart-wrap { height: 180px; }
-  }
-
-  /* ---------- Top10 narrower cols + wider table ---------- */
-  .genre-col-narrow {
-    flex: 1 1 180px;
-    min-width: 160px;
-  }
-
-  .genre-table-wide {
-    flex: 2 1 360px;
-    min-width: 280px;
-  }
-
-  .genre-table thead th:nth-child(3),
-  .genre-table tbody td:nth-child(3) {
-    color: var(--text-dim);
-    font-size: 0.78rem;
-  }
-
-  /* ---------- Dashboard 3-col row ---------- */
-  .dashboard-row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 0;
-  }
-
-  @media (max-width: 1100px) {
-    .dashboard-row-3 { grid-template-columns: 1fr 1fr; }
-  }
-
-  @media (max-width: 860px) {
-    .dashboard-row-3 { grid-template-columns: 1fr; }
-  }
-
-  .dash-card {
-    margin-top: 0 !important;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .dash-card h3 {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0 0 14px;
-    flex-shrink: 0;
-  }
-
-  .dash-chart-wrap {
-    position: relative;
-    flex: 1;
-    min-height: 220px;
-  }
-
-  .dash-donut-wrap {
-    min-height: 160px;
-  }
-
 </style>
 </head>
 <body>
@@ -1873,62 +1742,30 @@
         </div>
 
         <!-- Timeline: รายปี + รายเดือน -->
-        <!-- Timeline header (reset button) -->
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-          <span style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:700; color:var(--text-soft);">Timeline การดู</span>
-          <span class="timeline-year-label" id="timelineYearLabel"></span>
-          <button class="timeline-reset-btn" id="timelineResetBtn" hidden>✕ ล้างการเลือก</button>
-        </div>
-
-        <!-- Row 1: 3 chart แยกกล่อง -->
-        <div class="dashboard-row-3">
-          <div class="chart-card dash-card">
-            <h3>รายปี <span style="font-size:0.7rem;font-weight:400;color:var(--text-dim);">คลิกเพื่อดูรายเดือน</span></h3>
-            <div class="dash-chart-wrap">
-              <canvas id="timelineYearChart"></canvas>
-              <p class="chart-empty" id="timelineYearEmpty" hidden>ยังไม่มีข้อมูลวันที่ดูจบ</p>
+        <div class="chart-card">
+          <div class="genre-section-3">
+            <div class="genre-col">
+              <h3 class="genre-col-title">Top 10 แนวที่ดูเยอะที่สุด</h3>
+              <div class="genre-chart-wrap">
+                <canvas id="genreChart"></canvas>
+                <p class="chart-empty" id="genreChartEmpty" hidden>ยังไม่มีข้อมูล</p>
+              </div>
             </div>
-          </div>
-          <div class="chart-card dash-card">
-            <h3 id="timelineMonthLabel">รายเดือน</h3>
-            <div class="dash-chart-wrap">
-              <canvas id="timelineMonthChart"></canvas>
-              <p class="chart-empty" id="timelineMonthEmpty" hidden>ยังไม่มีข้อมูล</p>
+            <div class="genre-col">
+              <h3 class="genre-col-title">Top 10 แนวที่ถูกใจมากที่สุด</h3>
+              <div class="genre-chart-wrap">
+                <canvas id="genreLikedChart"></canvas>
+                <p class="chart-empty" id="genreLikedChartEmpty" hidden>ยังไม่มีข้อมูล</p>
+              </div>
             </div>
-          </div>
-          <div class="chart-card dash-card">
-            <h3>Watched vs Watchlist vs Dropped</h3>
-            <div class="dash-chart-wrap dash-donut-wrap">
-              <canvas id="completionDonutChart"></canvas>
-              <p class="chart-empty" id="completionDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
-            </div>
-            <div class="donut-legend" id="completionDonutLegend" style="margin-top:12px;"></div>
-          </div>
-        </div>
-
-        <!-- Row 2: Top10 + Table แยกกล่อง -->
-        <div class="dashboard-row-3" style="margin-top:16px;">
-          <div class="chart-card dash-card">
-            <h3>Top 10 แนวที่ดูเยอะที่สุด</h3>
-            <div class="dash-chart-wrap">
-              <canvas id="genreChart"></canvas>
-              <p class="chart-empty" id="genreChartEmpty" hidden>ยังไม่มีข้อมูล</p>
-            </div>
-          </div>
-          <div class="chart-card dash-card">
-            <h3>Top 10 แนวที่ถูกใจมากที่สุด</h3>
-            <div class="dash-chart-wrap">
-              <canvas id="genreLikedChart"></canvas>
-              <p class="chart-empty" id="genreLikedChartEmpty" hidden>ยังไม่มีข้อมูล</p>
-            </div>
-          </div>
-          <div class="chart-card dash-card">
-            <p class="genre-table-title" id="genreTableTitle" style="margin:0 0 12px;">คลิกแนวในกราฟหรือ Timeline เพื่อดูรายชื่อเรื่อง</p>
-            <div class="genre-table-scroll" style="max-height:320px;">
-              <table class="genre-table">
-                <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th><th>แนว/หมวด</th></tr></thead>
-                <tbody id="genreTableBody"></tbody>
-              </table>
+            <div class="genre-table-wrap">
+              <p class="genre-table-title" id="genreTableTitle">คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง</p>
+              <div class="genre-table-scroll">
+                <table class="genre-table">
+                  <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
+                  <tbody id="genreTableBody"></tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -2267,22 +2104,8 @@
       episodes: Number(row['จำนวนตอน']) || 0,
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
       liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE',
-      no: Number(row['No.'] || row['ลำดับ']) || 0,
-      watchedDate: parseSheetDate(row['วันที่ดูจบ'] || '')
+      no: Number(row['No.'] || row['ลำดับ']) || 0
     };
-  }
-
-  // แปลง mm/dd/yyyy (Google Sheet format) → Date object
-  function parseSheetDate(str) {
-    if (!str) return null;
-    const s = str.toString().trim();
-    const parts = s.split('/');
-    if (parts.length !== 3) return null;
-    const mm = parseInt(parts[0], 10);
-    const dd = parseInt(parts[1], 10);
-    const yyyy = parseInt(parts[2], 10);
-    if (isNaN(mm) || isNaN(dd) || isNaN(yyyy)) return null;
-    return new Date(yyyy, mm - 1, dd);
   }
 
   function rowToPending(row) {
@@ -2960,9 +2783,9 @@
     titleEl.textContent=title;
     if(list.length===0){tbody.innerHTML='<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';return;}
     if(isPending){
-      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td><td>${(s.genres||[]).join(', ')}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
     } else {
-      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td><td>${(s.genres||[]).join(', ')}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
     }
   }
 
@@ -3045,8 +2868,7 @@
     if(!diaryLoaded){
       summaryTotal.textContent='…';summaryLiked.textContent='…';
       summaryTotalBreakdown.textContent='กำลังโหลดข้อมูล...';summaryLikedBreakdown.textContent='';
-      renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
-      renderCompletionDonut();return;
+      renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();return;
     }
     const summaryShows=getSummaryShows();
     const total=summaryShows.length, seriesCount=summaryShows.filter(s=>s.type==='series').length, varietyCount=summaryShows.filter(s=>s.type==='variety').length;
@@ -3054,345 +2876,7 @@
     summaryTotal.textContent=total; summaryTotalBreakdown.textContent=`ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}`;
     summaryLiked.textContent=likedCount; summaryLikedBreakdown.textContent=`ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
     renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
-    renderTimelineYearChart();
-    renderCompletionDonut();
   }
-
-  // ============================================================
-  // Timeline charts
-  // ============================================================
-  let timelineYearChartInst = null;
-  let timelineMonthChartInst = null;
-  let avgEpChartInst = null;
-  let lastRenderedYear = null; // ใช้เช็คว่าปีเปลี่ยนหรือเปล่า (สำหรับ animation month)
-  let selectedTimelineYear = null; // ปีที่ถูกเลือก null = ปีปัจจุบัน
-  let selectedTimelineMonth = null; // เดือนที่ถูกเลือก (0-11) null = ไม่ได้เลือก
-
-  const MONTH_NAMES = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-
-  function getShowsWithDate() {
-    // เอาเฉพาะเรื่องที่มี watchedDate และกรองตาม slicer Series/Variety
-    return shows.filter(s => s.watchedDate && summaryTypeFilter[s.type]);
-  }
-
-  function renderTimelineYearChart() {
-    const canvas = document.getElementById('timelineYearChart');
-    const emptyMsg = document.getElementById('timelineYearEmpty');
-    if (!canvas) return;
-
-    const allWithDate = getShowsWithDate();
-    if (!diaryLoaded || allWithDate.length === 0) {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      if (timelineYearChartInst) { timelineYearChartInst.destroy(); timelineYearChartInst = null; }
-      // ยังไม่มีข้อมูล → ให้ month chart แสดงปีปัจจุบันเปล่า
-      renderTimelineMonthChart(new Date().getFullYear());
-      return;
-    }
-
-    // นับจำนวนเรื่องต่อปี (จาก watchedDate)
-    const yearCounts = {};
-    allWithDate.forEach(s => {
-      const y = s.watchedDate.getFullYear();
-      yearCounts[y] = (yearCounts[y] || 0) + 1;
-    });
-    const years = Object.keys(yearCounts).map(Number).sort((a,b) => a-b);
-    const counts = years.map(y => yearCounts[y]);
-
-    canvas.hidden = false; emptyMsg.hidden = true;
-    if (timelineYearChartInst) timelineYearChartInst.destroy();
-
-    // ถ้ายังไม่มีปีที่เลือก → ไม่ select อะไร (month chart ใช้ปีล่าสุด)
-    const latestYear = years[years.length - 1];
-    if (selectedTimelineYear === null) {
-      selectedTimelineYear = latestYear;
-    }
-
-    const barColors = years.map(y => y === selectedTimelineYear ? '#E50914' : 'rgba(229,9,20,0.45)');
-
-    timelineYearChartInst = new Chart(canvas.getContext('2d'), {
-      type: 'bar',
-      data: { labels: years, datasets: [{ label: 'เรื่อง', data: counts,
-        backgroundColor: barColors, hoverBackgroundColor: '#E50914',
-        borderRadius: 6, maxBarThickness: 40 }] },
-      options: {
-        animation: false,
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false },
-          tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1,
-            titleColor:'#FFFFFF', bodyColor:'#B3B3B3',
-            callbacks: { label: ctx => `${ctx.parsed.y} เรื่อง` } } },
-        scales: {
-          x: { ticks: { color:'#B3B3B3', font:{family:'Inter'} }, grid: { color:'rgba(255,255,255,0.06)' } },
-          y: { beginAtZero: true, ticks: { color:'#B3B3B3', precision:0 }, grid: { color:'rgba(255,255,255,0.06)' } }
-        },
-        onClick: (evt, elements) => {
-          if (!elements.length) return;
-          const clickedYear = years[elements[0].index];
-          if (selectedTimelineYear === clickedYear) {
-            // คลิกซ้ำ → ไม่ reset แค่ update
-          } else {
-            selectedTimelineYear = clickedYear;
-            selectedTimelineMonth = null;
-          }
-          updateTimelineUI();
-        },
-        onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
-      }
-    });
-
-    // render month chart + avgEp chart
-    renderTimelineMonthChart(selectedTimelineYear);
-    renderAvgEpChart();
-    updateTimelineUI();
-  }
-
-  function renderTimelineMonthChart(year) {
-    const canvas = document.getElementById('timelineMonthChart');
-    const emptyMsg = document.getElementById('timelineMonthEmpty');
-    const monthLabel = document.getElementById('timelineMonthLabel');
-    if (!canvas) return;
-
-    monthLabel.textContent = `รายเดือน — ปี ${year}`;
-
-    const allWithDate = getShowsWithDate();
-    const inYear = allWithDate.filter(s => s.watchedDate.getFullYear() === year);
-
-    const monthlyCounts = Array(12).fill(0);
-    inYear.forEach(s => { monthlyCounts[s.watchedDate.getMonth()]++; });
-
-    const yearChanged = lastRenderedYear !== year;
-    lastRenderedYear = year;
-    if (timelineMonthChartInst) timelineMonthChartInst.destroy();
-
-    const barColors = MONTH_NAMES.map((_, i) => i === selectedTimelineMonth ? '#46D369' : 'rgba(70,211,105,0.45)');
-
-    timelineMonthChartInst = new Chart(canvas.getContext('2d'), {
-      type: 'bar',
-      data: { labels: MONTH_NAMES, datasets: [{ label: 'เรื่อง', data: monthlyCounts,
-        backgroundColor: barColors, hoverBackgroundColor: '#46D369',
-        borderRadius: 5, maxBarThickness: 32 }] },
-      options: {
-        animation: yearChanged ? { duration: 400 } : false,
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false },
-          tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1,
-            titleColor:'#FFFFFF', bodyColor:'#B3B3B3',
-            callbacks: { label: ctx => `${ctx.parsed.y} เรื่อง` } } },
-        scales: {
-          x: { ticks: { color:'#B3B3B3', font:{family:'Sarabun', size:11} }, grid: { color:'rgba(255,255,255,0.06)' } },
-          y: { beginAtZero: true, ticks: { color:'#B3B3B3', precision:0 }, grid: { color:'rgba(255,255,255,0.06)' } }
-        },
-        onClick: (evt, elements) => {
-          if (!elements.length) return;
-          const clickedMonth = elements[0].index;
-          selectedTimelineMonth = (selectedTimelineMonth === clickedMonth) ? null : clickedMonth;
-          updateTimelineUI();
-        },
-        onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
-      }
-    });
-
-    renderTimelineTable();
-  }
-
-  // ============================================================
-  // Completion Donut: Watched vs Watchlist vs Dropped
-  // ============================================================
-  let completionDonutInst = null;
-
-  function renderCompletionDonut() {
-    const canvas   = document.getElementById('completionDonutChart');
-    const emptyMsg = document.getElementById('completionDonutEmpty');
-    const legendEl = document.getElementById('completionDonutLegend');
-    if (!canvas) return;
-
-    const watchedCount  = shows.filter(s => summaryTypeFilter[s.type]).length;
-    const pendingCount  = pending.filter(s => summaryTypeFilter[s.type]).length;
-    const droppedCount  = dropped.filter(s => summaryTypeFilter[s.type]).length;
-    const total = watchedCount + pendingCount + droppedCount;
-
-    if (!diaryLoaded || total === 0) {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      if (completionDonutInst) { completionDonutInst.destroy(); completionDonutInst = null; }
-      if (legendEl) legendEl.innerHTML = '';
-      return;
-    }
-
-    canvas.hidden = false; emptyMsg.hidden = true;
-    const watchedPct = Math.round(watchedCount / total * 100);
-
-    if (completionDonutInst) completionDonutInst.destroy();
-
-    completionDonutInst = new Chart(canvas.getContext('2d'), {
-      type: 'doughnut',
-      data: {
-        labels: ['Watched', 'Watchlist', 'Dropped'],
-        datasets: [{ data: [watchedCount, pendingCount, droppedCount],
-          backgroundColor: ['#46D369', '#E6B91E', '#F97316'],
-          borderColor: '#1F1F1F', borderWidth: 2, hoverOffset: 4 }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false, cutout: '70%',
-        animation: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1,
-            titleColor:'#FFFFFF', bodyColor:'#B3B3B3',
-            callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed} เรื่อง (${Math.round(ctx.parsed/total*100)}%)` } }
-        }
-      }
-    });
-
-    if (legendEl) {
-      legendEl.innerHTML = `
-        <span class="legend-item"><i class="legend-dot" style="background:#46D369"></i>Watched <b>${watchedCount}</b> <span style="color:var(--text-dim);font-size:0.72rem">(${watchedPct}%)</span></span>
-        <span class="legend-item"><i class="legend-dot" style="background:#E6B91E"></i>Watchlist <b>${pendingCount}</b></span>
-        <span class="legend-item"><i class="legend-dot" style="background:#F97316"></i>Dropped <b>${droppedCount}</b></span>`;
-    }
-  }
-
-  function renderAvgEpChart() {
-    const canvas  = document.getElementById('avgEpChart');
-    const emptyMsg = document.getElementById('avgEpChartEmpty');
-    if (!canvas) return;
-
-    const summaryShows = getSummaryShows().filter(s => s.episodes > 0 && s.genres.length > 0);
-    if (!diaryLoaded || summaryShows.length === 0) {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      if (avgEpChartInst) { avgEpChartInst.destroy(); avgEpChartInst = null; }
-      return;
-    }
-
-    // คำนวณตอนเฉลี่ยต่อแนว
-    const genreEps = {}, genreCount = {};
-    summaryShows.forEach(s => {
-      s.genres.forEach(g => {
-        if (!g) return;
-        genreEps[g]   = (genreEps[g]   || 0) + s.episodes;
-        genreCount[g] = (genreCount[g] || 0) + 1;
-      });
-    });
-
-    const top8 = Object.keys(genreEps)
-      .filter(g => genreCount[g] >= 2)
-      .map(g => ({ genre: g, avg: genreEps[g] / genreCount[g], count: genreCount[g] }))
-      .sort((a,b) => b.avg - a.avg)
-      .slice(0, 8);
-
-    if (top8.length === 0) {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      return;
-    }
-
-    canvas.hidden = false; emptyMsg.hidden = true;
-    if (avgEpChartInst) avgEpChartInst.destroy();
-
-    avgEpChartInst = new Chart(canvas.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: top8.map(d => d.genre),
-        datasets: [{ label: 'ตอนเฉลี่ย', data: top8.map(d => Math.round(d.avg * 10) / 10),
-          backgroundColor: 'rgba(230,185,30,0.55)', hoverBackgroundColor: '#E6B91E',
-          borderRadius: 5, maxBarThickness: 28 }]
-      },
-      options: {
-        animation: false,
-        indexAxis: 'y',
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1,
-            titleColor:'#FFFFFF', bodyColor:'#B3B3B3',
-            callbacks: { label: ctx => `เฉลี่ย ${ctx.parsed.x} ตอน (${top8[ctx.dataIndex].count} เรื่อง)` } }
-        },
-        scales: {
-          x: { beginAtZero: true, ticks: { color:'#B3B3B3', precision:1 }, grid: { color:'rgba(255,255,255,0.06)' } },
-          y: { ticks: { color:'#B3B3B3', font:{ family:'Sarabun', size:11 } }, grid: { display:false } }
-        }
-      }
-    });
-  }
-
-  function updateTimelineUI() {
-    const yearLabel = document.getElementById('timelineYearLabel');
-    const resetBtn  = document.getElementById('timelineResetBtn');
-
-    yearLabel.textContent = selectedTimelineYear ? `ปี ${selectedTimelineYear}` : '';
-    resetBtn.hidden = false;
-
-    // อัปเดตสีแท่ง year chart
-    if (timelineYearChartInst) {
-      const years = timelineYearChartInst.data.labels;
-      timelineYearChartInst.data.datasets[0].backgroundColor = years.map(y =>
-        y === selectedTimelineYear ? '#E50914' : 'rgba(229,9,20,0.45)'
-      );
-      timelineYearChartInst.update('none');
-    }
-
-    // อัปเดตสีแท่ง month chart
-    if (timelineMonthChartInst) {
-      timelineMonthChartInst.data.datasets[0].backgroundColor = MONTH_NAMES.map((_, i) =>
-        i === selectedTimelineMonth ? '#46D369' : 'rgba(70,211,105,0.45)'
-      );
-      timelineMonthChartInst.update('none');
-    }
-
-    // render month chart ของปีที่เลือก
-    if (selectedTimelineYear) renderTimelineMonthChart(selectedTimelineYear);
-    renderCompletionDonut();
-    renderTimelineTable();
-  }
-
-  function renderTimelineTable() {
-    const tbody   = document.getElementById('genreTableBody');
-    const titleEl = document.getElementById('genreTableTitle');
-    if (!tbody) return;
-
-    // scroll table กลับขึ้นบนสุด
-    const scrollWrap = tbody.closest('.genre-table-scroll');
-    if (scrollWrap) scrollWrap.scrollTop = 0;
-
-    const allWithDate = getShowsWithDate();
-    let list = [], title = '';
-
-    if (selectedTimelineMonth !== null && selectedTimelineYear) {
-      list = allWithDate.filter(s =>
-        s.watchedDate.getFullYear() === selectedTimelineYear &&
-        s.watchedDate.getMonth() === selectedTimelineMonth
-      ).sort((a,b) => a.watchedDate - b.watchedDate);
-      title = `${MONTH_NAMES[selectedTimelineMonth]} ${selectedTimelineYear} — ${list.length} เรื่อง`;
-    } else if (selectedTimelineYear) {
-      list = allWithDate.filter(s =>
-        s.watchedDate.getFullYear() === selectedTimelineYear
-      ).sort((a,b) => a.watchedDate - b.watchedDate);
-      title = `ปี ${selectedTimelineYear} — ${list.length} เรื่อง`;
-    } else {
-      tbody.innerHTML = '';
-      titleEl.textContent = 'คลิกแนวในกราฟหรือ Timeline เพื่อดูรายชื่อเรื่อง';
-      return;
-    }
-
-    titleEl.textContent = title;
-
-    if (list.length === 0) {
-      tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="3">ไม่มีเรื่องในช่วงเวลานี้</td></tr>';
-      return;
-    }
-
-    tbody.innerHTML = list.map(s => {
-      const d = s.watchedDate;
-      const dateStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
-      const feeling = s.liked ? '<span class="liked-tag liked">♥ ชอบ</span>' : '<span class="liked-tag neutral">♡ เฉยๆ</span>';
-      return `<tr><td>${s.title}<br><span style="font-size:0.7rem;color:var(--text-dim)">${dateStr}</span></td><td>${feeling}</td><td style="color:var(--text-dim);font-size:0.78rem">${(s.genres||[]).join(', ')}</td></tr>`;
-    }).join('');
-  }
-
-  // ปุ่ม reset
-  document.getElementById('timelineResetBtn')?.addEventListener('click', () => {
-    selectedTimelineYear = new Date().getFullYear();
-    selectedTimelineMonth = null;
-    updateTimelineUI();
-  });
 
   // ============================================================
   // Modal: Add to Watchlist
