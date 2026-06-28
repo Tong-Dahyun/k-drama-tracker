@@ -2055,7 +2055,10 @@
         <span id="moveEpHint" style="font-size:0.75rem; color:var(--text-dim);"></span>
       </div>
       <p class="form-status" id="moveFormStatus"></p>
-      <div class="modal-actions"><button type="button" class="btn-secondary" id="closeMoveModal">ยกเลิก</button></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="closeMoveModal">ยกเลิก</button>
+        <button type="button" class="add-entry-btn" id="confirmMoveBtn" disabled style="opacity:0.4;">ตกลง</button>
+      </div>
     </div>
   </div>
 
@@ -3070,6 +3073,9 @@
     document.getElementById('moveEpField').hidden = true;
     document.getElementById('moveLastEpInput').value = '';
     document.getElementById('moveFormStatus').textContent = '';
+    // disable ปุ่มตกลงจนกว่าจะเลือก
+    const confirmBtn = document.getElementById('confirmMoveBtn');
+    if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.style.opacity = '0.4'; }
   }
 
   // เก็บ reference ปุ่ม drop ไว้ตลอด ไม่ให้ GC เก็บ
@@ -3121,15 +3127,13 @@
       btnNo.classList.add('dimmed');
       if (btnDrop) btnDrop.classList.add('dimmed');
       epField.hidden = true;
-      // กด liked → confirm ทันที
-      confirmMove('liked');
+      epField.style.display = 'none';
     } else if (choice === 'neutral') {
       btnNo.classList.add('selected-neutral');
       btnYes.classList.add('dimmed');
       if (btnDrop) btnDrop.classList.add('dimmed');
       epField.hidden = true;
-      // กด neutral → confirm ทันที
-      confirmMove('neutral');
+      epField.style.display = 'none';
     } else if (choice === 'dropped') {
       if (pendingMoveSource === 'dropped') return;
       btnDrop.classList.add('selected-dropped');
@@ -3139,6 +3143,9 @@
       epField.style.display = 'flex';
       document.getElementById('moveLastEpInput').focus();
     }
+    // enable ปุ่มตกลงหลังเลือกแล้ว
+    const confirmBtn = document.getElementById('confirmMoveBtn');
+    if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.style.opacity = '1'; }
   }
 
   async function confirmMove(choice) {
@@ -3221,6 +3228,20 @@
   document.getElementById('likeChoiceYes').addEventListener('click',  () => selectMoveChoice('liked'));
   document.getElementById('likeChoiceNo').addEventListener('click',   () => selectMoveChoice('neutral'));
   document.getElementById('likeChoiceDrop').addEventListener('click', () => selectMoveChoice('dropped'));
+
+  // ปุ่มตกลง — confirm ตาม choice ที่เลือกไว้
+  document.getElementById('confirmMoveBtn').addEventListener('click', () => {
+    if (!moveModalChoice) return;
+    confirmMove(moveModalChoice);
+  });
+
+  // กด Enter ในช่อง ep → ถือว่ากดตกลงด้วย
+  document.getElementById('moveLastEpInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const confirmBtn = document.getElementById('confirmMoveBtn');
+      if (confirmBtn && !confirmBtn.disabled) confirmMove('dropped');
+    }
+  });
 
   // grid event listeners
 
