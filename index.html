@@ -1887,6 +1887,19 @@
             </div>
           </div>
         </div>
+
+        <!-- รายเดือน ตามวันที่ดูจบ -->
+        <div class="chart-card">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+            <h3 style="margin:0;">จำนวนเรื่องที่ดู และจำนวนที่ถูกใจ รายเดือน (ตามวันที่ดูจบ)</h3>
+            <select id="monthlyYearSelect" class="sort-select" style="flex:0 1 110px;"></select>
+          </div>
+          <div class="chart-wrap summary-right-chart">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+          <p class="chart-empty" id="monthlyChartEmpty" hidden>ยังไม่มีข้อมูลวันที่ดูจบสำหรับปีนี้</p>
+          <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
+        </div>
       </section>
 
       <!-- Detail: Watched / Watchlist / Dropped -->
@@ -2243,8 +2256,22 @@
       episodes: Number(row['จำนวนตอน']) || 0,
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
       liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE',
-      no: Number(row['No.'] || row['ลำดับ']) || 0
+      no: Number(row['No.'] || row['ลำดับ']) || 0,
+      watchedDate: parseSheetDate(row['วันที่ดูจบ'] || '')
     };
+  }
+
+  // แปลง mm/dd/yyyy (Google Sheet format) → Date object
+  function parseSheetDate(str) {
+    if (!str) return null;
+    const s = str.toString().trim();
+    const parts = s.split('/');
+    if (parts.length !== 3) return null;
+    const mm = parseInt(parts[0], 10);
+    const dd = parseInt(parts[1], 10);
+    const yyyy = parseInt(parts[2], 10);
+    if (isNaN(mm) || isNaN(dd) || isNaN(yyyy)) return null;
+    return new Date(yyyy, mm - 1, dd);
   }
 
   function rowToPending(row) {
@@ -3018,7 +3045,9 @@
     if(!diaryLoaded){
       summaryTotal.textContent='…';summaryLiked.textContent='…';
       summaryTotalBreakdown.textContent='กำลังโหลดข้อมูล...';summaryLikedBreakdown.textContent='';
-      renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();return;
+      renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
+      renderMonthlyChart();
+      return;
     }
     const summaryShows=getSummaryShows();
     const total=summaryShows.length, seriesCount=summaryShows.filter(s=>s.type==='series').length, varietyCount=summaryShows.filter(s=>s.type==='variety').length;
@@ -3026,7 +3055,126 @@
     summaryTotal.textContent=total; summaryTotalBreakdown.textContent=`ซีรีส์ ${seriesCount} · วาไรตี้ ${varietyCount}`;
     summaryLiked.textContent=likedCount; summaryLikedBreakdown.textContent=`ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
     renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
+    renderMonthlyChart();
   }
+
+  // ============================================================
+  // Monthly chart (ตามวันที่ดูจบ) — dropdown เลือกปี
+  // ============================================================
+  let monthlyChartInstance = null;
+  let monthlySelectedYear = null;
+  const MONTH_NAMES_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+  function getShowsWithWatchedDate() {
+    return getSummaryShows().filter(s => s.watchedDate instanceof Date && !isNaN(s.watchedDate));
+  }
+
+  function populateMonthlyYearSelect(years) {
+    const select = document.getElementById('monthlyYearSelect');
+    if (!select) return;
+    const prevValue = monthlySelectedYear;
+    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    if (years.includes(prevValue)) {
+      monthlySelectedYear = prevValue;
+    } else {
+      monthlySelectedYear = years[years.length - 1]; // ปีล่าสุดที่มีข้อมูล
+    }
+    select.value = monthlySelectedYear;
+  }
+
+  function renderMonthlyChart() {
+    const canvas = document.getElementById('monthlyChart');
+    const emptyMsg = document.getElementById('monthlyChartEmpty');
+    const noteEl = document.getElementById('monthlyNoDateNote');
+    const yearSelect = document.getElementById('monthlyYearSelect');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') { canvas.hidden = true; emptyMsg.hidden = false; return; }
+
+    const summaryShows = getSummaryShows();
+    const withDate = getShowsWithWatchedDate();
+    const noDateCount = summaryShows.length - withDate.length;
+
+    if (noteEl) {
+      noteEl.textContent = noDateCount > 0
+        ? `* มี ${noDateCount} เรื่องที่ไม่มีข้อมูลวันที่ดูจบ จึงไม่ถูกนับในกราฟนี้`
+        : '';
+    }
+
+    if (!diaryLoaded || withDate.length === 0) {
+      canvas.hidden = true; emptyMsg.hidden = false;
+      if (yearSelect) yearSelect.innerHTML = '';
+      if (monthlyChartInstance) { monthlyChartInstance.destroy(); monthlyChartInstance = null; }
+      return;
+    }
+
+    // เตรียม dropdown ปี
+    const years = [...new Set(withDate.map(s => s.watchedDate.getFullYear()))].sort((a,b) => a-b);
+    populateMonthlyYearSelect(years);
+
+    const year = monthlySelectedYear;
+    const inYear = withDate.filter(s => s.watchedDate.getFullYear() === year);
+
+    if (inYear.length === 0) {
+      canvas.hidden = true; emptyMsg.hidden = false;
+      if (monthlyChartInstance) { monthlyChartInstance.destroy(); monthlyChartInstance = null; }
+      return;
+    }
+
+    canvas.hidden = false; emptyMsg.hidden = true;
+
+    const watchedCounts = Array(12).fill(0);
+    const likedCounts   = Array(12).fill(0);
+    inYear.forEach(s => {
+      const m = s.watchedDate.getMonth();
+      watchedCounts[m]++;
+      if (s.liked) likedCounts[m]++;
+    });
+
+    const rawMax = Math.max(1, ...watchedCounts, ...likedCounts);
+    const sharedAxisMax = Math.ceil((rawMax * 1.1) / 5) * 5 || 5;
+
+    if (monthlyChartInstance) monthlyChartInstance.destroy();
+
+    try {
+      monthlyChartInstance = new Chart(canvas.getContext('2d'), {
+        data: {
+          labels: MONTH_NAMES_TH,
+          datasets: [
+            { type:'bar', label:'จำนวนที่ดู', data: watchedCounts,
+              backgroundColor:'rgba(229,9,20,0.75)', hoverBackgroundColor:'rgba(229,9,20,0.95)',
+              borderRadius:6, maxBarThickness:48, yAxisID:'yWatched', order:2 },
+            { type:'line', label:'จำนวนที่ถูกใจ', data: likedCounts,
+              borderColor:'#46D369', backgroundColor:'#46D369',
+              pointBackgroundColor:'#46D369', pointBorderColor:'#141414',
+              pointRadius:4, pointHoverRadius:6, borderWidth:2, borderDash:[6,4], tension:0.3,
+              yAxisID:'yLiked', order:1 }
+          ]
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          interaction:{ mode:'index', intersect:false },
+          plugins: {
+            legend: { labels:{ color:'#B3B3B3', font:{family:'Inter'} } },
+            tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1, titleColor:'#FFFFFF', bodyColor:'#B3B3B3' }
+          },
+          scales: {
+            x: { ticks:{ color:'#B3B3B3', font:{family:'Sarabun'} }, grid:{ color:'rgba(255,255,255,0.06)' } },
+            yWatched: { position:'left',  min:0, max:sharedAxisMax, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ color:'rgba(255,255,255,0.06)' }, title:{ display:true, text:'จำนวนที่ดู (เรื่อง)', color:'#B3B3B3' } },
+            yLiked:   { position:'right', min:0, max:sharedAxisMax, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ drawOnChartArea:false }, title:{ display:true, text:'จำนวนที่ถูกใจ (เรื่อง)', color:'#B3B3B3' } }
+          }
+        }
+      });
+    } catch(err) {
+      console.error('สร้างกราฟรายเดือนไม่สำเร็จ:', err);
+      canvas.hidden = true; emptyMsg.hidden = false;
+    }
+  }
+
+  document.getElementById('monthlyYearSelect')?.addEventListener('change', e => {
+    monthlySelectedYear = Number(e.target.value);
+    renderMonthlyChart();
+  });
 
   // ============================================================
   // Modal: Add to Watchlist
