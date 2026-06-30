@@ -330,9 +330,9 @@
   }
 
   @media (max-width: 860px) {
-    .monthly-layout { flex-direction: column; }
+    .monthly-layout { flex-direction: column; gap: 16px; }
     .monthly-stats-col { flex: none; width: 100%; }
-    .monthly-chart-wrap { height: 240px; min-height: 0; }
+    .monthly-chart-wrap { height: 280px; min-height: 0; }
   }
 
   .genre-section-3 {
@@ -1148,7 +1148,7 @@
     /* charts */
     .chart-card { max-width: none; }
     .chart-card .chart-wrap { height: 240px; }
-    .genre-chart-wrap { height: 260px; flex-basis: 100%; }
+    .genre-chart-wrap { height: 320px; flex-basis: 100%; }
     .summary-layout { grid-template-columns: 1fr; }
     .summary-right-chart { flex: none; height: 220px !important; }
   }
@@ -3117,7 +3117,10 @@
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'},
             datalabels:{display:true,color:'#FFFFFF',font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}},
-          scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
+          scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
+            y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun',size:window.innerWidth<=860?10:12},autoSkip:false,
+              callback:function(v){const l=this.getLabelForValue(v);const max=window.innerWidth<=860?6:20;return l.length>max?l.slice(0,max)+'…':l;}},
+              afterFit:a=>{a.width=window.innerWidth<=860?54:undefined;},grid:{display:false}}},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
             const genre=labels[elements[0].index];
@@ -3155,7 +3158,10 @@
               callbacks:{label:ctx=>`${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`}}
             ,datalabels:{display:true,color:'#FFFFFF',font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}
           },
-          scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
+          scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
+            y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun',size:window.innerWidth<=860?10:12},autoSkip:false,
+              callback:function(v){const l=this.getLabelForValue(v);const max=window.innerWidth<=860?6:20;return l.length>max?l.slice(0,max)+'…':l;}},
+              afterFit:a=>{a.width=window.innerWidth<=860?54:undefined;},grid:{display:false}}},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
             const genre=labels[elements[0].index];
