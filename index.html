@@ -290,6 +290,44 @@
     .summary-right-chart { flex: none; height: 220px !important; }
   }
 
+  /* ---------- Monthly chart layout: stats + chart side by side ---------- */
+  .monthly-layout {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .monthly-stats-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 0 0 150px;
+  }
+
+  .monthly-stat-box {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .monthly-chart-wrap {
+    flex: 1;
+    min-height: 280px;
+    min-width: 0;
+  }
+
+  @media (max-width: 860px) {
+    .monthly-layout { flex-direction: column; }
+    .monthly-stats-col { flex-direction: row; flex: none; }
+    .monthly-chart-wrap { height: 240px; min-height: 0; }
+  }
+
   .genre-section-3 {
     display: flex;
     gap: 20px;
@@ -1894,8 +1932,20 @@
             <h3 style="margin:0;">จำนวนเรื่องที่ดู และจำนวนที่ถูกใจ รายเดือน (ตามวันที่ดูจบ)</h3>
             <select id="monthlyYearSelect" class="sort-select" style="flex:0 1 110px;"></select>
           </div>
-          <div class="chart-wrap summary-right-chart">
-            <canvas id="monthlyChart"></canvas>
+          <div class="monthly-layout">
+            <div class="monthly-stats-col">
+              <div class="monthly-stat-box">
+                <p class="summary-label">รวมทั้งหมด</p>
+                <p class="summary-value" id="monthlyStatTotal" style="font-size:1.6rem;">—</p>
+              </div>
+              <div class="monthly-stat-box">
+                <p class="summary-label">ถูกใจ</p>
+                <p class="summary-value" id="monthlyStatLiked" style="font-size:1.6rem; color:var(--mint);">—</p>
+              </div>
+            </div>
+            <div class="chart-wrap monthly-chart-wrap">
+              <canvas id="monthlyChart"></canvas>
+            </div>
           </div>
           <p class="chart-empty" id="monthlyChartEmpty" hidden>ยังไม่มีข้อมูลวันที่ดูจบสำหรับปีนี้</p>
           <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
@@ -2257,7 +2307,7 @@
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
       liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE',
       no: Number(row['No.'] || row['ลำดับ']) || 0,
-      watchedDate: parseSheetDate(row['วันที่ดูจบ'] || '')
+      watchedDate: parseSheetDate(row['วันที่ดูจบ'] || row['วันที่จบ'] || '')
     };
   }
 
@@ -3082,6 +3132,13 @@
     select.value = monthlySelectedYear;
   }
 
+  function updateMonthlyStats(total, liked) {
+    const totalEl = document.getElementById('monthlyStatTotal');
+    const likedEl = document.getElementById('monthlyStatLiked');
+    if (totalEl) totalEl.textContent = total;
+    if (likedEl) likedEl.textContent = liked;
+  }
+
   function renderMonthlyChart() {
     const canvas = document.getElementById('monthlyChart');
     const emptyMsg = document.getElementById('monthlyChartEmpty');
@@ -3105,6 +3162,7 @@
       canvas.hidden = true; emptyMsg.hidden = false;
       if (yearSelect) yearSelect.innerHTML = '';
       if (monthlyChartInstance) { monthlyChartInstance.destroy(); monthlyChartInstance = null; }
+      updateMonthlyStats(0, 0);
       return;
     }
 
@@ -3118,10 +3176,15 @@
     if (inYear.length === 0) {
       canvas.hidden = true; emptyMsg.hidden = false;
       if (monthlyChartInstance) { monthlyChartInstance.destroy(); monthlyChartInstance = null; }
+      updateMonthlyStats(0, 0);
       return;
     }
 
     canvas.hidden = false; emptyMsg.hidden = true;
+
+    // อัปเดตตัวเลขสรุป (เฉพาะปีที่เลือก)
+    const likedInYear = inYear.filter(s => s.liked).length;
+    updateMonthlyStats(inYear.length, likedInYear);
 
     const watchedCounts = Array(12).fill(0);
     const likedCounts   = Array(12).fill(0);
