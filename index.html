@@ -1304,7 +1304,6 @@
   .login-submit-btn { width: 100%; margin-top: 8px; }
 
   .logout-btn {
-    margin-top: auto;
     padding: 10px 12px;
     background: transparent;
     border: none;
@@ -1317,6 +1316,57 @@
   }
 
   .logout-btn:hover { color: var(--text-soft); }
+
+  /* ---------- User info card ---------- */
+  .user-info-card {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 6px;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--red-soft);
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+
+  .user-info-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .user-info-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-info-role {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
 
   /* ---------- Users table ---------- */
   .users-topbar {
@@ -1818,6 +1868,13 @@
         </div>
       </nav>
 
+      <div class="user-info-card" id="userInfoCard" hidden>
+        <div class="user-avatar" id="userAvatar"></div>
+        <div class="user-info-text">
+          <span class="user-info-name" id="userInfoName"></span>
+          <span class="user-info-role" id="userInfoRole"></span>
+        </div>
+      </div>
       <button class="logout-btn" id="logoutBtn">ออกจากระบบ</button>
     </aside>
 
@@ -3674,6 +3731,18 @@
   function setStoredAuth(username,role) { localStorage.setItem(AUTH_STORAGE_KEY,JSON.stringify({username,role,loggedInAt:Date.now()})); }
   function clearStoredAuth() { localStorage.removeItem(AUTH_STORAGE_KEY); }
 
+  function updateUserInfoCard() {
+    const card = document.getElementById('userInfoCard');
+    const avatar = document.getElementById('userAvatar');
+    const nameEl = document.getElementById('userInfoName');
+    const roleEl = document.getElementById('userInfoRole');
+    if (!card || !currentUsername) return;
+    card.hidden = false;
+    avatar.textContent = currentUsername.charAt(0);
+    nameEl.textContent = currentUsername;
+    roleEl.textContent = currentRole;
+  }
+
   function applyRoleVisibility() {
     document.body.classList.toggle('viewer-mode',currentRole==='Viewer');
     const isAdmin = currentRole==='Admin';
@@ -3682,6 +3751,7 @@
     settingsSubNav.hidden = false;
     const navUsers = document.getElementById('navUsers');
     if (navUsers) navUsers.hidden = !isAdmin;
+    updateUserInfoCard();
   }
 
   function unlockApp() {
