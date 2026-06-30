@@ -298,10 +298,11 @@
   }
 
   .monthly-stats-col {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    flex: 0 0 150px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    flex: 0 0 320px;
   }
 
   .monthly-stat-box {
@@ -330,7 +331,7 @@
 
   @media (max-width: 860px) {
     .monthly-layout { flex-direction: column; }
-    .monthly-stats-col { flex-direction: row; flex: none; }
+    .monthly-stats-col { flex: none; width: 100%; }
     .monthly-chart-wrap { height: 240px; min-height: 0; }
   }
 
@@ -2002,13 +2003,13 @@
                 <p class="summary-value" id="monthlyStatTotal" style="font-size:1.6rem;">—</p>
               </div>
               <div class="monthly-stat-box">
-                <p class="summary-label">ถูกใจ</p>
-                <p class="summary-value" id="monthlyStatLiked" style="font-size:1.6rem; color:var(--mint);">—</p>
-              </div>
-              <div class="monthly-stat-box">
                 <p class="summary-label">แนวที่ดูมากสุด</p>
                 <p class="summary-value monthly-genre-value" id="monthlyTopGenreWatched">—</p>
                 <p class="summary-sub" id="monthlyTopGenreWatchedCount"></p>
+              </div>
+              <div class="monthly-stat-box">
+                <p class="summary-label">ถูกใจ</p>
+                <p class="summary-value" id="monthlyStatLiked" style="font-size:1.6rem; color:var(--mint);">—</p>
               </div>
               <div class="monthly-stat-box">
                 <p class="summary-label">แนวที่ถูกใจมากสุด</p>
