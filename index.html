@@ -328,83 +328,6 @@
     .monthly-chart-wrap { height: 240px; min-height: 0; }
   }
 
-  /* ---------- Heatmap (GitHub-style contribution graph) ---------- */
-  .heatmap-scroll {
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-
-  .heatmap-wrap {
-    display: inline-flex;
-    gap: 10px;
-    min-width: 100%;
-  }
-
-  .heatmap-month-labels {
-    display: flex;
-    gap: 2px;
-    margin-bottom: 4px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.65rem;
-    color: var(--text-dim);
-  }
-
-  .heatmap-day-labels {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.62rem;
-    color: var(--text-dim);
-    margin-right: 2px;
-    flex-shrink: 0;
-  }
-
-  .heatmap-day-labels span {
-    height: 12px;
-    line-height: 12px;
-  }
-
-  .heatmap-grid {
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-rows: repeat(7, 12px);
-    gap: 2px;
-  }
-
-  .heatmap-cell {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    background: var(--surface-soft);
-    display: inline-block;
-    cursor: default;
-    transition: outline .1s;
-  }
-
-  .heatmap-cell:hover {
-    outline: 1.5px solid var(--text-soft);
-  }
-
-  .heatmap-cell[data-level="0"] { background: var(--surface-soft); }
-  .heatmap-cell[data-level="1"] { background: rgba(229,9,20,0.25); }
-  .heatmap-cell[data-level="2"] { background: rgba(229,9,20,0.48); }
-  .heatmap-cell[data-level="3"] { background: rgba(229,9,20,0.72); }
-  .heatmap-cell[data-level="4"] { background: #E50914; }
-
-  .heatmap-legend {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 14px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    justify-content: flex-end;
-  }
-
-  .heatmap-legend .heatmap-cell { cursor: default; }
-
   .genre-section-3 {
     display: flex;
     gap: 20px;
@@ -2085,25 +2008,13 @@
           <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
         </div>
 
-        <!-- Heatmap แบบ GitHub Contribution -->
+        <!-- Genre Trend ตามปี -->
         <div class="chart-card">
-          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
-            <h3 style="margin:0;">ปฏิทินการดู (ตามวันที่ดูจบ)</h3>
-            <select id="heatmapYearSelect" class="sort-select" style="flex:0 1 110px;"></select>
+          <h3>เทรนด์แนวที่ดู ตามปีที่ออกอากาศ (Top 6 แนว)</h3>
+          <div class="chart-wrap summary-right-chart">
+            <canvas id="genreTrendChart"></canvas>
           </div>
-          <div class="heatmap-scroll">
-            <div class="heatmap-wrap" id="heatmapWrap"></div>
-          </div>
-          <p class="chart-empty" id="heatmapEmpty" hidden>ยังไม่มีข้อมูลวันที่ดูจบสำหรับปีนี้</p>
-          <div class="heatmap-legend">
-            <span>น้อย</span>
-            <span class="heatmap-cell" data-level="0"></span>
-            <span class="heatmap-cell" data-level="1"></span>
-            <span class="heatmap-cell" data-level="2"></span>
-            <span class="heatmap-cell" data-level="3"></span>
-            <span class="heatmap-cell" data-level="4"></span>
-            <span>มาก</span>
-          </div>
+          <p class="chart-empty" id="genreTrendEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
         </div>
       </section>
 
@@ -3252,7 +3163,7 @@
       summaryTotalBreakdown.textContent='กำลังโหลดข้อมูล...';summaryLikedBreakdown.textContent='';
       renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
       renderMonthlyChart();
-      renderHeatmap();
+      renderGenreTrendChart();
       return;
     }
     const summaryShows=getSummaryShows();
@@ -3262,7 +3173,7 @@
     summaryLiked.textContent=likedCount; summaryLikedBreakdown.textContent=`ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
     renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
     renderMonthlyChart();
-    renderHeatmap();
+    renderGenreTrendChart();
   }
 
   // ============================================================
@@ -3397,145 +3308,85 @@
   });
 
   // ============================================================
-  // Heatmap (GitHub-style contribution graph)
+  // Genre Trend chart — stacked bar ตามปีที่ออกอากาศ (Top 6 แนว)
   // ============================================================
-  let heatmapSelectedYear = null;
-  const HEATMAP_MONTH_NAMES = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  const HEATMAP_DAY_LABELS = ['', 'จ', '', 'พ', '', 'ศ', ''];
+  let genreTrendChartInstance = null;
+  const GENRE_TREND_COLORS = [
+    '#E50914', '#46D369', '#E6B91E', '#F97316', '#8B5CF6', '#06B6D4'
+  ];
 
-  function populateHeatmapYearSelect(years) {
-    const select = document.getElementById('heatmapYearSelect');
-    if (!select) return;
-    const prevValue = heatmapSelectedYear;
-    select.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
-    heatmapSelectedYear = years.includes(prevValue) ? prevValue : years[years.length - 1];
-    select.value = heatmapSelectedYear;
-  }
+  function renderGenreTrendChart() {
+    const canvas = document.getElementById('genreTrendChart');
+    const emptyMsg = document.getElementById('genreTrendEmpty');
+    if (!canvas) return;
 
-  function getHeatmapLevel(count) {
-    if (count === 0) return 0;
-    if (count === 1) return 1;
-    if (count === 2) return 2;
-    if (count <= 4) return 3;
-    return 4;
-  }
+    if (typeof Chart === 'undefined') { canvas.hidden = true; emptyMsg.hidden = false; return; }
 
-  function renderHeatmap() {
-    const wrap = document.getElementById('heatmapWrap');
-    const emptyMsg = document.getElementById('heatmapEmpty');
-    const yearSelect = document.getElementById('heatmapYearSelect');
-    if (!wrap) return;
+    const summaryShows = getSummaryShows().filter(s => s.year && s.genres.length > 0);
 
-    const withDate = getShowsWithWatchedDate();
-
-    if (!diaryLoaded || withDate.length === 0) {
-      wrap.innerHTML = ''; wrap.hidden = true;
-      emptyMsg.hidden = false;
-      if (yearSelect) yearSelect.innerHTML = '';
+    if (!diaryLoaded || summaryShows.length === 0) {
+      canvas.hidden = true; emptyMsg.hidden = false;
+      if (genreTrendChartInstance) { genreTrendChartInstance.destroy(); genreTrendChartInstance = null; }
       return;
     }
 
-    const years = [...new Set(withDate.map(s => s.watchedDate.getFullYear()))].sort((a,b) => a-b);
-    populateHeatmapYearSelect(years);
+    // หา Top 6 แนวที่ดูเยอะที่สุดโดยรวม
+    const genreTotals = {};
+    summaryShows.forEach(s => {
+      s.genres.forEach(g => { if (g) genreTotals[g] = (genreTotals[g] || 0) + 1; });
+    });
+    const top6Genres = Object.entries(genreTotals)
+      .sort((a,b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(g => g[0]);
 
-    const year = heatmapSelectedYear;
-    const inYear = withDate.filter(s => s.watchedDate.getFullYear() === year);
-
-    if (inYear.length === 0) {
-      wrap.innerHTML = ''; wrap.hidden = true;
-      emptyMsg.hidden = false;
+    if (top6Genres.length === 0) {
+      canvas.hidden = true; emptyMsg.hidden = false;
+      if (genreTrendChartInstance) { genreTrendChartInstance.destroy(); genreTrendChartInstance = null; }
       return;
     }
 
-    wrap.hidden = false; emptyMsg.hidden = true;
+    // หาปีทั้งหมดที่มีข้อมูล เรียงน้อย → มาก
+    const years = [...new Set(summaryShows.map(s => s.year))].sort((a,b) => a-b);
 
-    // นับจำนวนเรื่องต่อวัน (key = 'YYYY-MM-DD')
-    const countByDate = {};
-    inYear.forEach(s => {
-      const d = s.watchedDate;
-      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      countByDate[key] = (countByDate[key] || 0) + 1;
+    // นับจำนวนเรื่องของแต่ละแนว ในแต่ละปี
+    const datasets = top6Genres.map((genre, i) => {
+      const data = years.map(y =>
+        summaryShows.filter(s => s.year === y && s.genres.includes(genre)).length
+      );
+      return {
+        label: genre,
+        data,
+        backgroundColor: GENRE_TREND_COLORS[i],
+        borderRadius: 4,
+        maxBarThickness: 36
+      };
     });
 
-    // สร้างช่วงวันที่ 1 ม.ค. - 31 ธ.ค. ของปีนั้น โดยเริ่มจากวันอาทิตย์แรกก่อน 1 ม.ค.
-    const startDate = new Date(year, 0, 1);
-    const endDate = new Date(year, 11, 31);
-    // เลื่อน startDate กลับไปจนถึงวันอาทิตย์
-    const startDow = startDate.getDay(); // 0 = อาทิตย์
-    const gridStart = new Date(startDate);
-    gridStart.setDate(gridStart.getDate() - startDow);
+    canvas.hidden = false; emptyMsg.hidden = true;
+    if (genreTrendChartInstance) genreTrendChartInstance.destroy();
 
-    const days = [];
-    let cursor = new Date(gridStart);
-    while (cursor <= endDate || cursor.getDay() !== 0) {
-      days.push(new Date(cursor));
-      cursor.setDate(cursor.getDate() + 1);
-      if (cursor > endDate && cursor.getDay() === 0) break;
-    }
-
-    // จัดกลุ่มเป็นสัปดาห์ (คอลัมน์ละ 7 วัน เริ่มอาทิตย์)
-    const weeks = [];
-    for (let i = 0; i < days.length; i += 7) {
-      weeks.push(days.slice(i, i + 7));
-    }
-
-    // หา label เดือนสำหรับแต่ละสัปดาห์ (แสดงเมื่อสัปดาห์นั้นมีวันที่ 1 ของเดือน)
-    const monthLabels = weeks.map(week => {
-      const firstOfMonth = week.find(d => d.getDate() === 1 && d.getFullYear() === year);
-      return firstOfMonth ? HEATMAP_MONTH_NAMES[firstOfMonth.getMonth()] : '';
-    });
-
-    // สร้าง HTML
-    let html = '<div>';
-    // month labels row
-    html += '<div class="heatmap-month-labels" style="margin-left:20px;">';
-    weeks.forEach(() => {}); // placeholder
-    html += weeks.map(() => '').join(''); // we'll build grid-aligned labels below using inline-block widths
-    html += '</div>';
-    html += '</div>';
-
-    // ใช้วิธี flex column: day-labels + grid พร้อม month label เหนือ grid
-    let monthLabelHtml = '<div class="heatmap-month-labels">';
-    weeks.forEach((w, i) => {
-      monthLabelHtml += `<span style="width:14px; flex-shrink:0;">${monthLabels[i]}</span>`;
-    });
-    monthLabelHtml += '</div>';
-
-    let gridHtml = '<div class="heatmap-grid">';
-    weeks.forEach(week => {
-      week.forEach(d => {
-        if (d.getFullYear() !== year) {
-          gridHtml += `<span class="heatmap-cell" style="opacity:0; pointer-events:none;"></span>`;
-          return;
+    try {
+      genreTrendChartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: { labels: years, datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color:'#B3B3B3', font:{family:'Sarabun', size:11}, boxWidth:12, padding:10 } },
+            tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1, titleColor:'#FFFFFF', bodyColor:'#B3B3B3', mode:'index', intersect:false }
+          },
+          scales: {
+            x: { stacked: true, ticks:{ color:'#B3B3B3', font:{family:'Inter'} }, grid:{ color:'rgba(255,255,255,0.06)' }, title:{ display:true, text:'ปีที่ออกอากาศ', color:'#B3B3B3' } },
+            y: { stacked: true, beginAtZero:true, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ color:'rgba(255,255,255,0.06)' }, title:{ display:true, text:'จำนวนเรื่อง', color:'#B3B3B3' } }
+          }
         }
-        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        const count = countByDate[key] || 0;
-        const level = getHeatmapLevel(count);
-        const dateLabel = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-        const titleText = count > 0 ? `${dateLabel}: ${count} เรื่อง` : `${dateLabel}: ไม่มีข้อมูล`;
-        gridHtml += `<span class="heatmap-cell" data-level="${level}" title="${titleText}"></span>`;
       });
-    });
-    gridHtml += '</div>';
-
-    let dayLabelHtml = '<div class="heatmap-day-labels">' +
-      HEATMAP_DAY_LABELS.map(l => `<span>${l}</span>`).join('') +
-      '</div>';
-
-    wrap.innerHTML = `
-      <div>
-        ${monthLabelHtml}
-        <div style="display:flex; gap:6px;">
-          ${dayLabelHtml}
-          ${gridHtml}
-        </div>
-      </div>`;
+    } catch(err) {
+      console.error('สร้างกราฟ genre trend ไม่สำเร็จ:', err);
+      canvas.hidden = true; emptyMsg.hidden = false;
+    }
   }
-
-  document.getElementById('heatmapYearSelect')?.addEventListener('change', e => {
-    heatmapSelectedYear = Number(e.target.value);
-    renderHeatmap();
-  });
 
   // ============================================================
   // Modal: Add to Watchlist
