@@ -3079,6 +3079,11 @@
     else if(source==='watchlist-ready') {list=pending.filter(s=>summaryTypeFilter[s.type]&&s.finished);title=`รอดูอยู่ (จบแล้ว) — ${list.length} เรื่อง`;isPending=true;}
     else if(source==='watchlist-airing'){list=pending.filter(s=>summaryTypeFilter[s.type]&&!s.finished);title=`รอดูอยู่ (กำลังออกอากาศ) — ${list.length} เรื่อง`;isPending=true;}
     else if(source==='year')           {list=summaryShows.filter(s=>s.year===value);title=`ปี ${value} — ${list.length} เรื่อง`;}
+    else if(source==='month')          {
+      const withDate = getShowsWithWatchedDate().filter(s => s.watchedDate.getFullYear() === monthlySelectedYear && s.watchedDate.getMonth() === value);
+      list = withDate;
+      title = `${MONTH_NAMES_TH[value]} ${monthlySelectedYear} — ${list.length} เรื่อง (ตามวันที่ดูจบ)`;
+    }
     titleEl.textContent=title;
     if(list.length===0){tbody.innerHTML='<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';return;}
     if(isPending){
@@ -3326,7 +3331,19 @@
             x: { ticks:{ color:'#B3B3B3', font:{family:'Sarabun'} }, grid:{ color:'rgba(255,255,255,0.06)' } },
             yWatched: { position:'left',  min:0, max:sharedAxisMax, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ color:'rgba(255,255,255,0.06)' }, title:{ display:true, text:'จำนวนที่ดู (เรื่อง)', color:'#B3B3B3' } },
             yLiked:   { position:'right', min:0, max:sharedAxisMax, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ drawOnChartArea:false }, title:{ display:true, text:'จำนวนที่ถูกใจ (เรื่อง)', color:'#B3B3B3' } }
-          }
+          },
+          onClick: (evt, elements) => {
+            if (!elements.length) return;
+            const monthIdx = elements[0].index;
+            dashboardTableState = (dashboardTableState.source === 'month' && dashboardTableState.value === monthIdx)
+              ? { source: null, value: null }
+              : { source: 'month', value: monthIdx };
+            selectedGenre = null; selectedGenreSource = null;
+            if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => 'rgba(229,9,20,0.55)'); genreChartInstance.update('none'); }
+            if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
+            renderGenreTable();
+          },
+          onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; }
         }
       });
     } catch(err) {
@@ -3338,6 +3355,8 @@
   document.getElementById('monthlyYearSelect')?.addEventListener('change', e => {
     monthlySelectedYear = Number(e.target.value);
     renderMonthlyChart();
+    // ถ้า table กำลังโชว์ข้อมูลรายเดือนอยู่ ให้ refresh ตามปีใหม่ด้วย
+    if (dashboardTableState.source === 'month') renderGenreTable();
   });
 
   // ============================================================
