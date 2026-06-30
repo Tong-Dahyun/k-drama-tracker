@@ -308,12 +308,18 @@
     background: var(--surface-soft);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     flex: 1;
+  }
+
+  .monthly-genre-value {
+    font-size: 1.05rem !important;
+    line-height: 1.3;
+    word-break: break-word;
   }
 
   .monthly-chart-wrap {
@@ -1999,6 +2005,16 @@
                 <p class="summary-label">ถูกใจ</p>
                 <p class="summary-value" id="monthlyStatLiked" style="font-size:1.6rem; color:var(--mint);">—</p>
               </div>
+              <div class="monthly-stat-box">
+                <p class="summary-label">แนวที่ดูมากสุด</p>
+                <p class="summary-value monthly-genre-value" id="monthlyTopGenreWatched">—</p>
+                <p class="summary-sub" id="monthlyTopGenreWatchedCount"></p>
+              </div>
+              <div class="monthly-stat-box">
+                <p class="summary-label">แนวที่ถูกใจมากสุด</p>
+                <p class="summary-value monthly-genre-value" id="monthlyTopGenreLiked" style="color:var(--mint);">—</p>
+                <p class="summary-sub" id="monthlyTopGenreLikedCount"></p>
+              </div>
             </div>
             <div class="chart-wrap monthly-chart-wrap">
               <canvas id="monthlyChart"></canvas>
@@ -2006,15 +2022,6 @@
           </div>
           <p class="chart-empty" id="monthlyChartEmpty" hidden>ยังไม่มีข้อมูลวันที่ดูจบสำหรับปีนี้</p>
           <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
-        </div>
-
-        <!-- Genre Trend ตามปี -->
-        <div class="chart-card">
-          <h3>เทรนด์แนวที่ดู ตามปีที่ออกอากาศ (Top 6 แนว)</h3>
-          <div class="chart-wrap summary-right-chart">
-            <canvas id="genreTrendChart"></canvas>
-          </div>
-          <p class="chart-empty" id="genreTrendEmpty" hidden>ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</p>
         </div>
       </section>
 
@@ -3163,7 +3170,6 @@
       summaryTotalBreakdown.textContent='กำลังโหลดข้อมูล...';summaryLikedBreakdown.textContent='';
       renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
       renderMonthlyChart();
-      renderGenreTrendChart();
       return;
     }
     const summaryShows=getSummaryShows();
@@ -3173,7 +3179,6 @@
     summaryLiked.textContent=likedCount; summaryLikedBreakdown.textContent=`ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
     renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
     renderMonthlyChart();
-    renderGenreTrendChart();
   }
 
   // ============================================================
@@ -3200,11 +3205,36 @@
     select.value = monthlySelectedYear;
   }
 
-  function updateMonthlyStats(total, liked) {
+  function updateMonthlyStats(total, liked, topGenreWatched, topGenreLiked) {
     const totalEl = document.getElementById('monthlyStatTotal');
     const likedEl = document.getElementById('monthlyStatLiked');
     if (totalEl) totalEl.textContent = total;
     if (likedEl) likedEl.textContent = liked;
+
+    const genreWatchedEl = document.getElementById('monthlyTopGenreWatched');
+    const genreWatchedCountEl = document.getElementById('monthlyTopGenreWatchedCount');
+    const genreLikedEl = document.getElementById('monthlyTopGenreLiked');
+    const genreLikedCountEl = document.getElementById('monthlyTopGenreLikedCount');
+
+    if (genreWatchedEl) {
+      genreWatchedEl.textContent = topGenreWatched ? topGenreWatched.name : '—';
+      genreWatchedCountEl.textContent = topGenreWatched ? `${topGenreWatched.count} เรื่อง` : '';
+    }
+    if (genreLikedEl) {
+      genreLikedEl.textContent = topGenreLiked ? topGenreLiked.name : '—';
+      genreLikedCountEl.textContent = topGenreLiked ? `${topGenreLiked.count} เรื่อง` : '';
+    }
+  }
+
+  // หาแนวที่มีจำนวนเรื่องมากสุดจาก list ของ shows ที่กรองแล้ว
+  function getTopGenreFrom(list) {
+    const counts = {};
+    list.forEach(s => {
+      s.genres.forEach(g => { if (g) counts[g] = (counts[g] || 0) + 1; });
+    });
+    const entries = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+    if (entries.length === 0) return null;
+    return { name: entries[0][0], count: entries[0][1] };
   }
 
   function renderMonthlyChart() {
@@ -3230,7 +3260,7 @@
       canvas.hidden = true; emptyMsg.hidden = false;
       if (yearSelect) yearSelect.innerHTML = '';
       if (monthlyChartInstance) { monthlyChartInstance.destroy(); monthlyChartInstance = null; }
-      updateMonthlyStats(0, 0);
+      updateMonthlyStats(0, 0, null, null);
       return;
     }
 
@@ -3244,7 +3274,7 @@
     if (inYear.length === 0) {
       canvas.hidden = true; emptyMsg.hidden = false;
       if (monthlyChartInstance) { monthlyChartInstance.destroy(); monthlyChartInstance = null; }
-      updateMonthlyStats(0, 0);
+      updateMonthlyStats(0, 0, null, null);
       return;
     }
 
@@ -3252,7 +3282,9 @@
 
     // อัปเดตตัวเลขสรุป (เฉพาะปีที่เลือก)
     const likedInYear = inYear.filter(s => s.liked).length;
-    updateMonthlyStats(inYear.length, likedInYear);
+    const topGenreWatched = getTopGenreFrom(inYear);
+    const topGenreLiked   = getTopGenreFrom(inYear.filter(s => s.liked));
+    updateMonthlyStats(inYear.length, likedInYear, topGenreWatched, topGenreLiked);
 
     const watchedCounts = Array(12).fill(0);
     const likedCounts   = Array(12).fill(0);
@@ -3306,87 +3338,6 @@
     monthlySelectedYear = Number(e.target.value);
     renderMonthlyChart();
   });
-
-  // ============================================================
-  // Genre Trend chart — stacked bar ตามปีที่ออกอากาศ (Top 6 แนว)
-  // ============================================================
-  let genreTrendChartInstance = null;
-  const GENRE_TREND_COLORS = [
-    '#E50914', '#46D369', '#E6B91E', '#F97316', '#8B5CF6', '#06B6D4'
-  ];
-
-  function renderGenreTrendChart() {
-    const canvas = document.getElementById('genreTrendChart');
-    const emptyMsg = document.getElementById('genreTrendEmpty');
-    if (!canvas) return;
-
-    if (typeof Chart === 'undefined') { canvas.hidden = true; emptyMsg.hidden = false; return; }
-
-    const summaryShows = getSummaryShows().filter(s => s.year && s.genres.length > 0);
-
-    if (!diaryLoaded || summaryShows.length === 0) {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      if (genreTrendChartInstance) { genreTrendChartInstance.destroy(); genreTrendChartInstance = null; }
-      return;
-    }
-
-    // หา Top 6 แนวที่ดูเยอะที่สุดโดยรวม
-    const genreTotals = {};
-    summaryShows.forEach(s => {
-      s.genres.forEach(g => { if (g) genreTotals[g] = (genreTotals[g] || 0) + 1; });
-    });
-    const top6Genres = Object.entries(genreTotals)
-      .sort((a,b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(g => g[0]);
-
-    if (top6Genres.length === 0) {
-      canvas.hidden = true; emptyMsg.hidden = false;
-      if (genreTrendChartInstance) { genreTrendChartInstance.destroy(); genreTrendChartInstance = null; }
-      return;
-    }
-
-    // หาปีทั้งหมดที่มีข้อมูล เรียงน้อย → มาก
-    const years = [...new Set(summaryShows.map(s => s.year))].sort((a,b) => a-b);
-
-    // นับจำนวนเรื่องของแต่ละแนว ในแต่ละปี
-    const datasets = top6Genres.map((genre, i) => {
-      const data = years.map(y =>
-        summaryShows.filter(s => s.year === y && s.genres.includes(genre)).length
-      );
-      return {
-        label: genre,
-        data,
-        backgroundColor: GENRE_TREND_COLORS[i],
-        borderRadius: 4,
-        maxBarThickness: 36
-      };
-    });
-
-    canvas.hidden = false; emptyMsg.hidden = true;
-    if (genreTrendChartInstance) genreTrendChartInstance.destroy();
-
-    try {
-      genreTrendChartInstance = new Chart(canvas.getContext('2d'), {
-        type: 'bar',
-        data: { labels: years, datasets },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom', labels: { color:'#B3B3B3', font:{family:'Sarabun', size:11}, boxWidth:12, padding:10 } },
-            tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1, titleColor:'#FFFFFF', bodyColor:'#B3B3B3', mode:'index', intersect:false }
-          },
-          scales: {
-            x: { stacked: true, ticks:{ color:'#B3B3B3', font:{family:'Inter'} }, grid:{ color:'rgba(255,255,255,0.06)' }, title:{ display:true, text:'ปีที่ออกอากาศ', color:'#B3B3B3' } },
-            y: { stacked: true, beginAtZero:true, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ color:'rgba(255,255,255,0.06)' }, title:{ display:true, text:'จำนวนเรื่อง', color:'#B3B3B3' } }
-          }
-        }
-      });
-    } catch(err) {
-      console.error('สร้างกราฟ genre trend ไม่สำเร็จ:', err);
-      canvas.hidden = true; emptyMsg.hidden = false;
-    }
-  }
 
   // ============================================================
   // Modal: Add to Watchlist
