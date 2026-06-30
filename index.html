@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bai+Jamjuree:wght@400;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
   :root {
     --bg: #141414;
@@ -2771,6 +2772,12 @@
   // ============================================================
   // Dashboard charts
   // ============================================================
+  // Register datalabels plugin (ใช้เฉพาะ chart ที่ระบุ datalabels ใน options เท่านั้น)
+  if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+    Chart.defaults.set('plugins.datalabels', { display: false }); // ปิด default ทุก chart ก่อน
+  }
+
   let yearlyChartInstance = null;
 
   function renderYearlyChart() {
@@ -2947,7 +2954,8 @@
         type:'bar',
         data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:'#E50914',borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}},
+          plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'},
+            datalabels:{display:true,color:'#FFFFFF',font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'end',offset:4}},
           scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
@@ -2984,6 +2992,7 @@
           plugins:{legend:{display:false},
             tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3',
               callbacks:{label:ctx=>`${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`}}
+            ,datalabels:{display:true,color:'#FFFFFF',font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'end',offset:4}
           },
           scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun'}},grid:{display:false}}},
           onClick:(evt,elements)=>{
