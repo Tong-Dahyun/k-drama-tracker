@@ -3118,15 +3118,17 @@
         type:'bar',
         data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:'#E50914',borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          layout:{padding:{left: window.innerWidth<=860?0:0, right: window.innerWidth<=860?8:8}},
           plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'},
             datalabels:{display:true,color:'#FFFFFF',font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}},
-          scales:{x:{beginAtZero:true,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
+          scales:{x:{beginAtZero:true,grace:'10%',ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
             y:{ticks:{color:'#B3B3B3',
               font:function(){return {family:'Sarabun', size: window.innerWidth<=860?10:12};},
               autoSkip:false,
+              maxTicksLimit:10,
               callback:function(value){
                 var label=this.getLabelForValue(value);
-                var maxLen=window.innerWidth<=860?7:18;
+                var maxLen=window.innerWidth<=860?5:18;
                 return label.length>maxLen ? label.slice(0,maxLen)+'…' : label;
               }
             },grid:{display:false}}},
@@ -3162,18 +3164,20 @@
         type:'bar',
         data:{labels,datasets:[{label:'% ถูกใจ',data:pcts,backgroundColor:barColors,hoverBackgroundColor:'#46D369',borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          layout:{padding:{right: window.innerWidth<=860?8:8}},
           plugins:{legend:{display:false},
             tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3',
               callbacks:{label:ctx=>`${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`}}
             ,datalabels:{display:true,color:'#FFFFFF',font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}
           },
-          scales:{x:{min:0,ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
+          scales:{x:{min:0,grace:'10%',ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
             y:{ticks:{color:'#B3B3B3',
               font:function(){return {family:'Sarabun', size: window.innerWidth<=860?10:12};},
               autoSkip:false,
+              maxTicksLimit:10,
               callback:function(value){
                 var label=this.getLabelForValue(value);
-                var maxLen=window.innerWidth<=860?7:18;
+                var maxLen=window.innerWidth<=860?5:18;
                 return label.length>maxLen ? label.slice(0,maxLen)+'…' : label;
               }
             },grid:{display:false}}},
