@@ -1757,6 +1757,97 @@
 
   .load-error-btn:hover { background: var(--red-soft); color: var(--red); border-color: transparent; }
 
+  /* ---------- AI Recommendation ---------- */
+  .ai-rec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .ai-rec-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color .2s;
+  }
+
+  .ai-rec-card:hover { border-color: var(--red-muted); }
+
+  .ai-rec-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ai-rec-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .ai-rec-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ai-rec-tag {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+  }
+
+  .ai-rec-reason {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+
+  .ai-rec-loading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-dim);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.85rem;
+    padding: 20px 0;
+  }
+
+  .ai-rec-spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .ai-rec-error {
+    color: var(--red);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.85rem;
+    padding: 16px;
+    background: var(--red-soft);
+    border-radius: 10px;
+    border: 1px solid var(--red-muted);
+  }
+
   /* ---------- Mode selector ---------- */
   .mode-card {
     background: var(--surface);
@@ -1867,6 +1958,7 @@
         <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg></span>Dashboard</div>
         <div class="page-tabs-sub">
           <button class="page-tab sub-page-tab active" data-nav="summary">Summary</button>
+          <button class="page-tab sub-page-tab" data-nav="ai-rec">✦ แนะนำ</button>
         </div>
 
         <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></span>Series &amp; Variety</div>
@@ -1894,6 +1986,16 @@
     </aside>
 
     <main>
+      <!-- AI Recommendation -->
+      <section class="view-section" id="view-ai-rec">
+        <div class="users-topbar">
+          <h2 class="users-heading">✦ แนะนำเรื่องให้ดูต่อ</h2>
+          <button class="add-entry-btn" id="aiRecBtn">✦ แนะนำเลย</button>
+        </div>
+        <p style="color:var(--text-dim);font-size:0.82rem;margin:0 0 20px;">Claude จะวิเคราะห์จากเรื่องที่คุณชอบทั้งหมดแล้วแนะนำ 5 เรื่องที่น่าดูต่อ</p>
+        <div id="aiRecResults"></div>
+      </section>
+
       <!-- Summary -->
       <section class="view-section active" id="view-summary">
         <div class="dashboard-slicer">
@@ -2901,6 +3003,8 @@
     if (tab.dataset.nav === 'summary') {
       document.getElementById('view-summary').classList.add('active');
       updateSummary();
+    } else if (tab.dataset.nav === 'ai-rec') {
+      document.getElementById('view-ai-rec').classList.add('active');
     } else if (tab.dataset.nav === 'mode') {
       document.getElementById('view-mode').classList.add('active');
       updateModeCards();
@@ -4124,6 +4228,96 @@
 
   document.getElementById('modeDarkBtn')?.addEventListener('click',  () => applyMode('dark'));
   document.getElementById('modeLightBtn')?.addEventListener('click', () => applyMode('light'));
+
+  // ============================================================
+  // AI Recommendation
+  // ============================================================
+  document.getElementById('aiRecBtn')?.addEventListener('click', runAiRecommendation);
+
+  async function runAiRecommendation() {
+    const resultsEl = document.getElementById('aiRecResults');
+    const btn = document.getElementById('aiRecBtn');
+    if (!resultsEl) return;
+
+    // แสดง loading
+    btn.disabled = true;
+    btn.textContent = 'กำลังวิเคราะห์...';
+    resultsEl.innerHTML = `<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>Claude กำลังวิเคราะห์รสนิยมของคุณ...</div>`;
+
+    try {
+      // สร้าง context จากข้อมูลที่มี
+      const likedShows = shows
+        .filter(s => s.liked)
+        .sort((a,b) => (b.no||0) - (a.no||0))
+        .slice(0, 50)
+        .map(s => `${s.title} (${s.year||'?'}) [${s.genres.join(', ')}]`);
+
+      const watchlistShows = pending
+        .slice(0, 20)
+        .map(s => `${s.title} (${s.year||'?'})`);
+
+      const topGenres = (() => {
+        const counts = {};
+        shows.filter(s => s.liked).forEach(s => s.genres.forEach(g => { if(g) counts[g] = (counts[g]||0)+1; }));
+        return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(g=>g[0]);
+      })();
+
+      const prompt = `คุณเป็นผู้เชี่ยวชาญด้านซีรีส์และวาไรตี้เอเชีย
+
+ข้อมูลของผู้ใช้:
+- เรื่องที่ชอบ (50 เรื่องล่าสุด): ${likedShows.join(', ')}
+- แนวที่ชอบมากที่สุด: ${topGenres.join(', ')}
+- Watchlist ปัจจุบัน: ${watchlistShows.join(', ')}
+
+กรุณาแนะนำซีรีส์หรือวาไรตี้ที่น่าดูต่อ 5 เรื่อง โดย:
+- ต้องไม่ซ้ำกับรายการในข้อมูลข้างต้น
+- เลือกจากรสนิยมและแนวที่ผู้ใช้ชอบจริงๆ
+- ตอบเป็น JSON array เท่านั้น ไม่มี markdown ไม่มีข้อความอื่น
+
+รูปแบบ JSON:
+[
+  {
+    "title": "ชื่อเรื่อง (ภาษาอังกฤษหรือไทย)",
+    "year": 2024,
+    "genres": ["แนว1", "แนว2"],
+    "reason": "เหตุผลสั้นๆ เป็นภาษาไทย 1-2 ประโยค ว่าทำไมถึงแนะนำ"
+  }
+]`;
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      const text = data.content?.map(c => c.text || '').join('') || '';
+      const clean = text.replace(/```json|```/g, '').trim();
+      const recs = JSON.parse(clean);
+
+      // render ผลลัพธ์
+      resultsEl.innerHTML = `<div class="ai-rec-grid">${recs.map((r, i) => `
+        <div class="ai-rec-card">
+          <div class="ai-rec-num">แนะนำ #${i+1}</div>
+          <div class="ai-rec-title">${r.title}</div>
+          <div class="ai-rec-meta">
+            <span class="ai-rec-tag">📅 ${r.year || '?'}</span>
+            ${(r.genres||[]).map(g => `<span class="ai-rec-tag">${g}</span>`).join('')}
+          </div>
+          <div class="ai-rec-reason">${r.reason}</div>
+        </div>`).join('')}</div>`;
+
+    } catch (err) {
+      resultsEl.innerHTML = `<div class="ai-rec-error">เกิดข้อผิดพลาด: ${err.message} — กรุณาลองใหม่อีกครั้ง</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '✦ แนะนำเลย';
+    }
+  }
 
   // Mobile drawer
   // ============================================================
