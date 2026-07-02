@@ -1992,7 +1992,7 @@
           <h2 class="users-heading">✦ แนะนำเรื่องให้ดูต่อ</h2>
           <button class="add-entry-btn" id="aiRecBtn">✦ แนะนำเลย</button>
         </div>
-        <p style="color:var(--text-dim);font-size:0.82rem;margin:0 0 20px;">วิเคราะห์จากเรื่องที่คุณชอบทั้งหมด แล้วแนะนำซีรีส์เกาหลี 5 เรื่องที่น่าดูต่อ</p>
+        <p style="color:var(--text-dim);font-size:0.82rem;margin:0 0 20px;">วิเคราะห์จากเรื่องที่คุณชอบทั้งหมด แล้วแนะนำซีรีส์เกาหลี 3 เรื่องที่น่าดูต่อ</p>
         <div id="aiRecResults"></div>
       </section>
 
@@ -4249,26 +4249,20 @@
       const likedShows = shows
         .filter(s => s.liked)
         .sort((a,b) => (b.no||0) - (a.no||0))
-        .slice(0, 30)
-        .map(s => `${s.title} (${s.year||'?'}) [${s.genres.join('/')}]`);
-
-      const watchlistShows = pending.slice(0, 10).map(s => s.title);
+        .slice(0, 20)
+        .map(s => `${s.title}[${s.genres.slice(0,2).join('/')}]`);
 
       const topGenres = (() => {
         const counts = {};
         shows.filter(s => s.liked).forEach(s => s.genres.forEach(g => { if(g) counts[g]=(counts[g]||0)+1; }));
-        return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(g=>g[0]);
+        return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(g=>g[0]);
       })();
 
-      const prompt = `You are a Korean drama and variety show expert.
+      const prompt = `Korean drama expert. User likes: ${likedShows.join(', ')}. Top genres: ${topGenres.join('/')}. Watchlist: ${pending.slice(0,5).map(s=>s.title).join(', ')}.
 
-User's liked shows: ${likedShows.join(', ')}
-User's favorite genres: ${topGenres.join(', ')}
-User's current watchlist: ${watchlistShows.join(', ')}
-
-Recommend 5 Korean dramas or variety shows NOT in the lists above.
-Reply ONLY with a valid JSON array, no markdown, no extra text:
-[{"title":"Show Title","year":2024,"genres":["Romance","Comedy"],"reason":"เหตุผลสั้นๆ เป็นภาษาไทย 1-2 ประโยค"}]`;
+Recommend 3 Korean dramas NOT in the lists above.
+Reply ONLY with JSON array, nothing else:
+[{"title":"...","year":2024,"genres":["...","..."],"reason":"1 sentence in Thai"}]`;
 
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
