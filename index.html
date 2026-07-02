@@ -4280,7 +4280,13 @@ Reply ONLY with a valid JSON array, no markdown, no extra text:
         },
         body: JSON.stringify({
           model: 'openrouter/auto',
-          messages: [{ role: 'user', content: prompt }],
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a Korean drama expert. You MUST respond with ONLY a valid JSON array. No markdown, no explanation, no text outside the JSON array. Start your response with [ and end with ].'
+            },
+            { role: 'user', content: prompt }
+          ],
           max_tokens: 2000
         })
       });
