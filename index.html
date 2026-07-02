@@ -4252,15 +4252,24 @@
         .slice(0, 20)
         .map(s => `${s.title}[${s.genres.slice(0,2).join('/')}]`);
 
+      // รายชื่อทุกเรื่องที่ดูแล้ว + watchlist เพื่อไม่ให้แนะนำซ้ำ
+      const allWatchedTitles = [
+        ...shows.map(s => s.title),
+        ...pending.map(s => s.title),
+        ...dropped.map(s => s.title)
+      ].join(', ');
+
       const topGenres = (() => {
         const counts = {};
         shows.filter(s => s.liked).forEach(s => s.genres.forEach(g => { if(g) counts[g]=(counts[g]||0)+1; }));
         return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(g=>g[0]);
       })();
 
-      const prompt = `Korean drama expert. User likes: ${likedShows.join(', ')}. Top genres: ${topGenres.join('/')}. Watchlist: ${pending.slice(0,5).map(s=>s.title).join(', ')}.
+      const prompt = `Korean drama expert. User likes: ${likedShows.join(', ')}. Top genres: ${topGenres.join('/')}.
 
-Recommend 3 Korean dramas NOT in the lists above.
+ALREADY WATCHED OR IN WATCHLIST (do NOT recommend any of these): ${allWatchedTitles}
+
+Recommend 3 Korean dramas NOT in the list above.
 Reply ONLY with JSON array, nothing else:
 [{"title":"...","year":2024,"genres":["...","..."],"reason":"1 sentence in Thai"}]`;
 
