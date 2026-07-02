@@ -4290,8 +4290,10 @@
       if (data.error) throw new Error(data.error.message);
 
       const text = data.choices?.[0]?.message?.content || '';
-      const clean = text.replace(/```json|```/g, '').trim();
-      const recs = JSON.parse(clean);
+      // ดึงเฉพาะ JSON array ออกมา
+      const match = text.match(/\[[\s\S]*\]/);
+      if (!match) throw new Error('ไม่พบข้อมูลในรูปแบบที่ถูกต้อง');
+      const recs = JSON.parse(match[0]);
 
       resultsEl.innerHTML = `<div class="ai-rec-grid">${recs.map((r, i) => `
         <div class="ai-rec-card">
