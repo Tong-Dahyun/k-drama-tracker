@@ -4260,16 +4260,15 @@
         return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(g=>g[0]);
       })();
 
-      const prompt = `คุณเป็นผู้เชี่ยวชาญด้านซีรีส์และวาไรตี้เกาหลี
+      const prompt = `You are a Korean drama and variety show expert.
 
-ข้อมูลของผู้ใช้:
-- เรื่องที่ชอบ: ${likedShows.join(', ')}
-- แนวที่ชอบมากที่สุด: ${topGenres.join(', ')}
-- Watchlist ปัจจุบัน: ${watchlistShows.join(', ')}
+User's liked shows: ${likedShows.join(', ')}
+User's favorite genres: ${topGenres.join(', ')}
+User's current watchlist: ${watchlistShows.join(', ')}
 
-แนะนำซีรีส์หรือวาไรตี้เกาหลี 5 เรื่องที่น่าดูต่อ โดยไม่ซ้ำกับรายการข้างต้น และต้องเป็นเกาหลีเท่านั้น
-ตอบเป็น JSON array เท่านั้น ไม่มี markdown ไม่มีข้อความอื่น:
-[{"title":"...","year":2024,"genres":["..."],"reason":"เหตุผลสั้นๆ ภาษาไทย"}]`;
+Recommend 5 Korean dramas or variety shows NOT in the lists above.
+Reply ONLY with a valid JSON array, no markdown, no extra text:
+[{"title":"Show Title","year":2024,"genres":["Romance","Comedy"],"reason":"เหตุผลสั้นๆ เป็นภาษาไทย 1-2 ประโยค"}]`;
 
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -4291,9 +4290,14 @@
 
       const text = data.choices?.[0]?.message?.content || '';
       // ดึงเฉพาะ JSON array ออกมา
-      const match = text.match(/\[[\s\S]*\]/);
+      const match = text.match(/\[[\s\S]*?\]/);
       if (!match) throw new Error('ไม่พบข้อมูลในรูปแบบที่ถูกต้อง');
-      const recs = JSON.parse(match[0]);
+      // clean อักขระที่อาจทำให้ JSON พัง
+      const clean = match[0]
+        .replace(/[\u0000-\u001F\u007F]/g, ' ') // ลบ control characters
+        .replace(/,\s*}/g, '}')                   // trailing comma
+        .replace(/,\s*\]/g, ']');                 // trailing comma in array
+      const recs = JSON.parse(clean);
 
       resultsEl.innerHTML = `<div class="ai-rec-grid">${recs.map((r, i) => `
         <div class="ai-rec-card">
