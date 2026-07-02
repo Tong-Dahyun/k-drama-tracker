@@ -4249,10 +4249,10 @@
       const likedShows = shows
         .filter(s => s.liked)
         .sort((a,b) => (b.no||0) - (a.no||0))
-        .slice(0, 50)
-        .map(s => `${s.title} (${s.year||'?'}) [${s.genres.join(', ')}]`);
+        .slice(0, 30)
+        .map(s => `${s.title} (${s.year||'?'}) [${s.genres.join('/')}]`);
 
-      const watchlistShows = pending.slice(0, 20).map(s => s.title);
+      const watchlistShows = pending.slice(0, 10).map(s => s.title);
 
       const topGenres = (() => {
         const counts = {};
@@ -4281,7 +4281,7 @@ Reply ONLY with a valid JSON array, no markdown, no extra text:
         body: JSON.stringify({
           model: 'openrouter/auto',
           messages: [{ role: 'user', content: prompt }],
-          max_tokens: 1000
+          max_tokens: 2000
         })
       });
 
