@@ -4289,6 +4289,7 @@ Reply ONLY with a valid JSON array, no markdown, no extra text:
       if (data.error) throw new Error(data.error.message);
 
       const text = data.choices?.[0]?.message?.content || '';
+      console.log('AI raw response:', text); // debug
 
       // วิธี parse ที่ robust ที่สุด — ดึง object ทีละอัน
       let recs = [];
