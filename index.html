@@ -4415,7 +4415,7 @@ Reply ONLY with JSON array, nothing else:
   }
 
   // click บนตั๋ว (ยกเว้นปุ่ม genre, menu, edit, delete)
-  document.getElementById('gridDiary')?.addEventListener('click', e => {
+  document.getElementById('grid')?.addEventListener('click', e => {
     if (e.target.closest('.card-menu-btn') || e.target.closest('.card-menu') ||
         e.target.closest('.genre-tag') || e.target.closest('.mark-watched-btn')) return;
     const card = e.target.closest('.ticket');
