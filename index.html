@@ -4414,13 +4414,16 @@ Reply ONLY with JSON array, nothing else:
     }
   }
 
-  // click บนตั๋ว (ยกเว้นปุ่ม genre, menu, edit, delete)
-  document.getElementById('grid')?.addEventListener('click', e => {
+  // click บนตั๋ว Watched (ยกเว้นปุ่ม genre, menu, edit, delete)
+  document.addEventListener('click', e => {
     if (e.target.closest('.card-menu-btn') || e.target.closest('.card-menu') ||
         e.target.closest('.genre-tag') || e.target.closest('.mark-watched-btn')) return;
-    const card = e.target.closest('.ticket');
+    // เช็คว่าอยู่ใน #grid (Watched) เท่านั้น
+    const grid = document.getElementById('grid');
+    if (!grid) return;
+    const card = e.target.closest('#grid .ticket');
     if (!card) return;
-    const title = card.querySelector('.ticket-title')?.textContent;
+    const title = card.querySelector('.ticket-title')?.textContent?.trim();
     const show = shows.find(s => s.title === title);
     if (show) openSynopsisModal(show);
   });
