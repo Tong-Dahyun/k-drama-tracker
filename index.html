@@ -4250,7 +4250,7 @@
   // ============================================================
   // AI Recommendation — OpenRouter (free model, supports CORS)
   // ============================================================
-  const OPENROUTER_API_KEY = 'sk-NtxGaKhjcqhjq1iEWE1BLldB55zVtKlzAXkFQY8ToWRXL54x0boNGEYUtd0AFn8C';
+  const OPENCODE_ZEN_API_KEY = 'sk-NtxGaKhjcqhjq1iEWE1BLldB55zVtKlzAXkFQY8ToWRXL54x0boNGEYUtd0AFn8C';
 
   document.getElementById('aiRecBtn')?.addEventListener('click', runAiRecommendation);
 
@@ -4294,7 +4294,7 @@ Reply ONLY with JSON array, nothing else:
       const response = await fetch('https://opencode.ai/zen/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Authorization': `Bearer ${OPENCODE_ZEN_API_KEY}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'https://tong-dahyun.github.io',
           'X-Title': 'TONGHUB'
@@ -4308,7 +4308,7 @@ Reply ONLY with JSON array, nothing else:
             },
             { role: 'user', content: prompt }
           ],
-          max_tokens: 2000
+          max_tokens: 500
         })
       });
 
@@ -4389,7 +4389,7 @@ Reply ONLY with JSON array, nothing else:
       const response = await fetch('https://opencode.ai/zen/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Authorization': `Bearer ${OPENCODE_ZEN_API_KEY}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'https://tong-dahyun.github.io',
           'X-Title': 'TONGHUB'
