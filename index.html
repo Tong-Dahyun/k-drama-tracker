@@ -710,6 +710,7 @@
     animation: rise .4s ease forwards;
     box-shadow: 0 4px 12px rgba(0,0,0,0.35);
     transition: transform .25s, box-shadow .25s, border-color .25s;
+    cursor: pointer;
   }
 
   .ticket:hover {
@@ -2354,7 +2355,24 @@
     </div>
   </div>
 
+  <!-- Modal: Synopsis -->
+  <div class="modal-overlay" id="synopsisModalOverlay" hidden>
+    <div class="modal-box" style="max-width:480px;">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:4px;">
+        <div>
+          <h3 id="synopsisTitle" style="margin:0 0 4px;"></h3>
+          <p id="synopsisMeta" style="margin:0; font-size:0.78rem; color:var(--text-dim);"></p>
+        </div>
+        <button id="closeSynopsisModal" style="background:none;border:none;color:var(--text-dim);font-size:1.2rem;cursor:pointer;flex-shrink:0;padding:0;">✕</button>
+      </div>
+      <div id="synopsisBody" style="margin-top:16px; font-family:'Sarabun',sans-serif; font-size:0.9rem; line-height:1.8; color:var(--text-soft); min-height:80px;">
+        <div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังโหลดเรื่องย่อ...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Delete -->
+
   <div class="modal-overlay" id="deleteModalOverlay" hidden>
     <div class="modal-box">
       <h3>ลบรายการนี้?</h3>
@@ -4338,6 +4356,74 @@ Reply ONLY with JSON array, nothing else:
       btn.textContent = '✦ แนะนำเลย';
     }
   }
+
+  // ============================================================
+  // Synopsis Modal — คลิกตั๋วเพื่อดูเรื่องย่อ
+  // ============================================================
+  const synopsisModalOverlay = document.getElementById('synopsisModalOverlay');
+  const synopsisTitle = document.getElementById('synopsisTitle');
+  const synopsisMeta  = document.getElementById('synopsisMeta');
+  const synopsisBody  = document.getElementById('synopsisBody');
+  const synopsisCache = {}; // cache เรื่องย่อที่โหลดแล้ว
+
+  document.getElementById('closeSynopsisModal')?.addEventListener('click', () => {
+    synopsisModalOverlay.hidden = true;
+  });
+  synopsisModalOverlay?.addEventListener('click', e => {
+    if (e.target === synopsisModalOverlay) synopsisModalOverlay.hidden = true;
+  });
+
+  async function openSynopsisModal(show) {
+    synopsisTitle.textContent = show.title;
+    synopsisMeta.textContent = [show.year, show.genres.join(' · ')].filter(Boolean).join(' · ');
+    synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังโหลดเรื่องย่อ...</div>';
+    synopsisModalOverlay.hidden = false;
+
+    // ถ้ามี cache แล้วแสดงเลย
+    if (synopsisCache[show.title]) {
+      synopsisBody.textContent = synopsisCache[show.title];
+      return;
+    }
+
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://tong-dahyun.github.io',
+          'X-Title': 'TONGHUB'
+        },
+        body: JSON.stringify({
+          model: 'openrouter/auto',
+          messages: [
+            { role: 'system', content: 'You are a Korean drama expert. Write a brief synopsis in Thai language only. Keep it to 2-3 sentences. No spoilers.' },
+            { role: 'user', content: `Write a brief synopsis in Thai for the show: "${show.title}" (${show.year || ''}) Genre: ${show.genres.join(', ')}` }
+          ],
+          max_tokens: 300
+        })
+      });
+
+      const data = await response.json();
+      if (data.error) throw new Error(data.error.message);
+      const text = (data.choices?.[0]?.message?.content || '').trim();
+      synopsisCache[show.title] = text;
+      synopsisBody.textContent = text;
+    } catch(err) {
+      synopsisBody.innerHTML = `<span style="color:var(--text-dim)">ไม่สามารถโหลดเรื่องย่อได้ — ${err.message}</span>`;
+    }
+  }
+
+  // click บนตั๋ว (ยกเว้นปุ่ม genre, menu, edit, delete)
+  document.getElementById('gridDiary')?.addEventListener('click', e => {
+    if (e.target.closest('.card-menu-btn') || e.target.closest('.card-menu') ||
+        e.target.closest('.genre-tag') || e.target.closest('.mark-watched-btn')) return;
+    const card = e.target.closest('.ticket');
+    if (!card) return;
+    const title = card.querySelector('.ticket-title')?.textContent;
+    const show = shows.find(s => s.title === title);
+    if (show) openSynopsisModal(show);
+  });
 
   // ============================================================
   // AI Recommendation
