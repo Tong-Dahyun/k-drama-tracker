@@ -4248,7 +4248,7 @@
   document.getElementById('modeLightBtn')?.addEventListener('click', () => applyMode('light'));
 
   // ============================================================
-  // AI Recommendation — OpenRouter (free model, supports CORS)
+  // AI Recommendation — OpenCode Zen
   // ============================================================
   const OPENCODE_ZEN_API_KEY = 'sk-NtxGaKhjcqhjq1iEWE1BLldB55zVtKlzAXkFQY8ToWRXL54x0boNGEYUtd0AFn8C';
 
@@ -4300,7 +4300,7 @@ Reply ONLY with JSON array, nothing else:
           'X-Title': 'TONGHUB'
         },
         body: JSON.stringify({
-          model: 'deepseek/deepseek-v4-flash',
+          model: 'deepseek-v4-flash',
           messages: [
             {
               role: 'system',
@@ -4312,8 +4312,9 @@ Reply ONLY with JSON array, nothing else:
         })
       });
 
-      const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data?.error?.message || data?.error || `HTTP ${response.status}`);
+      if (data.error) throw new Error(data.error.message || data.error);
 
       const text = data.choices?.[0]?.message?.content || '';
       console.log('AI raw response:', text); // debug
@@ -4395,7 +4396,7 @@ Reply ONLY with JSON array, nothing else:
           'X-Title': 'TONGHUB'
         },
         body: JSON.stringify({
-          model: 'deepseek/deepseek-v4-flash',
+          model: 'deepseek-v4-flash',
           messages: [
             { role: 'system', content: 'You are a Korean drama expert. Write a brief synopsis in Thai language only. Keep it to 2-3 sentences. No spoilers.' },
             { role: 'user', content: `Write a brief synopsis in Thai for the show: "${show.title}" (${show.year || ''}) Genre: ${show.genres.join(', ')}` }
@@ -4404,8 +4405,9 @@ Reply ONLY with JSON array, nothing else:
         })
       });
 
-      const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data?.error?.message || data?.error || `HTTP ${response.status}`);
+      if (data.error) throw new Error(data.error.message || data.error);
       const text = (data.choices?.[0]?.message?.content || '').trim();
       synopsisCache[show.title] = text;
       synopsisBody.textContent = text;
