@@ -4250,7 +4250,7 @@
   // ============================================================
   // AI Recommendation — OpenRouter (free model, supports CORS)
   // ============================================================
-  const OPENROUTER_API_KEY = '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';
+  const OPENROUTER_API_KEY = 'sk-NtxGaKhjcqhjq1iEWE1BLldB55zVtKlzAXkFQY8ToWRXL54x0boNGEYUtd0AFn8C';
 
   document.getElementById('aiRecBtn')?.addEventListener('click', runAiRecommendation);
 
@@ -4291,7 +4291,7 @@ Recommend 3 Korean dramas NOT in the list above.
 Reply ONLY with JSON array, nothing else:
 [{"title":"...","year":2024,"genres":["...","..."],"reason":"1 sentence in Thai"}]`;
 
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const response = await fetch('https://opencode.ai/zen/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
@@ -4300,7 +4300,7 @@ Reply ONLY with JSON array, nothing else:
           'X-Title': 'TONGHUB'
         },
         body: JSON.stringify({
-          model: 'openrouter/auto',
+          model: 'deepseek/deepseek-v4-flash',
           messages: [
             {
               role: 'system',
@@ -4386,7 +4386,7 @@ Reply ONLY with JSON array, nothing else:
     }
 
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const response = await fetch('https://opencode.ai/zen/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
@@ -4395,7 +4395,7 @@ Reply ONLY with JSON array, nothing else:
           'X-Title': 'TONGHUB'
         },
         body: JSON.stringify({
-          model: 'openrouter/auto',
+          model: 'deepseek/deepseek-v4-flash',
           messages: [
             { role: 'system', content: 'You are a Korean drama expert. Write a brief synopsis in Thai language only. Keep it to 2-3 sentences. No spoilers.' },
             { role: 'user', content: `Write a brief synopsis in Thai for the show: "${show.title}" (${show.year || ''}) Genre: ${show.genres.join(', ')}` }
