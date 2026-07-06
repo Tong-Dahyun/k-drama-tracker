@@ -4284,13 +4284,28 @@
         return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(g=>g[0]);
       })();
 
-      const prompt = `Korean drama expert. User likes: ${likedShows.join(', ')}. Top genres: ${topGenres.join('/')}.
+      // แบ่ง blacklist เป็น Set เพื่อ filter ผลลัพธ์ใน JS ด้วย
+      const watchedSet = new Set([
+        ...shows.map(s => s.title.toLowerCase().trim()),
+        ...pending.map(s => s.title.toLowerCase().trim()),
+        ...dropped.map(s => s.title.toLowerCase().trim())
+      ]);
 
-ALREADY WATCHED OR IN WATCHLIST (do NOT recommend any of these): ${allWatchedTitles}
+      const prompt = `You are a Korean drama recommendation expert.
 
-Recommend 3 Korean dramas or Korean variety shows NOT in the list above.
-ALL fields must be in English except "reason" which must be in Thai.
-Reply ONLY with a valid JSON array, nothing else:
+User's favorite shows: ${likedShows.join(', ')}
+User's top genres: ${topGenres.join('/')}
+
+BLACKLIST - You MUST NOT recommend ANY of these titles (user already watched or has in watchlist):
+${allWatchedTitles}
+
+IMPORTANT RULES:
+1. Check every title you recommend against the BLACKLIST above
+2. If a title appears in the BLACKLIST, do NOT recommend it
+3. Only recommend shows the user has NOT seen before
+4. Recommend exactly 3 Korean dramas or variety shows
+
+Reply ONLY with a valid JSON array:
 [{"title":"Show Title in English","year":2024,"genres":["Genre1","Genre2"],"reason":"เหตุผลสั้นๆ เป็นภาษาไทย 1 ประโยค"}]`;
 
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -4337,6 +4352,10 @@ Reply ONLY with a valid JSON array, nothing else:
         }
       }
       if (recs.length === 0) throw new Error('ไม่สามารถอ่านผลลัพธ์ได้ กรุณาลองใหม่');
+
+      // กรองซ้ำด้วย JS อีกชั้น
+      recs = recs.filter(r => !watchedSet.has((r.title || '').toLowerCase().trim()));
+      if (recs.length === 0) throw new Error('ผลลัพธ์ซ้ำกับที่ดูไปแล้ว กรุณาลองใหม่');
 
       resultsEl.innerHTML = `<div class="ai-rec-grid">${recs.map((r, i) => `
         <div class="ai-rec-card">
