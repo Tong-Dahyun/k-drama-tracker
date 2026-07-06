@@ -510,6 +510,26 @@
 
   .genre-table tbody tr:last-child td { border-bottom: none; }
 
+  .genre-table-tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .genre-table-pill {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: var(--surface-soft);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
   .genre-table-empty-row td {
     color: var(--text-dim);
     text-align: center;
@@ -3243,9 +3263,9 @@
     titleEl.textContent=title;
     if(list.length===0){tbody.innerHTML='<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';return;}
     if(isPending){
-      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
     } else {
-      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
     }
   }
 
