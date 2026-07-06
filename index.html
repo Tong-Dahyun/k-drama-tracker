@@ -4251,6 +4251,7 @@
   // AI Recommendation — OpenRouter (free model, supports CORS)
   // ============================================================
   const GROQ_API_KEY = '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';
+  const TAVILY_API_KEY = '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';
 
   document.getElementById('aiRecBtn')?.addEventListener('click', runAiRecommendation);
 
@@ -4375,7 +4376,7 @@ Reply ONLY with a valid JSON array, nothing else:
   async function openSynopsisModal(show) {
     synopsisTitle.textContent = show.title;
     synopsisMeta.textContent = [show.year, show.genres.join(' · ')].filter(Boolean).join(' · ');
-    synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังโหลดเรื่องย่อ...</div>';
+    synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังค้นหาข้อมูล...</div>';
     synopsisModalOverlay.hidden = false;
 
     // ถ้ามี cache แล้วแสดงเลย
@@ -4385,7 +4386,31 @@ Reply ONLY with a valid JSON array, nothing else:
     }
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      // Step 1: Tavily ค้นหาข้อมูลซีรีส์จากอินเทอร์เน็ต
+      synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังค้นหาข้อมูลซีรีส์...</div>';
+      const searchQuery = `${show.title} ${show.year || ''} Korean drama synopsis plot`;
+      const tavilyRes = await fetch('https://api.tavily.com/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          api_key: TAVILY_API_KEY,
+          query: searchQuery,
+          search_depth: 'basic',
+          max_results: 3,
+          include_answer: true
+        })
+      });
+      const tavilyData = await tavilyRes.json();
+      const searchContext = [
+        tavilyData.answer || '',
+        ...(tavilyData.results || []).slice(0, 2).map(r => r.content || '')
+      ].filter(Boolean).join('\n\n').slice(0, 1500);
+
+      if (!searchContext) throw new Error('ไม่พบข้อมูล');
+
+      // Step 2: Groq สรุปเป็นเรื่องย่อภาษาไทย
+      synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังสรุปเรื่องย่อ...</div>';
+      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${GROQ_API_KEY}`,
@@ -4394,18 +4419,18 @@ Reply ONLY with a valid JSON array, nothing else:
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           messages: [
-            { role: 'system', content: 'You are a Korean drama and variety show expert. Write a synopsis in Thai language only. Keep it to 2-3 sentences. No spoilers. Always write something helpful even if details are limited.' },
-            { role: 'user', content: `เขียนเรื่องย่อภาษาไทยสำหรับซีรีส์/วาไรตี้เกาหลีเรื่อง "${show.title}" (${show.year || ''}) แนว: ${show.genres.join(', ')} ยาว 2-3 ประโยค ไม่สปอยล์` }
+            { role: 'system', content: 'สรุปเรื่องย่อของซีรีส์/วาไรตี้เกาหลีจากข้อมูลที่ให้มาเป็นภาษาไทย 2-3 ประโยค ไม่สปอยล์ตอนจบ' },
+            { role: 'user', content: `ซีรีส์: "${show.title}" (${show.year || ''})\nข้อมูลจากอินเทอร์เน็ต:\n${searchContext}\n\nสรุปเรื่องย่อเป็นภาษาไทย 2-3 ประโยค:` }
           ],
           max_tokens: 400
         })
       });
-
-      const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
-      const text = (data.choices?.[0]?.message?.content || '').trim();
+      const groqData = await groqRes.json();
+      if (groqData.error) throw new Error(groqData.error.message);
+      const text = (groqData.choices?.[0]?.message?.content || '').trim();
       synopsisCache[show.title] = text;
       synopsisBody.textContent = text;
+
     } catch(err) {
       synopsisBody.innerHTML = `<span style="color:var(--text-dim)">ไม่สามารถโหลดเรื่องย่อได้ — ${err.message}</span>`;
     }
