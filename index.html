@@ -1177,12 +1177,12 @@
     .summary-value { font-size: 1.8rem !important; }
     .summary-right-chart { flex: none; height: 220px !important; }
 
-    /* Top 10 — เต็มความกว้าง เรียงซ้อน */
-    .genre-section-3 { flex-direction: column; gap: 20px; }
-    .genre-col { flex-basis: 100%; min-width: 0; width: 100%; }
-    .genre-chart-wrap { height: 300px; flex-basis: 100%; width: 100%; }
-    .genre-col-title { font-size: 0.85rem; margin-bottom: 10px; }
-    .genre-table-wrap { flex-basis: 100%; width: 100%; min-width: 0; }
+    /* Top 10 — 2 คอลัมน์ซ้ายขวา + table เต็มความกว้าง */
+    .genre-section-3 { flex-wrap: wrap; gap: 12px; }
+    .genre-col { flex: 1 1 calc(50% - 6px); min-width: 0; width: auto; }
+    .genre-chart-wrap { height: 300px; width: 100%; }
+    .genre-col-title { font-size: 0.78rem; margin-bottom: 8px; }
+    .genre-table-wrap { flex-basis: 100%; width: 100%; min-width: 0; order: 3; }
 
     /* Monthly chart stats — 2x2 grid เต็มความกว้าง */
     .monthly-stats-col { grid-template-columns: 1fr 1fr; gap: 8px; flex: none; width: 100%; }
@@ -1904,6 +1904,63 @@
     border: 1px solid var(--red-muted);
   }
 
+  /* ---------- Data Bar (Mobile Top10) ---------- */
+  .databar-wrap { display: none; }
+
+  @media (max-width: 860px) {
+    /* ซ่อน canvas, โชว์ databar */
+    .genre-chart-wrap { display: none !important; }
+    .databar-wrap { display: block; width: 100%; }
+
+    .databar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .databar-row:last-child { border-bottom: none; }
+
+    .databar-label {
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text);
+      width: 80px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .databar-bar-wrap {
+      flex: 1;
+      height: 20px;
+      background: var(--surface-soft);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .databar-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .4s ease;
+    }
+
+    .databar-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text);
+      width: 28px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .databar-row.selected .databar-label { color: var(--red); font-weight: 700; }
+    .databar-row.selected-liked .databar-label { color: var(--mint); font-weight: 700; }
+  }
+
   /* ---------- Mode selector ---------- */
   .mode-card {
     background: var(--surface);
@@ -2142,6 +2199,8 @@
                 <canvas id="genreChart"></canvas>
                 <p class="chart-empty" id="genreChartEmpty" hidden>ยังไม่มีข้อมูล</p>
               </div>
+              <!-- Mobile Data Bar -->
+              <div class="databar-wrap" id="genreDataBar"></div>
             </div>
             <div class="genre-col">
               <h3 class="genre-col-title">Top 10 แนวที่ถูกใจมากที่สุด</h3>
@@ -2149,6 +2208,8 @@
                 <canvas id="genreLikedChart"></canvas>
                 <p class="chart-empty" id="genreLikedChartEmpty" hidden>ยังไม่มีข้อมูล</p>
               </div>
+              <!-- Mobile Data Bar -->
+              <div class="databar-wrap" id="genreLikedDataBar"></div>
             </div>
             <div class="genre-table-wrap">
               <p class="genre-table-title" id="genreTableTitle">คลิกแนวในกราฟเพื่อดูรายชื่อเรื่อง</p>
@@ -3382,6 +3443,59 @@
     summaryLiked.textContent=likedCount; summaryLikedBreakdown.textContent=`ซีรีส์ ${likedSeries} · วาไรตี้ ${likedVariety}`;
     renderYearlyChart();renderLikedDonutChart();renderWatchlistDonut();renderGenreChart();renderGenreLikedChart();renderGenreTable();
     renderMonthlyChart();
+    if (window.innerWidth <= 860) renderDataBars();
+  }
+
+  // ============================================================
+  // Data Bar — Mobile Top 10 (แทน Chart.js บนมือถือ)
+  // ============================================================
+  function renderDataBars() {
+    const summaryShows = getSummaryShows();
+
+    // นับแนวดูเยอะ
+    const genreCounts = {};
+    summaryShows.forEach(s => s.genres.forEach(g => { if(g) genreCounts[g] = (genreCounts[g]||0)+1; }));
+    const top10Watched = Object.entries(genreCounts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+    // นับแนวถูกใจ
+    const likedCounts = {};
+    summaryShows.filter(s=>s.liked).forEach(s => s.genres.forEach(g => { if(g) likedCounts[g] = (likedCounts[g]||0)+1; }));
+    const top10Liked = Object.entries(likedCounts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+    renderSingleDataBar('genreDataBar', top10Watched, '#E50914', 'watched');
+    renderSingleDataBar('genreLikedDataBar', top10Liked, '#46D369', 'liked');
+  }
+
+  function renderSingleDataBar(containerId, data, color, source) {
+    const wrap = document.getElementById(containerId);
+    if (!wrap || !data.length) return;
+    const maxVal = data[0][1];
+    wrap.innerHTML = data.map(([genre, count]) => {
+      const pct = Math.round((count / maxVal) * 100);
+      const isSelected = selectedGenre === genre && selectedGenreSource === source;
+      return `<div class="databar-row ${isSelected ? (source==='watched'?'selected':'selected-liked') : ''}" data-genre="${genre}" data-source="${source}">
+        <span class="databar-label">${genre}</span>
+        <div class="databar-bar-wrap">
+          <div class="databar-bar" style="width:${pct}%; background:${color};opacity:${isSelected?1:0.7};"></div>
+        </div>
+        <span class="databar-value">${count}</span>
+      </div>`;
+    }).join('');
+
+    // click handler
+    wrap.querySelectorAll('.databar-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const genre = row.dataset.genre;
+        const src = row.dataset.source;
+        if (selectedGenre === genre && selectedGenreSource === src) {
+          selectedGenre = null; selectedGenreSource = null;
+        } else {
+          selectedGenre = genre; selectedGenreSource = src;
+        }
+        renderGenreTable();
+        renderDataBars();
+      });
+    });
   }
 
   // ============================================================
