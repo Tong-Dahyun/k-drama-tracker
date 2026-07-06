@@ -1167,14 +1167,28 @@
     .sidebar-controls .add-entry-btn { width: auto; margin-top: 0; }
 
     /* charts */
-    .chart-card { max-width: none; }
-    .chart-card .chart-wrap { height: 240px; }
-    .genre-section-3 { flex-direction: column; gap: 28px; }
+    .chart-card { max-width: none; padding: 16px 14px 12px; }
+    .chart-card .chart-wrap { height: 220px; }
+
+    /* Summary stat cards — 2 คอลัมน์แทน 2x2 grid */
+    .summary-layout { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .summary-card { padding: 14px; }
+    .summary-value { font-size: 1.8rem !important; }
+    .summary-right-chart { flex: none; height: 200px !important; grid-column: 1 / -1; }
+
+    /* Top 10 — เต็มความกว้าง เรียงซ้อน */
+    .genre-section-3 { flex-direction: column; gap: 20px; }
     .genre-col { flex-basis: 100%; min-width: 0; width: 100%; }
-    .genre-chart-wrap { height: 320px; flex-basis: 100%; width: 100%; }
+    .genre-chart-wrap { height: 300px; flex-basis: 100%; width: 100%; }
+    .genre-col-title { font-size: 0.85rem; margin-bottom: 10px; }
     .genre-table-wrap { flex-basis: 100%; width: 100%; min-width: 0; }
-    .summary-layout { grid-template-columns: 1fr; }
-    .summary-right-chart { flex: none; height: 220px !important; }
+
+    /* Monthly chart stats — 2x2 grid เต็มความกว้าง */
+    .monthly-stats-col { grid-template-columns: 1fr 1fr; gap: 8px; flex: none; width: 100%; }
+    .monthly-stat-box { padding: 12px 10px; border-radius: 10px; }
+    .monthly-genre-value { font-size: 0.95rem !important; }
+    .monthly-chart-wrap { height: 220px; min-height: 0; }
+    .monthly-layout { gap: 14px; }
   }
 
   /* ---------- Add/modal buttons ---------- */
@@ -3290,7 +3304,7 @@
             datalabels:{display:true,color:'#FFFFFF',font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}},
           scales:{x:{min:0,grace:'10%',ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
             y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun',size:11},autoSkip:false},
-               afterFit:function(axis){if(window.innerWidth<=860){axis.width=Math.max(axis.width,70);}},
+               afterFit:function(axis){if(window.innerWidth<=860){axis.width=Math.max(axis.width,90);}},
                grid:{display:false}}},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
@@ -3331,7 +3345,7 @@
           },
           scales:{x:{min:0,grace:'10%',ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
             y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun',size:11},autoSkip:false},
-               afterFit:function(axis){if(window.innerWidth<=860){axis.width=Math.max(axis.width,70);}},
+               afterFit:function(axis){if(window.innerWidth<=860){axis.width=Math.max(axis.width,90);}},
                grid:{display:false}}},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
