@@ -4501,17 +4501,23 @@ Reply ONLY with a valid JSON array:
     }
   }
 
-  // click บนตั๋ว Watched (ยกเว้นปุ่ม genre, menu, edit, delete)
+  // click บนตั๋ว Watched / Watchlist / Dropped
   document.addEventListener('click', e => {
     if (e.target.closest('.card-menu-btn') || e.target.closest('.card-menu') ||
-        e.target.closest('.genre-tag') || e.target.closest('.mark-watched-btn')) return;
-    // เช็คว่าอยู่ใน #grid (Watched) เท่านั้น
-    const grid = document.getElementById('grid');
-    if (!grid) return;
-    const card = e.target.closest('#grid .ticket');
+        e.target.closest('.genre-tag') || e.target.closest('.mark-watched-btn') ||
+        e.target.closest('.mark-dropped-watched-btn')) return;
+
+    // หาว่าคลิกอยู่ใน grid ไหน
+    const card = e.target.closest('#grid .ticket, #gridPending .ticket, #gridDropped .ticket');
     if (!card) return;
+
     const title = card.querySelector('.ticket-title')?.textContent?.trim();
-    const show = shows.find(s => s.title === title);
+
+    // หาข้อมูลจาก shows, pending, หรือ dropped
+    const show = shows.find(s => s.title === title)
+      || pending.find(s => s.title === title)
+      || dropped.find(s => s.title === title);
+
     if (show) openSynopsisModal(show);
   });
 
