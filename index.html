@@ -1333,6 +1333,26 @@
 
   .logout-btn:hover { color: var(--text-soft); }
 
+  .logout-icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: auto;
+    transition: color .2s, background .2s;
+  }
+
+  .logout-icon-btn:hover {
+    color: var(--red);
+    background: var(--red-soft);
+  }
+
   /* ---------- User info card ---------- */
   .user-info-card {
     margin-top: auto;
@@ -1982,8 +2002,14 @@
           <span class="user-info-name" id="userInfoName"></span>
           <span class="user-info-role" id="userInfoRole"></span>
         </div>
+        <button class="logout-icon-btn" id="logoutBtn" title="ออกจากระบบ">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
       </div>
-      <button class="logout-btn" id="logoutBtn">ออกจากระบบ</button>
     </aside>
 
     <main>
