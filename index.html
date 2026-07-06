@@ -288,6 +288,7 @@
   @media (max-width: 860px) {
     .summary-layout { grid-template-columns: 1fr; }
     .summary-right-chart { flex: none; height: 220px !important; }
+    .summary-grid-2 { grid-template-columns: 1fr 1fr; gap: 10px; }
   }
 
   /* ---------- Monthly chart layout: stats + chart side by side ---------- */
@@ -1170,11 +1171,11 @@
     .chart-card { max-width: none; padding: 16px 14px 12px; }
     .chart-card .chart-wrap { height: 220px; }
 
-    /* Summary stat cards — 2 คอลัมน์แทน 2x2 grid */
-    .summary-layout { grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* Summary stat cards — แยก left/right เป็น 1 คอลัมน์ */
+    .summary-layout { grid-template-columns: 1fr; gap: 12px; }
     .summary-card { padding: 14px; }
     .summary-value { font-size: 1.8rem !important; }
-    .summary-right-chart { flex: none; height: 200px !important; grid-column: 1 / -1; }
+    .summary-right-chart { flex: none; height: 220px !important; }
 
     /* Top 10 — เต็มความกว้าง เรียงซ้อน */
     .genre-section-3 { flex-direction: column; gap: 20px; }
@@ -1188,7 +1189,7 @@
     .monthly-stat-box { padding: 12px 10px; border-radius: 10px; }
     .monthly-genre-value { font-size: 0.95rem !important; }
     .monthly-chart-wrap { height: 220px; min-height: 0; }
-    .monthly-layout { gap: 14px; }
+    .monthly-layout { flex-direction: column; gap: 14px; }
   }
 
   /* ---------- Add/modal buttons ---------- */
