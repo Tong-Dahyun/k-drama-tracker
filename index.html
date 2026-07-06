@@ -4391,12 +4391,12 @@ Reply ONLY with JSON array, nothing else:
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
+          model: 'llama-3.3-70b-versatile',
           messages: [
-            { role: 'system', content: 'You are a Korean drama expert. Write a brief synopsis in Thai language only. Keep it to 2-3 sentences. No spoilers.' },
-            { role: 'user', content: `Write a brief synopsis in Thai for the show: "${show.title}" (${show.year || ''}) Genre: ${show.genres.join(', ')}` }
+            { role: 'system', content: 'You are a Korean drama and variety show expert with deep knowledge of Korean entertainment. Your task is to write an accurate synopsis ONLY for the exact show title provided. If you are not confident about the show, say "ไม่มีข้อมูลเพียงพอสำหรับเรื่องนี้" instead of making up content. Write in Thai language only. 2-3 sentences max. No spoilers.' },
+            { role: 'user', content: `Write an accurate synopsis in Thai for this EXACT Korean show: "${show.title}" (${show.year || ''}) Genre: ${show.genres.join(', ')}. Only write about this specific show. Do not confuse it with other shows.` }
           ],
-          max_tokens: 300
+          max_tokens: 400
         })
       });
 
