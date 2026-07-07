@@ -1178,10 +1178,10 @@
     .summary-right-chart { flex: none; height: 220px !important; }
 
     /* Top 10 — 2 คอลัมน์ซ้ายขวา + table เต็มความกว้าง */
-    .genre-section-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .genre-col { min-width: 0; width: 100%; }
+    .genre-section-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+    .genre-col { flex: none; min-width: 0 !important; width: 100%; }
     .genre-col-title { font-size: 0.75rem; margin-bottom: 8px; }
-    .genre-table-wrap { grid-column: 1 / -1; width: 100%; min-width: 0; }
+    .genre-table-wrap { grid-column: 1 / -1; width: 100%; min-width: 0 !important; }
     .databar-label { width: 60px; font-size: 0.72rem; }
     .databar-value { font-size: 0.7rem; width: 22px; }
 
