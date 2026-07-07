@@ -727,6 +727,7 @@
     flex-direction: column;
     overflow: hidden;
     opacity: 0;
+    position: relative;
     transform: translateY(12px);
     animation: rise .4s ease forwards;
     box-shadow: 0 4px 12px rgba(0,0,0,0.35);
@@ -735,9 +736,10 @@
   }
 
   .ticket:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.55);
     border-color: var(--border);
+    z-index: 2;
   }
 
   .ticket:hover::after {
