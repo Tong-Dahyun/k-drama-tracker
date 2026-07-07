@@ -730,49 +730,28 @@
     transform: translateY(12px);
     animation: rise .4s ease forwards;
     box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-    transition: transform .25s, box-shadow .25s, border-color .25s;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
     cursor: pointer;
   }
 
   .ticket:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.5), 0 0 0 1px var(--red-muted);
-    border-color: var(--red);
-  }
-
-  /* hint ว่า clickable — แสดง subtle overlay */
-  .ticket::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    background: transparent;
-    transition: background .2s;
-    pointer-events: none;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    border-color: var(--border);
   }
 
   .ticket:hover::after {
-    background: rgba(229, 9, 20, 0.03);
+    background: transparent;
   }
 
   /* Dropped card: amber accent on hover */
   .ticket.dropped-card:hover {
-    border-color: var(--amber);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(249,115,22,0.3);
-  }
-
-  .ticket.dropped-card:hover::after {
-    background: rgba(249, 115, 22, 0.03);
+    border-color: var(--border);
   }
 
   /* Watchlist card: mint accent on hover */
   .ticket.watchlist:hover {
-    border-color: var(--mint);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(70,211,105,0.3);
-  }
-
-  .ticket.watchlist:hover::after {
-    background: rgba(70, 211, 105, 0.03);
+    border-color: var(--border);
   }
 
   @keyframes rise {
