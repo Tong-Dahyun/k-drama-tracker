@@ -4263,7 +4263,11 @@
   document.getElementById('modeLightBtn')?.addEventListener('click', () => applyMode('light'));
 
   // ============================================================
-  // AI Recommendation — OpenRouter (free model, su ============================================================
+  // Synopsis Modal — Tavily + Groq
+  // ============================================================
+  const GROQ_API_KEY   = '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';
+  const TAVILY_API_KEY = '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';
+
   const synopsisModalOverlay = document.getElementById('synopsisModalOverlay');
   const synopsisTitle = document.getElementById('synopsisTitle');
   const synopsisMeta  = document.getElementById('synopsisMeta');
