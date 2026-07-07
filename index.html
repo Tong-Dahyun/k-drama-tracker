@@ -736,10 +736,9 @@
   }
 
   .ticket:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    border-color: var(--border);
-    z-index: 2;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+    border-color: var(--red);
   }
 
   .ticket:hover::after {
@@ -748,12 +747,12 @@
 
   /* Dropped card: amber accent on hover */
   .ticket.dropped-card:hover {
-    border-color: var(--border);
+    border-color: var(--amber);
   }
 
   /* Watchlist card: mint accent on hover */
   .ticket.watchlist:hover {
-    border-color: var(--border);
+    border-color: var(--mint);
   }
 
   @keyframes rise {
