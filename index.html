@@ -4479,7 +4479,7 @@ IMPORTANT RULES:
 1. Check every title you recommend against the BLACKLIST above
 2. If a title appears in the BLACKLIST, do NOT recommend it
 3. Only recommend shows the user has NOT seen before
-4. Recommend exactly 3 Korean dramas or variety shows
+4. Recommend exactly 6 Korean dramas or variety shows (we will filter duplicates client-side)
 
 Reply ONLY with a valid JSON array:
 [{"title":"Show Title in English","year":2024,"genres":["Genre1","Genre2"],"reason":"เหตุผลสั้นๆ เป็นภาษาไทย 1 ประโยค"}]`;
@@ -4499,7 +4499,7 @@ Reply ONLY with a valid JSON array:
             },
             { role: 'user', content: prompt }
           ],
-          max_tokens: 800
+          max_tokens: 1500
         })
       });
 
@@ -4530,7 +4530,7 @@ Reply ONLY with a valid JSON array:
       if (recs.length === 0) throw new Error('ไม่สามารถอ่านผลลัพธ์ได้ กรุณาลองใหม่');
 
       // กรองซ้ำด้วย JS อีกชั้น
-      recs = recs.filter(r => !watchedSet.has((r.title || '').toLowerCase().trim()));
+      recs = recs.filter(r => !watchedSet.has((r.title || '').toLowerCase().trim())).slice(0, 3);
       if (recs.length === 0) throw new Error('ผลลัพธ์ซ้ำกับที่ดูไปแล้ว กรุณาลองใหม่');
 
       resultsEl.innerHTML = `<div class="ai-rec-grid">${recs.map((r, i) => `
