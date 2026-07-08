@@ -735,10 +735,19 @@
   }
 
   .ticket:hover,
-  article.ticket:hover {
+  article.ticket:hover,
+  .ticket.is-hovered {
     transform: translateY(-8px) scale(1.03);
     box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     border-color: var(--red);
+  }
+
+  .ticket.watchlist.is-hovered {
+    border-color: var(--mint);
+  }
+
+  .ticket.dropped-card.is-hovered {
+    border-color: var(--amber);
   }
 
   .ticket:hover::after {
@@ -4372,6 +4381,20 @@
       || dropped.find(s => s.title === title);
 
     if (show) openSynopsisModal(show);
+  });
+
+  // ============================================================
+  // Ticket hover — ใช้ JS แทน CSS :hover เพราะ animation override
+  // ============================================================
+  document.addEventListener('mouseover', e => {
+    const ticket = e.target.closest('.ticket');
+    if (ticket) ticket.classList.add('is-hovered');
+  });
+  document.addEventListener('mouseout', e => {
+    const ticket = e.target.closest('.ticket');
+    if (ticket && !ticket.contains(e.relatedTarget)) {
+      ticket.classList.remove('is-hovered');
+    }
   });
 
   // ============================================================
