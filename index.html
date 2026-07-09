@@ -4313,48 +4313,23 @@
     }
 
     try {
-      // Step 1: Tavily ค้นหาข้อมูลซีรีส์จากอินเทอร์เน็ต
       synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังค้นหาข้อมูลซีรีส์...</div>';
-      const searchQuery = `${show.title} ${show.year || ''} Korean drama synopsis plot`;
-      const tavilyRes = await fetch('https://api.tavily.com/search', {
+
+      // เรียกผ่าน Apps Script (proxy) เพื่อหลีกเลี่ยง CORS
+      const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
-          api_key: TAVILY_API_KEY,
-          query: searchQuery,
-          search_depth: 'basic',
-          max_results: 3,
-          include_answer: true
+          action: 'getSynopsis',
+          title: show.title,
+          year: show.year || '',
+          genres: show.genres || []
         })
       });
-      const tavilyData = await tavilyRes.json();
-      const searchContext = [
-        tavilyData.answer || '',
-        ...(tavilyData.results || []).slice(0, 2).map(r => r.content || '')
-      ].filter(Boolean).join('\n\n').slice(0, 1500);
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'เกิดข้อผิดพลาด');
 
-      if (!searchContext) throw new Error('ไม่พบข้อมูล');
-
-      // Step 2: Groq สรุปเป็นเรื่องย่อภาษาไทย
-      synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังสรุปเรื่องย่อ...</div>';
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: 'คุณต้องตอบเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอื่นไม่ว่ากรณีใด สรุปเรื่องย่อของซีรีส์/วาไรตี้เกาหลีจากข้อมูลที่ให้มา 2-3 ประโยค ไม่สปอยล์ตอนจบ ถ้าพบข้อมูลภาษาจีนหรือภาษาอื่นให้แปลเป็นภาษาไทยก่อนสรุป' },
-            { role: 'user', content: `ซีรีส์: "${show.title}" (${show.year || ''})\nข้อมูลจากอินเทอร์เน็ต:\n${searchContext}\n\nสรุปเรื่องย่อเป็นภาษาไทย 2-3 ประโยค:` }
-          ],
-          max_tokens: 400
-        })
-      });
-      const groqData = await groqRes.json();
-      if (groqData.error) throw new Error(groqData.error.message);
-      const text = (groqData.choices?.[0]?.message?.content || '').trim();
+      const text = data.synopsis || '';
       synopsisCache[show.title] = text;
       synopsisBody.textContent = text;
 
