@@ -4284,14 +4284,13 @@
   // ============================================================
   // Synopsis Modal — Tavily + Groq
   // ============================================================
-  const GROQ_API_KEY   = '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';
-  const TAVILY_API_KEY = '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';
+  const GEMINI_API_KEY = 'AQ.Ab8RN6IAhado5MkndELLPo5BMRcFpRtdftO-OPH9md1Bhv7tHQ';
 
   const synopsisModalOverlay = document.getElementById('synopsisModalOverlay');
   const synopsisTitle = document.getElementById('synopsisTitle');
   const synopsisMeta  = document.getElementById('synopsisMeta');
   const synopsisBody  = document.getElementById('synopsisBody');
-  const synopsisCache = {}; // cache เรื่องย่อที่โหลดแล้ว
+  const synopsisCache = {};
 
   document.getElementById('closeSynopsisModal')?.addEventListener('click', () => {
     synopsisModalOverlay.hidden = true;
@@ -4303,33 +4302,32 @@
   async function openSynopsisModal(show) {
     synopsisTitle.textContent = show.title;
     synopsisMeta.textContent = [show.year, show.genres.join(' · ')].filter(Boolean).join(' · ');
-    synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังค้นหาข้อมูล...</div>';
+    synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังโหลดเรื่องย่อ...</div>';
     synopsisModalOverlay.hidden = false;
 
-    // ถ้ามี cache แล้วแสดงเลย
     if (synopsisCache[show.title]) {
       synopsisBody.textContent = synopsisCache[show.title];
       return;
     }
 
     try {
-      synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังค้นหาข้อมูลซีรีส์...</div>';
+      const prompt = `เขียนเรื่องย่อภาษาไทยสำหรับซีรีส์/วาไรตี้เกาหลีเรื่อง "${show.title}" (${show.year || ''}) แนว: ${(show.genres||[]).join(', ')} ยาว 2-3 ประโยค ไม่สปอยล์ตอนจบ ตอบเป็นภาษาไทยเท่านั้น`;
 
-      // เรียกผ่าน Apps Script (proxy) เพื่อหลีกเลี่ยง CORS
-      const res = await fetch(APPS_SCRIPT_URL, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'getSynopsis',
-          title: show.title,
-          year: show.year || '',
-          genres: show.genres || []
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 300 }
         })
       });
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'เกิดข้อผิดพลาด');
 
-      const text = data.synopsis || '';
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+
+      const text = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+      if (!text) throw new Error('ไม่ได้รับข้อมูล');
+
       synopsisCache[show.title] = text;
       synopsisBody.textContent = text;
 
