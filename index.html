@@ -2492,7 +2492,9 @@
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
       liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE',
       no: Number(row['No.'] || row['ลำดับ']) || 0,
-      watchedDate: parseSheetDate(row['วันที่ดูจบ'] || row['วันที่จบ'] || '')
+      watchedDate: parseSheetDate(row['วันที่ดูจบ'] || row['วันที่จบ'] || ''),
+      synopsis: (row['เรื่องย่อ'] || '').trim(),
+      cast: (row['นักแสดง'] || '').trim()
     };
   }
 
@@ -2517,7 +2519,9 @@
       year: Number(row['ปีที่ออกอากาศ']) || '',
       episodes: Number(row['จำนวนตอน']) || 0,
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
-      finished: (row['จบแล้ว'] || '').trim().toUpperCase() === 'TRUE'
+      finished: (row['จบแล้ว'] || '').trim().toUpperCase() === 'TRUE',
+      synopsis: (row['เรื่องย่อ'] || '').trim(),
+      cast: (row['นักแสดง'] || '').trim()
     };
   }
 
@@ -2529,7 +2533,9 @@
       episodes: Number(row['จำนวนตอน']) || 0,
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
       lastEp: Number(row['ดูถึง ep'] || row['Last Episode']) || 0,
-      no: Number(row['ลำดับ']) || 0
+      no: Number(row['ลำดับ']) || 0,
+      synopsis: (row['เรื่องย่อ'] || '').trim(),
+      cast: (row['นักแสดง'] || '').trim()
     };
   }
 
@@ -4282,13 +4288,12 @@
   document.getElementById('modeLightBtn')?.addEventListener('click', () => applyMode('light'));
 
   // ============================================================
-  // Synopsis Modal — Tavily + Groq
+  // Synopsis Modal — อ่านจากคอลัมน์ "เรื่องย่อ" ใน Google Sheet
   // ============================================================
   const synopsisModalOverlay = document.getElementById('synopsisModalOverlay');
   const synopsisTitle = document.getElementById('synopsisTitle');
   const synopsisMeta  = document.getElementById('synopsisMeta');
   const synopsisBody  = document.getElementById('synopsisBody');
-  const synopsisCache = {};
 
   document.getElementById('closeSynopsisModal')?.addEventListener('click', () => {
     synopsisModalOverlay.hidden = true;
@@ -4297,39 +4302,13 @@
     if (e.target === synopsisModalOverlay) synopsisModalOverlay.hidden = true;
   });
 
-  async function openSynopsisModal(show) {
+  function openSynopsisModal(show) {
     synopsisTitle.textContent = show.title;
     synopsisMeta.textContent = [show.year, show.genres.join(' · ')].filter(Boolean).join(' · ');
-    synopsisBody.innerHTML = '<div class="ai-rec-loading"><div class="ai-rec-spinner"></div>กำลังโหลดเรื่องย่อ...</div>';
+    synopsisBody.textContent = show.synopsis
+      ? show.synopsis
+      : 'ยังไม่มีเรื่องย่อสำหรับเรื่องนี้';
     synopsisModalOverlay.hidden = false;
-
-    if (synopsisCache[show.title]) {
-      synopsisBody.textContent = synopsisCache[show.title];
-      return;
-    }
-
-    try {
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'getSynopsis',
-          title: show.title,
-          year: show.year || '',
-          genres: show.genres || []
-        })
-      });
-
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'เกิดข้อผิดพลาด');
-
-      const text = data.synopsis || '';
-      synopsisCache[show.title] = text;
-      synopsisBody.textContent = text;
-
-    } catch(err) {
-      synopsisBody.innerHTML = `<span style="color:var(--text-dim)">ไม่สามารถโหลดเรื่องย่อได้ — ${err.message}</span>`;
-    }
   }
 
   // click บนตั๋ว Watched / Watchlist / Dropped
