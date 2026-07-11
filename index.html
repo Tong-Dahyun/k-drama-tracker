@@ -4284,7 +4284,7 @@
   // ============================================================
   // Synopsis Modal — Tavily + Groq
   // ============================================================
-  const GEMINI_API_KEY = 'AQ.Ab8RN6IUvmgZi9IS71hh-mn4pKIY4O-Fk6rRP1bZXq2I5wIp-Q';
+  const GROQ_API_KEY = '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';
 
   const synopsisModalOverlay = document.getElementById('synopsisModalOverlay');
   const synopsisTitle = document.getElementById('synopsisTitle');
@@ -4311,24 +4311,28 @@
     }
 
     try {
-      const prompt = `เขียนเรื่องย่อภาษาไทยสำหรับซีรีส์/วาไรตี้เกาหลีเรื่อง "${show.title}" (${show.year || ''}) แนว: ${(show.genres||[]).join(', ')} ยาว 2-3 ประโยค ไม่สปอยล์ตอนจบ ตอบเป็นภาษาไทยเท่านั้น`;
+      const prompt = `เขียนเรื่องย่อภาษาไทยสำหรับซีรีส์/วาไรตี้เกาหลีเรื่อง "${show.title}" (${show.year || ''}) แนว: ${(show.genres||[]).join(', ')} ยาว 2-3 ประโยค ไม่สปอยล์ตอนจบ ตอบเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอื่น`;
 
-      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': GEMINI_API_KEY
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 300 }
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: 'คุณเป็นผู้เชี่ยวชาญด้านซีรีส์และวาไรตี้เกาหลี ตอบเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอื่นไม่ว่ากรณีใด' },
+            { role: 'user', content: prompt }
+          ],
+          max_tokens: 300
         })
       });
 
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
 
-      const text = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+      const text = (data.choices?.[0]?.message?.content || '').trim();
       if (!text) throw new Error('ไม่ได้รับข้อมูล');
 
       synopsisCache[show.title] = text;
