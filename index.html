@@ -4284,8 +4284,6 @@
   // ============================================================
   // Synopsis Modal — Tavily + Groq
   // ============================================================
-  const GROQ_API_KEY = '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';
-
   const synopsisModalOverlay = document.getElementById('synopsisModalOverlay');
   const synopsisTitle = document.getElementById('synopsisTitle');
   const synopsisMeta  = document.getElementById('synopsisMeta');
@@ -4311,30 +4309,21 @@
     }
 
     try {
-      const prompt = `เขียนเรื่องย่อภาษาไทยสำหรับซีรีส์/วาไรตี้เกาหลีเรื่อง "${show.title}" (${show.year || ''}) แนว: ${(show.genres||[]).join(', ')} ยาว 2-3 ประโยค ไม่สปอยล์ตอนจบ ตอบเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอื่น`;
-
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: 'คุณเป็นผู้เชี่ยวชาญด้านซีรีส์และวาไรตี้เกาหลี ตอบเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอื่นไม่ว่ากรณีใด' },
-            { role: 'user', content: prompt }
-          ],
-          max_tokens: 300
+          action: 'getSynopsis',
+          title: show.title,
+          year: show.year || '',
+          genres: show.genres || []
         })
       });
 
       const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
+      if (!data.ok) throw new Error(data.error || 'เกิดข้อผิดพลาด');
 
-      const text = (data.choices?.[0]?.message?.content || '').trim();
-      if (!text) throw new Error('ไม่ได้รับข้อมูล');
-
+      const text = data.synopsis || '';
       synopsisCache[show.title] = text;
       synopsisBody.textContent = text;
 
