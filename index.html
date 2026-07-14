@@ -890,6 +890,12 @@
     color: var(--red);
   }
 
+  .genre-tag.active-filter {
+    background: var(--red);
+    color: #fff;
+    font-weight: 600;
+  }
+
   .ticket-cast {
     display: flex;
     flex-wrap: wrap;
@@ -912,6 +918,13 @@
     background: var(--red-soft);
     border-color: var(--red);
     color: var(--red);
+  }
+
+  .cast-tag.active-filter {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+    font-weight: 600;
   }
 
   .clear-filters-btn {
@@ -2798,8 +2811,8 @@
           </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="diary">${g}</span>`).join('')}</div>
-          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag" data-cast="${c}" data-page="diary">${c}</span>`).join('')}</div>` : ''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenre?' active-filter':''}" data-genre="${g}" data-page="diary">${g}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCast?' active-filter':''}" data-cast="${c}" data-page="diary">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2854,8 +2867,8 @@
           </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="watchlist">${g}</span>`).join('')}</div>
-          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag" data-cast="${c}" data-page="watchlist">${c}</span>`).join('')}</div>` : ''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenrePending?' active-filter':''}" data-genre="${g}" data-page="watchlist">${g}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastPending?' active-filter':''}" data-cast="${c}" data-page="watchlist">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2911,8 +2924,8 @@
           </div>
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="dropped">${g}</span>`).join('')}</div>
-          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag" data-cast="${c}" data-page="dropped">${c}</span>`).join('')}</div>` : ''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenreDropped?' active-filter':''}" data-genre="${g}" data-page="dropped">${g}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastDropped?' active-filter':''}" data-cast="${c}" data-page="dropped">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
