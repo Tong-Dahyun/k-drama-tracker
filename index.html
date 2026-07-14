@@ -2319,6 +2319,7 @@
           <div class="form-field"><label for="newYear">ปีที่ออกอากาศ</label><input type="number" id="newYear" placeholder="2026" min="1990" max="2100"></div>
         </div>
         <div class="form-field"><label for="newGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="newGenres" placeholder="โรแมนติก, คอมเมดี้"></div>
+        <div class="form-field"><label for="newCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="newCast" placeholder="ซอนเยจิน, คิมซูฮยอน"></div>
         <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
         <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
         <p class="form-status" id="addFormStatus"></p>
@@ -2371,6 +2372,7 @@
           <div class="form-field"><label for="editYear">ปีที่ออกอากาศ</label><input type="number" id="editYear" min="1990" max="2100"></div>
         </div>
         <div class="form-field"><label for="editGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="editGenres"></div>
+        <div class="form-field"><label for="editCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="editCast"></div>
         <div class="form-field"><label for="editEpisodes">จำนวนตอน</label><input type="number" id="editEpisodes" min="0"></div>
         <div class="form-checkbox" id="editLikedRow"><input type="checkbox" id="editLiked"><label for="editLiked">ชอบเรื่องนี้</label></div>
         <div class="form-checkbox" id="editFinishedRow"><input type="checkbox" id="editFinished"><label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
@@ -2394,6 +2396,7 @@
           <div class="form-field"><label for="editDroppedEpisodes">จำนวนตอนทั้งหมด</label><input type="number" id="editDroppedEpisodes" min="0"></div>
         </div>
         <div class="form-field"><label for="editDroppedGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedGenres"></div>
+        <div class="form-field"><label for="editDroppedCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedCast"></div>
         <div class="form-field"><label for="editDroppedLastEp">ดูถึง ep (Last Episode)</label><input type="number" id="editDroppedLastEp" min="0" placeholder="0"></div>
         <p class="form-status" id="editDroppedFormStatus"></p>
         <div class="modal-actions">
@@ -3663,9 +3666,10 @@
     const typeRaw=document.getElementById('newType').value;
     const year=Number(document.getElementById('newYear').value)||'';
     const genresStr=document.getElementById('newGenres').value.trim();
+    const castStr=document.getElementById('newCast').value.trim();
     const episodes=Number(document.getElementById('newEpisodes').value)||0;
     const finished=document.getElementById('newFinished').checked;
-    const newEntry={ title, type:typeRaw.toLowerCase()==='variety'?'variety':'series', year, episodes, genres:genresStr.split(',').map(g=>g.trim()).filter(Boolean), finished };
+    const newEntry={ title, type:typeRaw.toLowerCase()==='variety'?'variety':'series', year, episodes, genres:genresStr.split(',').map(g=>g.trim()).filter(Boolean), finished, cast:castStr };
     pending=[newEntry,...pending]; usingFallbackPending=false; pendingLoaded=true;
     populateFiltersPending(); renderPending(); updateStatsPending();
     addModalOverlay.hidden=true; addPendingForm.reset();
@@ -3673,7 +3677,7 @@
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'addPending',title:newEntry.title,type:typeRaw,genres:genresStr,year:newEntry.year,episodes:newEntry.episodes,finished:newEntry.finished})});
+        body:JSON.stringify({action:'addPending',title:newEntry.title,type:typeRaw,genres:genresStr,cast:castStr,year:newEntry.year,episodes:newEntry.episodes,finished:newEntry.finished})});
     } catch(err){console.error(err);}
   });
 
@@ -3798,7 +3802,7 @@
         await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
           body: JSON.stringify({ action:'movePendingToDropped', title:entry.title,
             type:entry.type==='variety'?'Variety':'Series',
-            genres:entry.genres.join(', '), year:entry.year,
+            genres:entry.genres.join(', '), cast:entry.cast||'', year:entry.year,
             episodes:entry.episodes, lastEp })});
       } catch(err) { console.error(err); }
 
@@ -3826,12 +3830,12 @@
         if (source === 'dropped') {
           await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
             body: JSON.stringify({ action:'moveDroppedToWatched', title:entry.title, type:'Series',
-              genres:entry.genres.join(', '), year:entry.year, episodes:entry.episodes, liked })});
+              genres:entry.genres.join(', '), cast:entry.cast||'', year:entry.year, episodes:entry.episodes, liked })});
         } else {
           await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
             body: JSON.stringify({ action:'moveToWatched', title:entry.title,
               type:entry.type==='variety'?'Variety':'Series',
-              genres:entry.genres.join(', '), year:entry.year, episodes:entry.episodes, liked })});
+              genres:entry.genres.join(', '), cast:entry.cast||'', year:entry.year, episodes:entry.episodes, liked })});
         }
       } catch(err) { console.error(err); }
     }
@@ -3901,6 +3905,7 @@
     document.getElementById('editType').value=entry.type==='variety'?'Variety':'Series';
     document.getElementById('editYear').value=entry.year||'';
     document.getElementById('editGenres').value=entry.genres.join(', ');
+    document.getElementById('editCast').value=entry.cast||'';
     document.getElementById('editEpisodes').value=entry.episodes||'';
     if(source==='pending'){editLikedRow.style.display='none';editFinishedRow.style.display='flex';document.getElementById('editFinished').checked=!!entry.finished;}
     else{editLikedRow.style.display='flex';editFinishedRow.style.display='none';document.getElementById('editLiked').checked=!!entry.liked;}
@@ -3975,17 +3980,18 @@
     const year=Number(document.getElementById('editYear').value)||'';
     const genresStr=document.getElementById('editGenres').value.trim();
     const genres=genresStr.split(',').map(g=>g.trim()).filter(Boolean);
+    const castStr=document.getElementById('editCast').value.trim();
     const episodes=Number(document.getElementById('editEpisodes').value)||0;
     const liked=document.getElementById('editLiked').checked;
     const finished=document.getElementById('editFinished').checked;
     closeEditModal();
-    if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished}:p);renderPending();updateStatsPending();}
-    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked}:s);populateFilters();render();updateStats();}
+    if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished,cast:castStr}:p);renderPending();updateStatsPending();}
+    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked,cast:castStr}:s);populateFilters();render();updateStats();}
     showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,year,episodes,liked,finished})});
+        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,year,episodes,liked,finished})});
     } catch(err){console.error(err);}
   });
 
@@ -4019,6 +4025,7 @@
     document.getElementById('editDroppedYear').value     = entry.year || '';
     document.getElementById('editDroppedEpisodes').value = entry.episodes || '';
     document.getElementById('editDroppedGenres').value   = entry.genres.join(', ');
+    document.getElementById('editDroppedCast').value     = entry.cast||'';
     document.getElementById('editDroppedLastEp').value   = entry.lastEp || '';
     editDroppedFormStatus.textContent = '';
     editDroppedModalOverlay.hidden = false;
@@ -4039,15 +4046,16 @@
     const episodes=Number(document.getElementById('editDroppedEpisodes').value)||0;
     const genresStr=document.getElementById('editDroppedGenres').value.trim();
     const genres=genresStr.split(',').map(g=>g.trim()).filter(Boolean);
+    const castStr=document.getElementById('editDroppedCast').value.trim();
     const lastEp=Number(document.getElementById('editDroppedLastEp').value)||0;
     closeEditDroppedModal();
-    dropped=dropped.map(d=>d.title===originalTitle?{...d,title:newTitle,year,episodes,genres,lastEp}:d);
+    dropped=dropped.map(d=>d.title===originalTitle?{...d,title:newTitle,year,episodes,genres,lastEp,cast:castStr}:d);
     renderDropped();
     showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:'dropped',originalTitle,title:newTitle,year,episodes,genres:genresStr,lastEp})});
+        body:JSON.stringify({action:'update',sheet:'dropped',originalTitle,title:newTitle,year,episodes,genres:genresStr,cast:castStr,lastEp})});
     } catch(err){console.error(err);}
   });
 
