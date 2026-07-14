@@ -917,7 +917,7 @@
   .clear-filters-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     font-size: 0.8rem;
     background: var(--surface-soft);
     border: 1px solid var(--border);
@@ -928,6 +928,10 @@
     cursor: pointer;
     white-space: nowrap;
     transition: background .15s, color .15s, border-color .15s;
+  }
+
+  .clear-filters-btn svg {
+    flex-shrink: 0;
   }
 
   .clear-filters-btn:hover {
@@ -2171,7 +2175,7 @@
         <div class="detail-topbar">
           <!-- controls: Watched -->
           <div class="sidebar-controls page-section active" id="controls-diary">
-            <button class="clear-filters-btn" id="clearFiltersDiary">✕ ล้างตัวกรอง</button>
+            <button class="clear-filters-btn" id="clearFiltersDiary"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="3" x2="9" y2="15"/><line x1="4" y1="15" x2="14" y2="15"/><line x1="5" y1="15" x2="3" y2="21"/><line x1="9" y1="15" x2="8" y2="22"/><line x1="13" y1="15" x2="15" y2="21"/></svg><span>ล้างตัวกรอง</span></button>
             <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
             <div class="filter-pills">
               <button class="pill active" data-type="all">ทั้งหมด</button>
@@ -2190,7 +2194,7 @@
 
           <!-- controls: Watchlist -->
           <div class="sidebar-controls page-section" id="controls-watchlist">
-            <button class="clear-filters-btn" id="clearFiltersPending">✕ ล้างตัวกรอง</button>
+            <button class="clear-filters-btn" id="clearFiltersPending"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="3" x2="9" y2="15"/><line x1="4" y1="15" x2="14" y2="15"/><line x1="5" y1="15" x2="3" y2="21"/><line x1="9" y1="15" x2="8" y2="22"/><line x1="13" y1="15" x2="15" y2="21"/></svg><span>ล้างตัวกรอง</span></button>
             <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่องที่อยากดู...">
             <div class="filter-pills">
               <button class="pill active" data-ptype="all">ทั้งหมด</button>
@@ -2209,7 +2213,7 @@
 
           <!-- controls: Dropped -->
           <div class="sidebar-controls page-section" id="controls-dropped">
-            <button class="clear-filters-btn" id="clearFiltersDropped">✕ ล้างตัวกรอง</button>
+            <button class="clear-filters-btn" id="clearFiltersDropped"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="3" x2="9" y2="15"/><line x1="4" y1="15" x2="14" y2="15"/><line x1="5" y1="15" x2="3" y2="21"/><line x1="9" y1="15" x2="8" y2="22"/><line x1="13" y1="15" x2="15" y2="21"/></svg><span>ล้างตัวกรอง</span></button>
             <input type="text" id="searchDropped" class="search-box" placeholder="ค้นหาชื่อเรื่องที่ดรอป...">
             <select id="yearFilterDropped" class="sort-select"><option value="all">ทุกปี</option></select>
             <select id="genreFilterDropped" class="sort-select"><option value="all">ทุกแนว</option></select>
