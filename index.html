@@ -914,21 +914,26 @@
     color: var(--red);
   }
 
-  .active-cast-chip {
-    display: none;
+  .clear-filters-btn {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    background: var(--red-soft);
-    color: var(--red);
-    padding: 4px 10px;
-    border-radius: 999px;
+    gap: 4px;
+    font-size: 0.8rem;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+    padding: 0 12px;
+    height: 38px;
+    border-radius: 8px;
     cursor: pointer;
     white-space: nowrap;
+    transition: background .15s, color .15s, border-color .15s;
   }
 
-  .active-cast-chip.show {
-    display: inline-flex;
+  .clear-filters-btn:hover {
+    background: var(--red-soft);
+    border-color: var(--red);
+    color: var(--red);
   }
 
   .perforation {
@@ -2166,6 +2171,7 @@
         <div class="detail-topbar">
           <!-- controls: Watched -->
           <div class="sidebar-controls page-section active" id="controls-diary">
+            <button class="clear-filters-btn" id="clearFiltersDiary">✕ ล้างตัวกรอง</button>
             <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
             <div class="filter-pills">
               <button class="pill active" data-type="all">ทั้งหมด</button>
@@ -2180,11 +2186,11 @@
               <option value="liked-first">ชอบก่อน</option>
               <option value="title">ชื่อ A-Z</option>
             </select>
-            <span class="active-cast-chip" id="activeCastChip">🎭 <span class="chip-name"></span> ✕</span>
           </div>
 
           <!-- controls: Watchlist -->
           <div class="sidebar-controls page-section" id="controls-watchlist">
+            <button class="clear-filters-btn" id="clearFiltersPending">✕ ล้างตัวกรอง</button>
             <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่องที่อยากดู...">
             <div class="filter-pills">
               <button class="pill active" data-ptype="all">ทั้งหมด</button>
@@ -2199,11 +2205,11 @@
               <option value="title">ชื่อ A-Z</option>
             </select>
             <button class="add-entry-btn" id="openAddModal">+ เพิ่มเรื่อง</button>
-            <span class="active-cast-chip" id="activeCastChipPending">🎭 <span class="chip-name"></span> ✕</span>
           </div>
 
           <!-- controls: Dropped -->
           <div class="sidebar-controls page-section" id="controls-dropped">
+            <button class="clear-filters-btn" id="clearFiltersDropped">✕ ล้างตัวกรอง</button>
             <input type="text" id="searchDropped" class="search-box" placeholder="ค้นหาชื่อเรื่องที่ดรอป...">
             <select id="yearFilterDropped" class="sort-select"><option value="all">ทุกปี</option></select>
             <select id="genreFilterDropped" class="sort-select"><option value="all">ทุกแนว</option></select>
@@ -2213,7 +2219,6 @@
               <option value="title">ชื่อ A-Z</option>
               <option value="ep-desc">ดูได้ไกลสุดก่อน</option>
             </select>
-            <span class="active-cast-chip" id="activeCastChipDropped">🎭 <span class="chip-name"></span> ✕</span>
           </div>
         </div>
 
@@ -2947,43 +2952,32 @@
 
   // ============================================================
   // Cast tag click → filter ตามนักแสดงทันที
-  const activeCastChip        = document.getElementById('activeCastChip');
-  const activeCastChipPending = document.getElementById('activeCastChipPending');
-  const activeCastChipDropped = document.getElementById('activeCastChipDropped');
-
-  function setCastChip(chipEl, name) {
-    if (!chipEl) return;
-    if (name && name !== 'all') {
-      chipEl.querySelector('.chip-name').textContent = name;
-      chipEl.classList.add('show');
-    } else {
-      chipEl.classList.remove('show');
-    }
-  }
-
   document.addEventListener('click', e => {
     const castTag = e.target.closest('.cast-tag[data-cast]');
-    if (castTag) {
-      const cast = castTag.dataset.cast;
-      const page = castTag.dataset.page;
+    if (!castTag) return;
+    const cast = castTag.dataset.cast;
+    const page = castTag.dataset.page;
 
-      if (page === 'diary') {
-        activeCast = cast; currentPage = 1; setCastChip(activeCastChip, cast); render();
-      } else if (page === 'watchlist') {
-        activeCastPending = cast; currentPagePending = 1; setCastChip(activeCastChipPending, cast); renderPending();
-      } else if (page === 'dropped') {
-        activeCastDropped = cast; currentPageDropped = 1; setCastChip(activeCastChipDropped, cast); renderDropped();
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
+    if (page === 'diary') {
+      activeCast = cast; currentPage = 1; render();
+    } else if (page === 'watchlist') {
+      activeCastPending = cast; currentPagePending = 1; renderPending();
+    } else if (page === 'dropped') {
+      activeCastDropped = cast; currentPageDropped = 1; renderDropped();
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
-    const clearChip = e.target.closest('.active-cast-chip');
-    if (clearChip) {
-      if (clearChip.id === 'activeCastChip') { activeCast = 'all'; setCastChip(activeCastChip, null); currentPage = 1; render(); }
-      else if (clearChip.id === 'activeCastChipPending') { activeCastPending = 'all'; setCastChip(activeCastChipPending, null); currentPagePending = 1; renderPending(); }
-      else if (clearChip.id === 'activeCastChipDropped') { activeCastDropped = 'all'; setCastChip(activeCastChipDropped, null); currentPageDropped = 1; renderDropped(); }
-    }
+  // ============================================================
+  // ปุ่มล้างตัวกรองทั้งหมด (search / แนว / นักแสดง / ปี / ประเภท)
+  document.getElementById('clearFiltersDiary')?.addEventListener('click', () => {
+    resetDiaryFilters(); render(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.getElementById('clearFiltersPending')?.addEventListener('click', () => {
+    resetPendingFilters(); renderPending(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.getElementById('clearFiltersDropped')?.addEventListener('click', () => {
+    resetDroppedFilters(); renderDropped(); window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   // Filter event listeners
@@ -3056,7 +3050,6 @@
     searchInput.value=''; sortSelect.value='recently-watched';
     yearFilter.value='all'; genreFilter.value='all';
     activeType='all'; activeYear='all'; activeGenre='all'; activeCast='all'; currentPage=1;
-    setCastChip(activeCastChip, null);
     pills.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-diary .pill[data-type="all"]').classList.add('active');
   }
@@ -3065,7 +3058,6 @@
     searchInputPending.value=''; sortSelectPending.value='year-desc';
     yearFilterPending.value='all'; genreFilterPending.value='all';
     activeTypePending='all'; activeYearPending='all'; activeGenrePending='all'; activeCastPending='all'; currentPagePending=1;
-    setCastChip(activeCastChipPending, null);
     pillsPending.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-watchlist .pill[data-ptype="all"]').classList.add('active');
   }
@@ -3074,7 +3066,6 @@
     searchInputDropped.value=''; sortSelectDropped.value='no-desc';
     yearFilterDropped.value='all'; genreFilterDropped.value='all';
     activeYearDropped='all'; activeGenreDropped='all'; activeCastDropped='all'; currentPageDropped=1;
-    setCastChip(activeCastChipDropped, null);
   }
 
   // ============================================================
