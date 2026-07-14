@@ -890,6 +890,47 @@
     color: var(--red);
   }
 
+  .ticket-cast {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .cast-tag {
+    font-size: 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 1px 7px;
+    border-radius: 5px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+
+  .cast-tag:hover {
+    background: var(--red-soft);
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .active-cast-chip {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    background: var(--red-soft);
+    color: var(--red);
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .active-cast-chip.show {
+    display: inline-flex;
+  }
+
   .perforation {
     position: relative;
     border-top: 2px dashed var(--border);
@@ -2139,6 +2180,7 @@
               <option value="liked-first">ชอบก่อน</option>
               <option value="title">ชื่อ A-Z</option>
             </select>
+            <span class="active-cast-chip" id="activeCastChip">🎭 <span class="chip-name"></span> ✕</span>
           </div>
 
           <!-- controls: Watchlist -->
@@ -2157,6 +2199,7 @@
               <option value="title">ชื่อ A-Z</option>
             </select>
             <button class="add-entry-btn" id="openAddModal">+ เพิ่มเรื่อง</button>
+            <span class="active-cast-chip" id="activeCastChipPending">🎭 <span class="chip-name"></span> ✕</span>
           </div>
 
           <!-- controls: Dropped -->
@@ -2170,6 +2213,7 @@
               <option value="title">ชื่อ A-Z</option>
               <option value="ep-desc">ดูได้ไกลสุดก่อน</option>
             </select>
+            <span class="active-cast-chip" id="activeCastChipDropped">🎭 <span class="chip-name"></span> ✕</span>
           </div>
         </div>
 
@@ -2471,12 +2515,17 @@
   const statsEl = document.getElementById('stats');
   const navItems = document.querySelectorAll('.page-tabs-sub > .page-tab[data-nav]');
 
-  let activeType = 'all', activeYear = 'all', activeGenre = 'all';
-  let activeTypePending = 'all', activeYearPending = 'all', activeGenrePending = 'all';
-  let activeYearDropped = 'all', activeGenreDropped = 'all';
+  let activeType = 'all', activeYear = 'all', activeGenre = 'all', activeCast = 'all';
+  let activeTypePending = 'all', activeYearPending = 'all', activeGenrePending = 'all', activeCastPending = 'all';
+  let activeYearDropped = 'all', activeGenreDropped = 'all', activeCastDropped = 'all';
 
   const PAGE_SIZE = 48;
   let currentPage = 1, currentPagePending = 1, currentPageDropped = 1;
+
+  function splitCast(castStr) {
+    if (!castStr) return [];
+    return castStr.split(/[,\/／、|]+/).map(x => x.trim()).filter(Boolean);
+  }
   let summaryTypeFilter = { series: true, variety: true };
 
   // ============================================================
@@ -2709,7 +2758,8 @@
       return (activeType === 'all' || s.type === activeType)
           && (!query || s.title.toLowerCase().includes(query))
           && (activeYear === 'all' || String(s.year) === activeYear)
-          && (activeGenre === 'all' || s.genres.includes(activeGenre));
+          && (activeGenre === 'all' || s.genres.includes(activeGenre))
+          && (activeCast === 'all' || splitCast(s.cast).includes(activeCast));
     });
     const sortBy = sortSelect.value;
     filtered.sort((a,b) => {
@@ -2740,6 +2790,7 @@
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
           <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="diary">${g}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag" data-cast="${c}" data-page="diary">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2761,7 +2812,8 @@
       return (activeTypePending==='all'||s.type===activeTypePending)
           && (!query||s.title.toLowerCase().includes(query))
           && (activeYearPending==='all'||String(s.year)===activeYearPending)
-          && (activeGenrePending==='all'||s.genres.includes(activeGenrePending));
+          && (activeGenrePending==='all'||s.genres.includes(activeGenrePending))
+          && (activeCastPending==='all'||splitCast(s.cast).includes(activeCastPending));
     });
     const sortBy = sortSelectPending.value;
     filtered.sort((a,b) => {
@@ -2794,6 +2846,7 @@
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
           <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="watchlist">${g}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag" data-cast="${c}" data-page="watchlist">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2815,7 +2868,8 @@
     let filtered = dropped.filter(s => {
       return (!query || s.title.toLowerCase().includes(query))
           && (activeYearDropped==='all' || String(s.year)===activeYearDropped)
-          && (activeGenreDropped==='all' || s.genres.includes(activeGenreDropped));
+          && (activeGenreDropped==='all' || s.genres.includes(activeGenreDropped))
+          && (activeCastDropped==='all' || splitCast(s.cast).includes(activeCastDropped));
     });
     const sortBy = sortSelectDropped.value;
     filtered.sort((a,b) => {
@@ -2849,6 +2903,7 @@
           <h2 class="ticket-title">${s.title}</h2>
           ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
           <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag" data-genre="${g}" data-page="dropped">${g}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag" data-cast="${c}" data-page="dropped">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -2888,6 +2943,47 @@
 
     // scroll ขึ้นบนสุดให้เห็น filter bar
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ============================================================
+  // Cast tag click → filter ตามนักแสดงทันที
+  const activeCastChip        = document.getElementById('activeCastChip');
+  const activeCastChipPending = document.getElementById('activeCastChipPending');
+  const activeCastChipDropped = document.getElementById('activeCastChipDropped');
+
+  function setCastChip(chipEl, name) {
+    if (!chipEl) return;
+    if (name && name !== 'all') {
+      chipEl.querySelector('.chip-name').textContent = name;
+      chipEl.classList.add('show');
+    } else {
+      chipEl.classList.remove('show');
+    }
+  }
+
+  document.addEventListener('click', e => {
+    const castTag = e.target.closest('.cast-tag[data-cast]');
+    if (castTag) {
+      const cast = castTag.dataset.cast;
+      const page = castTag.dataset.page;
+
+      if (page === 'diary') {
+        activeCast = cast; currentPage = 1; setCastChip(activeCastChip, cast); render();
+      } else if (page === 'watchlist') {
+        activeCastPending = cast; currentPagePending = 1; setCastChip(activeCastChipPending, cast); renderPending();
+      } else if (page === 'dropped') {
+        activeCastDropped = cast; currentPageDropped = 1; setCastChip(activeCastChipDropped, cast); renderDropped();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const clearChip = e.target.closest('.active-cast-chip');
+    if (clearChip) {
+      if (clearChip.id === 'activeCastChip') { activeCast = 'all'; setCastChip(activeCastChip, null); currentPage = 1; render(); }
+      else if (clearChip.id === 'activeCastChipPending') { activeCastPending = 'all'; setCastChip(activeCastChipPending, null); currentPagePending = 1; renderPending(); }
+      else if (clearChip.id === 'activeCastChipDropped') { activeCastDropped = 'all'; setCastChip(activeCastChipDropped, null); currentPageDropped = 1; renderDropped(); }
+    }
   });
 
   // Filter event listeners
@@ -2959,7 +3055,8 @@
   function resetDiaryFilters() {
     searchInput.value=''; sortSelect.value='recently-watched';
     yearFilter.value='all'; genreFilter.value='all';
-    activeType='all'; activeYear='all'; activeGenre='all'; currentPage=1;
+    activeType='all'; activeYear='all'; activeGenre='all'; activeCast='all'; currentPage=1;
+    setCastChip(activeCastChip, null);
     pills.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-diary .pill[data-type="all"]').classList.add('active');
   }
@@ -2967,7 +3064,8 @@
   function resetPendingFilters() {
     searchInputPending.value=''; sortSelectPending.value='year-desc';
     yearFilterPending.value='all'; genreFilterPending.value='all';
-    activeTypePending='all'; activeYearPending='all'; activeGenrePending='all'; currentPagePending=1;
+    activeTypePending='all'; activeYearPending='all'; activeGenrePending='all'; activeCastPending='all'; currentPagePending=1;
+    setCastChip(activeCastChipPending, null);
     pillsPending.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-watchlist .pill[data-ptype="all"]').classList.add('active');
   }
@@ -2975,7 +3073,8 @@
   function resetDroppedFilters() {
     searchInputDropped.value=''; sortSelectDropped.value='no-desc';
     yearFilterDropped.value='all'; genreFilterDropped.value='all';
-    activeYearDropped='all'; activeGenreDropped='all'; currentPageDropped=1;
+    activeYearDropped='all'; activeGenreDropped='all'; activeCastDropped='all'; currentPageDropped=1;
+    setCastChip(activeCastChipDropped, null);
   }
 
   // ============================================================
