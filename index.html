@@ -2190,7 +2190,7 @@
           <!-- controls: Watched -->
           <div class="sidebar-controls page-section active" id="controls-diary">
             <button class="clear-filters-btn" id="clearFiltersDiary" title="ล้างตัวกรอง"><svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><circle cx="3" cy="3" r="1.4" fill="currentColor"/><circle cx="8" cy="4.5" r="1.1" fill="currentColor"/><circle cx="5" cy="9.5" r="1.9" fill="currentColor"/><path d="M14 10 L22 18 L19 22 L17 18 L14 23 L12 18 L9 21 L7 17 L4 16 Z" fill="currentColor"/><line x1="14" y1="10" x2="23" y2="1" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/></svg></button>
-            <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง...">
+            <input type="text" id="search" class="search-box" placeholder="ค้นหาชื่อเรื่อง, แนว, นักแสดง...">
             <div class="filter-pills">
               <button class="pill active" data-type="all">ทั้งหมด</button>
               <button class="pill" data-type="series">ซีรีส์</button>
@@ -2552,6 +2552,13 @@
     if (!castStr) return [];
     return castStr.split(/[,\/／、|]+/).map(x => x.trim()).filter(Boolean);
   }
+
+  function matchesSearch(s, query) {
+    if (s.title.toLowerCase().includes(query)) return true;
+    if (s.genres.some(g => g.toLowerCase().includes(query))) return true;
+    if (splitCast(s.cast).some(c => c.toLowerCase().includes(query))) return true;
+    return false;
+  }
   let summaryTypeFilter = { series: true, variety: true };
 
   // ============================================================
@@ -2782,7 +2789,7 @@
     const query = searchInput.value.trim().toLowerCase();
     let filtered = shows.filter(s => {
       return (activeType === 'all' || s.type === activeType)
-          && (!query || s.title.toLowerCase().includes(query))
+          && (!query || matchesSearch(s, query))
           && (activeYear === 'all' || String(s.year) === activeYear)
           && (activeGenre === 'all' || s.genres.includes(activeGenre))
           && (activeCast === 'all' || splitCast(s.cast).includes(activeCast));
