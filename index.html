@@ -1330,9 +1330,9 @@
     .genre-chart-wrap { display: none; }
     .databar-wrap { display: flex; gap: 5px; }
     .databar-row { gap: 4px; padding: 3px 2px; }
-    .databar-label { width: 46px; font-size: 0.64rem; }
+    .databar-label { width: 62px; font-size: 0.64rem; }
     .databar-bar-wrap { height: 13px; }
-    .databar-value { width: 18px; font-size: 0.62rem; }
+    .databar-value { width: 16px; font-size: 0.6rem; }
     .genre-table-wrap { grid-column: 1 / -1; width: 100%; min-width: 0 !important; }
 
     /* Monthly chart stats — 2x2 grid เต็มความกว้าง */
@@ -3550,7 +3550,7 @@
       const pct = Math.round((count / maxVal) * 100);
       const isSelected = selectedGenre === genre && selectedGenreSource === source;
       return `<div class="databar-row ${isSelected ? (source==='watched'?'selected':'selected-liked') : ''}" data-genre="${genre}" data-source="${source}">
-        <span class="databar-label">${genre}</span>
+        <span class="databar-label" title="${genre}">${genre}</span>
         <div class="databar-bar-wrap">
           <div class="databar-bar" style="width:${pct}%; background:${color};opacity:${isSelected?1:0.7};"></div>
         </div>
