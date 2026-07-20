@@ -463,6 +463,70 @@
     height: 320px;
   }
 
+  /* Data Bar (มือถือ) — ซ่อนไว้เป็นค่าเริ่มต้น โชว์เฉพาะจอแคบผ่าน media query */
+  .databar-wrap {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .databar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .databar-row:active { background: rgba(255,255,255,0.06); }
+
+  .databar-row.selected,
+  .databar-row.selected-liked {
+    background: rgba(229,9,20,0.1);
+  }
+
+  .databar-row.selected-liked { background: rgba(70,211,105,0.1); }
+
+  .databar-label {
+    width: 78px;
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .databar-row.selected .databar-label,
+  .databar-row.selected-liked .databar-label {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .databar-bar-wrap {
+    flex: 1;
+    height: 18px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .databar-bar {
+    height: 100%;
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+
+  .databar-value {
+    width: 28px;
+    flex-shrink: 0;
+    text-align: right;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
   .genre-table-wrap { flex: 1 1 280px; min-width: 240px; }
 
   .genre-table-title {
@@ -1259,13 +1323,13 @@
     .summary-value { font-size: 1.8rem !important; }
     .summary-right-chart { flex: none; height: 220px !important; }
 
-    /* Top 10 — 2 คอลัมน์ซ้ายขวา + table เต็มความกว้าง */
-    .genre-section-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+    /* Top 10 — สลับมาใช้ Data Bar แทน Chart.js บนมือถือ เรียงบนลงล่างทีละบล็อกให้อ่านง่าย */
+    .genre-section-3 { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
     .genre-col { flex: none; min-width: 0 !important; width: 100%; }
-    .genre-col-title { font-size: 0.75rem; margin-bottom: 8px; }
+    .genre-col-title { font-size: 0.85rem; margin-bottom: 10px; }
+    .genre-chart-wrap { display: none; }
+    .databar-wrap { display: flex; }
     .genre-table-wrap { grid-column: 1 / -1; width: 100%; min-width: 0 !important; }
-    .databar-label { width: 60px; font-size: 0.72rem; }
-    .databar-value { font-size: 0.7rem; width: 22px; }
 
     /* Monthly chart stats — 2x2 grid เต็มความกว้าง */
     .monthly-stats-col { grid-template-columns: 1fr 1fr; gap: 8px; flex: none; width: 100%; }
@@ -3205,12 +3269,13 @@
     const likedCounts   = years.map(y=>summaryShows.filter(s=>s.year===y&&s.liked).length);
     const rawMax = Math.max(1,...watchedCounts,...likedCounts);
     const sharedAxisMax = Math.ceil((rawMax*1.1)/10)*10||10;
+    const isMobile = window.innerWidth <= 860;
     if (yearlyChartInstance) yearlyChartInstance.destroy();
     try {
       yearlyChartInstance = new Chart(canvas.getContext('2d'), {
         data: { labels: years, datasets: [
           { type:'bar',  label:'จำนวนที่ดู',    data:watchedCounts, backgroundColor:'rgba(229,9,20,0.75)', hoverBackgroundColor:'rgba(229,9,20,0.95)', borderRadius:6, maxBarThickness:48, yAxisID:'yWatched', order:2 },
-          { type:'line', label:'จำนวนที่ถูกใจ', data:likedCounts,   borderColor:'#46D369', backgroundColor:'#46D369', pointBackgroundColor:'#46D369', pointBorderColor:'#141414', pointRadius:4, pointHoverRadius:6, borderWidth:2, tension:0.3, yAxisID:'yLiked', order:1 }
+          { type:'line', label:'จำนวนที่ถูกใจ', data:likedCounts,   borderColor:'#46D369', backgroundColor:'#46D369', pointBackgroundColor:'#46D369', pointBorderColor:'#141414', pointRadius:isMobile?2:4, pointHoverRadius:6, borderWidth:2, tension:0.3, yAxisID:'yLiked', order:1 }
         ]},
         options: {
           responsive:true, maintainAspectRatio:false,
@@ -3226,13 +3291,13 @@
           },
           onHover:(evt,elements)=>{ evt.native.target.style.cursor=elements.length?'pointer':'default'; },
           plugins: {
-            legend:{labels:{color:'#B3B3B3',font:{family:'Inter'}}},
+            legend:{labels:{color:'#B3B3B3',font:{family:'Inter',size:isMobile?10:12},boxWidth:isMobile?10:40}},
             tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}
           },
           scales:{
-            x:{ ticks:{color:'#B3B3B3',font:{family:'Inter'}}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:true,text:'ปีที่ออกอากาศ',color:'#B3B3B3'} },
-            yWatched:{ position:'left',  min:0,max:sharedAxisMax, ticks:{color:'#B3B3B3',precision:0}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:true,text:'จำนวนที่ดู (เรื่อง)',color:'#B3B3B3'} },
-            yLiked:  { position:'right', min:0,max:sharedAxisMax, ticks:{color:'#B3B3B3',precision:0}, grid:{drawOnChartArea:false}, title:{display:true,text:'จำนวนที่ถูกใจ (เรื่อง)',color:'#B3B3B3'} }
+            x:{ ticks:{color:'#B3B3B3',font:{family:'Inter',size:isMobile?9:12},maxRotation:isMobile?60:0,minRotation:isMobile?60:0,autoSkip:true,maxTicksLimit:isMobile?9:undefined}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:!isMobile,text:'ปีที่ออกอากาศ',color:'#B3B3B3'} },
+            yWatched:{ position:'left',  min:0,max:sharedAxisMax, ticks:{color:'#B3B3B3',precision:0,font:{size:isMobile?9:12}}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:!isMobile,text:'จำนวนที่ดู (เรื่อง)',color:'#B3B3B3'} },
+            yLiked:  { position:'right', min:0,max:sharedAxisMax, ticks:{display:!isMobile,color:'#B3B3B3',precision:0}, grid:{drawOnChartArea:false}, title:{display:!isMobile,text:'จำนวนที่ถูกใจ (เรื่อง)',color:'#B3B3B3'} }
           }
         }
       });
@@ -3327,7 +3392,8 @@
     const scrollWrap=tbody.closest('.genre-table-scroll');
     if(scrollWrap) scrollWrap.scrollTop=0;
     const {source,value}=dashboardTableState;
-    if(!source){tbody.innerHTML='';titleEl.textContent='คลิกข้อมูลในกราฟเพื่อดูรายชื่อเรื่อง';return;}
+    if(!source){tbody.innerHTML='';titleEl.textContent='คลิกข้อมูลในกราฟเพื่อดูรายชื่อเรื่อง';if(scrollWrap) scrollWrap.hidden=true;return;}
+    if(scrollWrap) scrollWrap.hidden=false;
     const summaryShows=getSummaryShows();
     let list=[],title='',isPending=false;
     if(source==='genre-watched')      {list=summaryShows.filter(s=>s.genres.includes(value));title=`แนว "${value}" — ${list.length} เรื่อง`;}
