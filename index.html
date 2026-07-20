@@ -3522,6 +3522,22 @@
     if (window.innerWidth <= 860) renderDataBars();
   }
 
+  // Dashboard ใช้ window.innerWidth ตอน render เพื่อสลับ Chart.js (จอกว้าง) / Data Bar (มือถือ)
+  // ต้องคอย re-render ใหม่เวลาจอเปลี่ยนขนาดข้าม breakpoint (หมุนจอ/ปรับขนาดหน้าต่าง โดยไม่ reload หน้า)
+  // ไม่งั้นเนื้อหาจะค้างอยู่กับขนาดจอตอนโหลดครั้งแรก ทั้งที่ CSS สลับซ่อน/โชว์ container ให้แล้ว
+  let dashboardWasMobile = window.innerWidth <= 860;
+  let dashboardResizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(dashboardResizeTimer);
+    dashboardResizeTimer = setTimeout(() => {
+      const isMobileNow = window.innerWidth <= 860;
+      if (isMobileNow !== dashboardWasMobile) {
+        dashboardWasMobile = isMobileNow;
+        if (document.getElementById('view-summary')?.classList.contains('active')) updateSummary();
+      }
+    }, 200);
+  });
+
   // ============================================================
   // Data Bar — Mobile Top 10 (แทน Chart.js บนมือถือ)
   // ============================================================
