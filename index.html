@@ -2436,21 +2436,25 @@
 
   <!-- Modal: Add to Watchlist -->
   <div class="modal-overlay" id="addModalOverlay" hidden>
-    <div class="modal-box">
+    <div class="modal-box modal-box-wide">
       <h3>เพิ่มเรื่องที่อยากดู</h3>
       <form id="addPendingForm">
-        <div class="form-field"><label for="newTitle">ชื่อเรื่อง *</label><input type="text" id="newTitle" required placeholder="เช่น Crash Landing on You"></div>
-        <div class="form-row">
-          <div class="form-field"><label for="newType">ประเภท</label><select id="newType"><option value="Series">ซีรีส์</option><option value="Variety">วาไรตี้</option></select></div>
-          <div class="form-field"><label for="newYear">ปีที่ออกอากาศ</label><input type="number" id="newYear" placeholder="2026" min="1990" max="2100"></div>
+        <div class="edit-form-columns">
+          <div class="edit-form-left">
+            <div class="form-field"><label for="newTitle">ชื่อเรื่อง *</label><input type="text" id="newTitle" required placeholder="เช่น Crash Landing on You"></div>
+            <div class="form-row">
+              <div class="form-field"><label for="newType">ประเภท</label><select id="newType"><option value="Series">ซีรีส์</option><option value="Variety">วาไรตี้</option></select></div>
+              <div class="form-field"><label for="newYear">ปีที่ออกอากาศ</label><input type="number" id="newYear" placeholder="2026" min="1990" max="2100"></div>
+            </div>
+            <div class="form-field"><label for="newGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="newGenres" placeholder="โรแมนติก, คอมเมดี้"></div>
+            <div class="form-field"><label for="newCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="newCast" placeholder="ซอนเยจิน, คิมซูฮยอน"></div>
+            <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
+            <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
+          </div>
+          <div class="edit-form-right">
+            <div class="form-field"><label for="newSynopsis">เรื่องย่อ</label><textarea id="newSynopsis" placeholder="เรื่องย่อสั้นๆ (ถ้ามี)"></textarea></div>
+          </div>
         </div>
-        <div class="form-row">
-          <div class="form-field"><label for="newGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="newGenres" placeholder="โรแมนติก, คอมเมดี้"></div>
-          <div class="form-field"><label for="newCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="newCast" placeholder="ซอนเยจิน, คิมซูฮยอน"></div>
-        </div>
-        <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
-        <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
-        <div class="form-field"><label for="newSynopsis">เรื่องย่อ</label><textarea id="newSynopsis" rows="3" placeholder="เรื่องย่อสั้นๆ (ถ้ามี)"></textarea></div>
         <p class="form-status" id="addFormStatus"></p>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="closeAddModal">ยกเลิก</button>
