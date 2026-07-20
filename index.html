@@ -1323,12 +1323,16 @@
     .summary-value { font-size: 1.8rem !important; }
     .summary-right-chart { flex: none; height: 220px !important; }
 
-    /* Top 10 — สลับมาใช้ Data Bar แทน Chart.js บนมือถือ เรียงบนลงล่างทีละบล็อกให้อ่านง่าย */
-    .genre-section-3 { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+    /* Top 10 — วางข้างกัน 2 คอลัมน์ ย่อขนาด Data Bar ให้พอดีพื้นที่ */
+    .genre-section-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
     .genre-col { flex: none; min-width: 0 !important; width: 100%; }
-    .genre-col-title { font-size: 0.85rem; margin-bottom: 10px; }
+    .genre-col-title { font-size: 0.72rem; margin-bottom: 8px; }
     .genre-chart-wrap { display: none; }
-    .databar-wrap { display: flex; }
+    .databar-wrap { display: flex; gap: 5px; }
+    .databar-row { gap: 4px; padding: 3px 2px; }
+    .databar-label { width: 46px; font-size: 0.64rem; }
+    .databar-bar-wrap { height: 13px; }
+    .databar-value { width: 18px; font-size: 0.62rem; }
     .genre-table-wrap { grid-column: 1 / -1; width: 100%; min-width: 0 !important; }
 
     /* Monthly chart stats — 2x2 grid เต็มความกว้าง */
