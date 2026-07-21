@@ -315,6 +315,7 @@
     flex-direction: column;
     justify-content: center;
     flex: 1;
+    min-width: 0;
   }
 
   .monthly-genre-value {
@@ -361,6 +362,7 @@
     padding: 22px 20px;
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   .summary-card-head {
@@ -368,6 +370,7 @@
     align-items: center;
     gap: 11px;
     margin-bottom: 16px;
+    min-width: 0;
   }
 
   .summary-icon {
@@ -393,6 +396,8 @@
     font-size: 0.78rem;
     color: var(--text-soft);
     margin: 0;
+    min-width: 0;
+    overflow-wrap: break-word;
   }
 
   .summary-value {
@@ -611,7 +616,7 @@
   .liked-tag.neutral { color: var(--text-dim); }
   .liked-tag.dropped { color: var(--amber); }
 
-  .donut-card { display: flex; flex-direction: column; }
+  .donut-card { display: flex; flex-direction: column; min-width: 0; }
 
   .donut-wrap {
     position: relative;
