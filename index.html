@@ -1366,10 +1366,19 @@
     .edit-form-right .form-field { display: block; margin-bottom: 14px; }
     .edit-form-right textarea { flex: none; min-height: 64px; }
 
-    /* Summary stat cards — แยก left/right เป็น 1 คอลัมน์ */
+    /* Summary stat cards — แยก left/right เป็น 1 คอลัมน์ + ย่อสัดส่วนให้กระชับ สมส่วนกับจอมือถือ */
     .summary-layout { grid-template-columns: 1fr; gap: 12px; }
+    .summary-grid-2 { gap: 10px; }
     .summary-card { padding: 14px; }
-    .summary-value { font-size: 1.8rem !important; }
+    .summary-card-head { gap: 8px; margin-bottom: 8px; }
+    .summary-icon { width: 32px; height: 32px; }
+    .summary-icon svg { width: 15px; height: 15px; }
+    .summary-label { font-size: 0.72rem; }
+    .summary-value { font-size: 1.5rem !important; }
+    .summary-sub { font-size: 0.72rem; }
+    .donut-wrap { height: 96px; margin-top: 2px; }
+    .donut-center-value { font-size: 1.15rem; }
+    .donut-legend { gap: 10px; margin-top: 10px; }
     .summary-right-chart { flex: none; height: 220px !important; }
 
     /* Top 10 — วางข้างกัน 2 คอลัมน์ ย่อขนาด Data Bar ให้พอดีพื้นที่ */
