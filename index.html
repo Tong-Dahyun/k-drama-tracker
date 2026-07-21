@@ -1257,6 +1257,19 @@
 
   .mobile-menu-btn:hover { background: var(--surface-soft); border-color: var(--red); }
 
+  /* แถบเต็มความกว้างพื้นหลังทึบด้านหลังปุ่มเมนู กันเนื้อหาที่ scroll ผ่านไปโผล่ชนปุ่ม */
+  .mobile-topbar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    z-index: 140;
+  }
+
   /* ---------- Drawer overlay ---------- */
   .drawer-overlay {
     display: none;
@@ -1272,9 +1285,10 @@
   @media (max-width: 860px) {
     /* hamburger button โชว์ */
     .mobile-menu-btn { display: flex; }
+    .mobile-topbar { display: block; }
 
     /* main content เพิ่ม padding บนให้ไม่ทับปุ่ม */
-    main { padding: 68px 16px 20px; }
+    main { padding: 82px 16px 20px; }
 
     /* sidebar กลายเป็น drawer เลื่อนจากซ้าย */
     .app-shell { display: block; }
@@ -2107,6 +2121,9 @@
       </form>
     </div>
   </div>
+
+  <!-- Mobile top bar (พื้นหลังทึบเต็มความกว้าง กันเนื้อหาเลื่อนมาชนปุ่มเมนูตอน scroll) -->
+  <div class="mobile-topbar" id="mobileTopbar"></div>
 
   <!-- Mobile hamburger button -->
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="เปิดเมนู">☰</button>
