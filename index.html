@@ -338,7 +338,7 @@
 
   .genre-section-3 {
     display: flex;
-    gap: 20px;
+    gap: 16px;
     align-items: flex-start;
     flex-wrap: wrap;
   }
@@ -347,10 +347,10 @@
 
   .genre-col-title {
     font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--text);
-    margin: 0 0 12px;
+    margin: 0 0 8px;
   }
 
   .genre-col .genre-chart-wrap { height: 280px; }
@@ -434,8 +434,8 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 22px 22px 14px;
-    margin-top: 16px;
+    padding: 18px 20px 12px;
+    margin-top: 14px;
     display: flex;
     flex-direction: column;
   }
@@ -478,7 +478,7 @@
   .databar-wrap {
     display: none;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
   }
 
   /* ใช้กับหน้า Cast — อยากให้ data bar โชว์ตลอดทุกขนาดจอ ไม่ใช่แค่มือถือ */
@@ -488,7 +488,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 4px;
+    padding: 4px 4px;
     border-radius: 8px;
     cursor: pointer;
     transition: background .15s;
@@ -523,7 +523,7 @@
 
   .databar-bar-wrap {
     flex: 1;
-    height: 18px;
+    height: 15px;
     background: rgba(255,255,255,0.06);
     border-radius: 5px;
     overflow: hidden;
@@ -2375,6 +2375,7 @@
             </div>
             <p class="summary-value text-value" id="castFavoriteName">—</p>
             <p class="summary-sub" id="castFavoriteSub"></p>
+            <p style="font-size:0.68rem; color:var(--text-dim); text-align:center; margin:6px 0 0;">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงตามสัดส่วนที่ถูกใจสูงสุด</p>
           </div>
         </div>
 
@@ -2404,7 +2405,8 @@
 
         <div class="chart-card">
           <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่ดูบ่อย แต่ยังไม่เคยติด "ถูกใจ"</h3>
-          <p class="genre-table-title" style="margin:0 0 14px;">อาจเป็นนักแสดงที่คุณมองข้าม ลองย้อนดูผลงานพวกเขาอีกครั้ง</p>
+          <p class="genre-table-title" style="margin:0 0 4px;">อาจเป็นนักแสดงที่คุณมองข้าม ลองย้อนดูผลงานพวกเขาอีกครั้ง</p>
+          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;">*นับเฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป แต่ยังไม่เคยติด "ถูกใจ" เลยสักเรื่อง</p>
           <div class="databar-wrap always-visible" id="castUnderratedBar"></div>
           <p class="chart-empty" id="castUnderratedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ หรือดูครบทุกคนที่ถูกใจแล้ว 🎉</p>
         </div>
@@ -3793,8 +3795,33 @@
     return set.size;
   }
 
+  // เกณฑ์ขั้นต่ำ: นักแสดงต้องเล่นอย่างน้อย 3 เรื่องขึ้นไป ถึงจะถูกนำมาคิด "คนโปรด" หรือ "underrated"
+  // กันไม่ให้นักแสดงที่โผล่แค่ 1 เรื่องแล้วบังเอิญถูกใจ/ไม่ถูกใจ ติดอันดับทั้งที่ข้อมูลยังน้อยเกินไปจะสรุปได้
+  const MIN_CAST_SHOWS = 3;
+
+  // "คนโปรด" = ในบรรดานักแสดงที่เล่นอย่างน้อย MIN_CAST_SHOWS เรื่องขึ้นไป
+  // เลือกคนที่มี "สัดส่วนเรื่องที่ถูกใจ" (ถูกใจ/ทั้งหมด) สูงที่สุด ไม่ใช่แค่นับจำนวนถูกใจดิบๆ
+  // (กันไม่ให้นักแสดงที่เล่นเรื่องเดียวแล้วถูกใจ ถูกจัดเป็นคนโปรดเหนือคนที่เล่น 30 เรื่อง ถูกใจ 15 เรื่อง)
+  function getFavoriteCastActor() {
+    const summaryShows = getSummaryShows();
+    const totalCounts = {}, likedCounts = {};
+    summaryShows.forEach(s => {
+      splitCast(s.cast).forEach(c => {
+        if (!c) return;
+        totalCounts[c] = (totalCounts[c]||0)+1;
+        if (s.liked) likedCounts[c] = (likedCounts[c]||0)+1;
+      });
+    });
+    const candidates = Object.keys(likedCounts)
+      .filter(c => (totalCounts[c]||0) >= MIN_CAST_SHOWS)
+      .map(c => ({ name:c, liked:likedCounts[c], total:totalCounts[c], ratio: likedCounts[c]/totalCounts[c] }))
+      .sort((a,b) => b.ratio - a.ratio || b.liked - a.liked);
+    return candidates.length ? candidates[0] : null;
+  }
+
+  // "ดูบ่อยแต่ยังไม่เคยถูกใจ" = นักแสดงที่เล่นอย่างน้อย MIN_CAST_SHOWS เรื่องขึ้นไป แต่ไม่เคยติด "ถูกใจ" เลยสักเรื่อง
   function getUnderratedCast(n) {
-    const topWatched = getTopCast(30);
+    const topWatched = getTopCast(50).filter(([,count]) => count >= MIN_CAST_SHOWS);
     const likedSet = getCastLikedSet();
     return topWatched.filter(([actor]) => !likedSet.has(actor)).slice(0, n);
   }
@@ -3816,13 +3843,14 @@
     uniqueEl.textContent = uniqueCount;
     uniqueSubEl.textContent = uniqueCount ? `จากทั้งหมด ${getSummaryShows().length} เรื่อง` : 'ยังไม่มีข้อมูลนักแสดง';
 
-    const favorite = getTopCastLiked(1)[0];
+    const favorite = getFavoriteCastActor();
     if (favorite) {
-      favNameEl.textContent = favorite[0];
-      favSubEl.textContent = `ถูกใจ ${favorite[1]} เรื่อง`;
+      favNameEl.textContent = favorite.name;
+      const pct = Math.round(favorite.ratio*100);
+      favSubEl.textContent = `ถูกใจ ${favorite.liked}/${favorite.total} เรื่อง (${pct}%)`;
     } else {
       favNameEl.textContent = '—';
-      favSubEl.textContent = 'ยังไม่มีเรื่องที่ถูกใจ';
+      favSubEl.textContent = `ยังไม่มีนักแสดงที่เล่นครบ ${MIN_CAST_SHOWS} เรื่องขึ้นไป`;
     }
 
     renderCastBars();
@@ -3873,6 +3901,9 @@
         renderCastTable();
         renderCastBars();
         renderCastUnderrated();
+        if (selectedCast) {
+          document.getElementById('castTableTitle')?.scrollIntoView({behavior:'smooth', block:'center'});
+        }
       });
     });
   }
