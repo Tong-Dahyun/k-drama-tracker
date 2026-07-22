@@ -2971,7 +2971,13 @@
     filtered.sort((a,b) => {
       if (sortBy === 'liked-first')      return (b.liked?1:0)-(a.liked?1:0);
       if (sortBy === 'year-desc')        return b.year-a.year;
-      if (sortBy === 'recently-watched') return (b.no||0)-(a.no||0);
+      if (sortBy === 'recently-watched') {
+        const aHas = a.watchedDate instanceof Date, bHas = b.watchedDate instanceof Date;
+        if (aHas && bHas) return b.watchedDate - a.watchedDate;
+        if (aHas && !bHas) return -1;
+        if (!aHas && bHas) return 1;
+        return (b.no||0)-(a.no||0);
+      }
       if (sortBy === 'title')            return a.title.localeCompare(b.title);
       return 0;
     });
