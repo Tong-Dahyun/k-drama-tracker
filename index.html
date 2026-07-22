@@ -475,6 +475,9 @@
     gap: 8px;
   }
 
+  /* ใช้กับหน้า Cast — อยากให้ data bar โชว์ตลอดทุกขนาดจอ ไม่ใช่แค่มือถือ */
+  .databar-wrap.always-visible { display: flex !important; }
+
   .databar-row {
     display: flex;
     align-items: center;
@@ -2159,6 +2162,7 @@
         <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg></span>Dashboard</div>
         <div class="page-tabs-sub">
           <button class="page-tab sub-page-tab active" data-nav="summary">Summary</button>
+          <button class="page-tab sub-page-tab" data-nav="cast">Cast</button>
         </div>
 
         <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></span>Series &amp; Variety</div>
@@ -2333,6 +2337,33 @@
           </div>
           <p class="chart-empty" id="monthlyChartEmpty" hidden>ยังไม่มีข้อมูลวันที่ดูจบสำหรับปีนี้</p>
           <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
+        </div>
+      </section>
+
+      <!-- Cast -->
+      <section class="view-section" id="view-cast">
+        <div class="chart-card">
+          <div class="genre-section-3">
+            <div class="genre-col">
+              <h3 class="genre-col-title">Top 10 นักแสดงที่ดูมากที่สุด</h3>
+              <div class="databar-wrap always-visible" id="castDataBarWatched"></div>
+              <p class="chart-empty" id="castDataBarWatchedEmpty" hidden>ยังไม่มีข้อมูลนักแสดง</p>
+            </div>
+            <div class="genre-col">
+              <h3 class="genre-col-title">Top 10 นักแสดงที่ถูกใจมากที่สุด</h3>
+              <div class="databar-wrap always-visible" id="castDataBarLiked"></div>
+              <p class="chart-empty" id="castDataBarLikedEmpty" hidden>ยังไม่มีข้อมูลนักแสดง</p>
+            </div>
+            <div class="genre-table-wrap">
+              <p class="genre-table-title" id="castTableTitle">คลิกชื่อนักแสดงเพื่อดูรายชื่อเรื่อง</p>
+              <div class="genre-table-scroll" hidden>
+                <table class="genre-table">
+                  <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
+                  <tbody id="castTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -3307,6 +3338,9 @@
     if (tab.dataset.nav === 'summary') {
       document.getElementById('view-summary').classList.add('active');
       updateSummary();
+    } else if (tab.dataset.nav === 'cast') {
+      document.getElementById('view-cast').classList.add('active');
+      updateCastView();
     } else if (tab.dataset.nav === 'mode') {
       document.getElementById('view-mode').classList.add('active');
       updateModeCards();
@@ -3676,6 +3710,88 @@
         renderDataBars();
       });
     });
+  }
+
+  // ============================================================
+  // Cast (นักแสดง) — Top 10 ดูมากสุด / ถูกใจมากสุด
+  // ============================================================
+  let selectedCast = null, selectedCastSource = null;
+
+  function getTopCast(n) {
+    const summaryShows = getSummaryShows(), counts = {};
+    summaryShows.forEach(s => splitCast(s.cast).forEach(c => { if(!c) return; counts[c] = (counts[c]||0)+1; }));
+    return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  }
+
+  function getTopCastLiked(n) {
+    const summaryShows = getSummaryShows(), counts = {};
+    summaryShows.filter(s=>s.liked).forEach(s => splitCast(s.cast).forEach(c => { if(!c) return; counts[c] = (counts[c]||0)+1; }));
+    return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  }
+
+  function updateCastView() {
+    if (!diaryLoaded) {
+      document.getElementById('castDataBarWatched').innerHTML = '';
+      document.getElementById('castDataBarLiked').innerHTML = '';
+      return;
+    }
+    renderCastBars();
+    renderCastTable();
+  }
+
+  function renderCastBars() {
+    const top10Watched = getTopCast(10);
+    const top10Liked = getTopCastLiked(10);
+    renderSingleCastBar('castDataBarWatched', 'castDataBarWatchedEmpty', top10Watched, '#E50914', 'watched');
+    renderSingleCastBar('castDataBarLiked', 'castDataBarLikedEmpty', top10Liked, '#46D369', 'liked');
+  }
+
+  function renderSingleCastBar(containerId, emptyId, data, color, source) {
+    const wrap = document.getElementById(containerId), emptyEl = document.getElementById(emptyId);
+    if (!wrap) return;
+    if (!data.length) { wrap.innerHTML = ''; if(emptyEl) emptyEl.hidden = false; return; }
+    if (emptyEl) emptyEl.hidden = true;
+    const maxVal = data[0][1];
+    wrap.innerHTML = data.map(([cast, count]) => {
+      const pct = Math.round((count / maxVal) * 100);
+      const isSelected = selectedCast === cast && selectedCastSource === source;
+      return `<div class="databar-row ${isSelected ? (source==='watched'?'selected':'selected-liked') : ''}" data-cast="${cast}" data-source="${source}">
+        <span class="databar-label" title="${cast}">${cast}</span>
+        <div class="databar-bar-wrap">
+          <div class="databar-bar" style="width:${pct}%; background:${color};opacity:${isSelected?1:0.7};"></div>
+        </div>
+        <span class="databar-value">${count}</span>
+      </div>`;
+    }).join('');
+
+    wrap.querySelectorAll('.databar-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const cast = row.dataset.cast;
+        const src = row.dataset.source;
+        if (selectedCast === cast && selectedCastSource === src) {
+          selectedCast = null; selectedCastSource = null;
+        } else {
+          selectedCast = cast; selectedCastSource = src;
+        }
+        renderCastTable();
+        renderCastBars();
+      });
+    });
+  }
+
+  function renderCastTable() {
+    const tbody = document.getElementById('castTableBody'), titleEl = document.getElementById('castTableTitle');
+    if (!tbody) return;
+    const scrollWrap = tbody.closest('.genre-table-scroll');
+    if (scrollWrap) scrollWrap.scrollTop = 0;
+    if (!selectedCast) { tbody.innerHTML=''; titleEl.textContent='คลิกชื่อนักแสดงเพื่อดูรายชื่อเรื่อง'; if(scrollWrap) scrollWrap.hidden=true; return; }
+    if (scrollWrap) scrollWrap.hidden = false;
+    const summaryShows = getSummaryShows();
+    let list = summaryShows.filter(s => splitCast(s.cast).includes(selectedCast));
+    if (selectedCastSource === 'liked') list = list.filter(s => s.liked);
+    titleEl.textContent = `${selectedCast} — ${list.length} เรื่อง${selectedCastSource==='liked' ? ' (เฉพาะที่ถูกใจ)' : ''}`;
+    if (!list.length) { tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่อง</td></tr>'; return; }
+    tbody.innerHTML = list.map(s => `<tr><td>${s.title}</td><td>${s.liked ? '❤️ ชอบ' : '—'}</td></tr>`).join('');
   }
 
   // ============================================================
@@ -4727,6 +4843,11 @@
       diaryLoaded = false; pendingLoaded = false; droppedLoaded = false;
       await Promise.all([loadData(), loadPending(), loadDropped()]);
       updateSummary();
+
+    } else if (currentNav === 'cast') {
+      diaryLoaded = false; pendingLoaded = false; droppedLoaded = false;
+      await Promise.all([loadData(), loadPending(), loadDropped()]);
+      updateCastView();
 
     } else if (currentNav === 'diary') {
       resetDiaryFilters();
