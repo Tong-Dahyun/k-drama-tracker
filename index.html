@@ -555,6 +555,15 @@
 
   .genre-table-scroll { max-height: 280px; overflow-y: auto; }
 
+  /* Cast — Stacked bar chart เลื่อนแนวนอนได้เมื่อนักแสดงเยอะ */
+  .cast-stacked-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .cast-stacked-inner { height: 320px; position: relative; }
+
   .genre-table {
     width: 100%;
     border-collapse: collapse;
@@ -2410,6 +2419,17 @@
           <div class="databar-wrap always-visible" id="castUnderratedBar"></div>
           <p class="chart-empty" id="castUnderratedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ หรือดูครบทุกคนที่ถูกใจแล้ว 🎉</p>
         </div>
+
+        <div class="chart-card">
+          <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่ดูมากที่สุด (แยกถูกใจ / เฉยๆ)</h3>
+          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงจากจำนวนเรื่องมากไปน้อย เลื่อนดูคนถัดไปได้ — คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน</p>
+          <div class="cast-stacked-scroll" id="castStackedScroll">
+            <div class="cast-stacked-inner" id="castStackedInner">
+              <canvas id="castStackedChart"></canvas>
+            </div>
+          </div>
+          <p class="chart-empty" id="castStackedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ</p>
+        </div>
       </section>
 
       <!-- Detail: Watched / Watchlist / Dropped -->
@@ -3856,6 +3876,7 @@
     renderCastBars();
     renderCastTable();
     renderCastUnderrated();
+    renderCastStackedChart();
   }
 
   function renderCastBars() {
@@ -3868,6 +3889,83 @@
   function renderCastUnderrated() {
     const underrated = getUnderratedCast(8);
     renderSingleCastBar('castUnderratedBar', 'castUnderratedEmpty', underrated, '#E6A817', 'underrated');
+  }
+
+  // นักแสดงที่ดูมากที่สุด แยกถูกใจ(แดง)/เฉยๆ(เทา) เป็น stacked bar — เฉพาะคนที่เล่นอย่างน้อย MIN_CAST_SHOWS เรื่องขึ้นไป
+  function getCastStackedData() {
+    const summaryShows = getSummaryShows();
+    const totalCounts = {}, likedCounts = {};
+    summaryShows.forEach(s => {
+      splitCast(s.cast).forEach(c => {
+        if (!c) return;
+        totalCounts[c] = (totalCounts[c]||0)+1;
+        if (s.liked) likedCounts[c] = (likedCounts[c]||0)+1;
+      });
+    });
+    return Object.keys(totalCounts)
+      .filter(c => totalCounts[c] >= MIN_CAST_SHOWS)
+      .map(c => ({ name:c, total:totalCounts[c], liked:likedCounts[c]||0, neutral: totalCounts[c]-(likedCounts[c]||0) }))
+      .sort((a,b) => b.total - a.total);
+  }
+
+  let castStackedChartInstance = null;
+
+  function renderCastStackedChart() {
+    const canvas = document.getElementById('castStackedChart'), emptyEl = document.getElementById('castStackedEmpty');
+    const inner = document.getElementById('castStackedInner'), scrollWrap = document.getElementById('castStackedScroll');
+    if (!canvas) return;
+    const data = getCastStackedData();
+
+    if (!data.length) {
+      canvas.hidden = true; if (emptyEl) emptyEl.hidden = false;
+      if (castStackedChartInstance) { castStackedChartInstance.destroy(); castStackedChartInstance = null; }
+      return;
+    }
+    canvas.hidden = false; if (emptyEl) emptyEl.hidden = true;
+
+    // ความกว้าง canvas: ให้พอดีกับพื้นที่มองเห็น ~20 แท่งแรก ที่เหลือเลื่อนดูได้
+    const barSlot = 46;
+    const visibleWidth = scrollWrap ? scrollWrap.clientWidth : 600;
+    inner.style.width = Math.max(data.length * barSlot, visibleWidth) + 'px';
+
+    const labels = data.map(d => d.name);
+    const likedData = data.map(d => d.liked);
+    const neutralData = data.map(d => d.neutral);
+
+    if (castStackedChartInstance) castStackedChartInstance.destroy();
+    castStackedChartInstance = new Chart(canvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'ถูกใจ', data: likedData, backgroundColor: '#E50914', hoverBackgroundColor: '#ff1a26', stack: 'cast', maxBarThickness: 32 },
+          { label: 'เฉยๆ', data: neutralData, backgroundColor: '#4A4A4A', hoverBackgroundColor: '#5c5c5c', stack: 'cast', borderRadius: {topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}, maxBarThickness: 32 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        onClick: (evt, elements) => {
+          if (!elements.length) return;
+          const actor = labels[elements[0].index];
+          if (selectedCast === actor && selectedCastSource === 'stacked') {
+            selectedCast = null; selectedCastSource = null;
+          } else {
+            selectedCast = actor; selectedCastSource = 'stacked';
+          }
+          renderCastTable();
+          renderCastStackedChart();
+        },
+        onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; },
+        plugins: {
+          legend: { labels: { color: '#B3B3B3', font: { family:'Inter', size:11 } } },
+          tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1, titleColor:'#FFFFFF', bodyColor:'#B3B3B3' }
+        },
+        scales: {
+          x: { stacked: true, ticks: { color:'#B3B3B3', font:{size:10}, maxRotation:60, minRotation:60, autoSkip:false }, grid:{color:'rgba(255,255,255,0.06)'} },
+          y: { stacked: true, beginAtZero:true, ticks: { color:'#B3B3B3', precision:0 }, grid:{color:'rgba(255,255,255,0.06)'} }
+        }
+      }
+    });
   }
 
   function renderSingleCastBar(containerId, emptyId, data, color, source) {
