@@ -3069,7 +3069,11 @@
       if (sortBy === 'year-desc')        return b.year-a.year;
       if (sortBy === 'recently-watched') {
         const aHas = a.watchedDate instanceof Date, bHas = b.watchedDate instanceof Date;
-        if (aHas && bHas) return b.watchedDate - a.watchedDate;
+        if (aHas && bHas) {
+          const diff = b.watchedDate - a.watchedDate;
+          if (diff !== 0) return diff;
+          return (b.no||0)-(a.no||0);
+        }
         if (aHas && !bHas) return -1;
         if (!aHas && bHas) return 1;
         return (b.no||0)-(a.no||0);
