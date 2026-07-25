@@ -2364,7 +2364,8 @@
           <button class="pill active" id="castSlicerVariety" data-summary-type="variety">Variety</button>
         </div>
 
-        <div class="summary-grid-2" style="margin-bottom:20px;">
+        <!-- ภาพรวม: การ์ดตัวเลข + โดนัท (เลย์เอาต์เดียวกับหน้า Summary) -->
+        <div class="summary-grid-2" style="margin-bottom:10px;">
           <div class="summary-card">
             <div class="summary-card-head">
               <div class="summary-icon gold">
@@ -2384,51 +2385,83 @@
             </div>
             <p class="summary-value text-value" id="castFavoriteName">—</p>
             <p class="summary-sub" id="castFavoriteSub"></p>
-            <p style="font-size:0.68rem; color:var(--text-dim); text-align:center; margin:6px 0 0;">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงตามสัดส่วนที่ถูกใจสูงสุด</p>
           </div>
         </div>
+        <p style="font-size:0.68rem; color:var(--text-dim); text-align:right; margin:0 0 20px;">*"คนโปรด" นับเฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงตามสัดส่วนที่ถูกใจสูงสุด</p>
 
-        <div class="chart-card">
-          <div class="genre-section-3">
-            <div class="genre-col">
-              <h3 class="genre-col-title">Top 10 นักแสดงที่ดูมากที่สุด</h3>
-              <div class="databar-wrap always-visible" id="castDataBarWatched"></div>
-              <p class="chart-empty" id="castDataBarWatchedEmpty" hidden>ยังไม่มีข้อมูลนักแสดง</p>
-            </div>
-            <div class="genre-col">
-              <h3 class="genre-col-title">Top 10 นักแสดงที่ถูกใจมากที่สุด</h3>
-              <div class="databar-wrap always-visible" id="castDataBarLiked"></div>
-              <p class="chart-empty" id="castDataBarLikedEmpty" hidden>ยังไม่มีข้อมูลนักแสดง</p>
-            </div>
-            <div class="genre-table-wrap">
-              <p class="genre-table-title" id="castTableTitle">คลิกชื่อนักแสดงเพื่อดูรายชื่อเรื่อง</p>
-              <div class="genre-table-scroll" hidden>
-                <table class="genre-table">
-                  <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
-                  <tbody id="castTableBody"></tbody>
-                </table>
+        <div class="summary-grid-2" style="margin-bottom:20px;">
+          <div class="summary-card donut-card">
+            <p class="summary-label">นักแสดงที่เคยถูกใจ</p>
+            <div class="donut-wrap">
+              <canvas id="castLikedRateDonutChart"></canvas>
+              <div class="donut-center" id="castLikedRateDonutCenter" hidden>
+                <span class="donut-center-value" id="castLikedRatePct">—</span>
+                <span class="donut-center-label">เคยถูกใจ</span>
               </div>
             </div>
+            <p class="chart-empty" id="castLikedRateDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
+            <div class="donut-legend">
+              <span class="legend-item"><i class="legend-dot liked"></i>เคยถูกใจ <b id="castLikedRateLikedCount">—</b></span>
+              <span class="legend-item"><i class="legend-dot neutral"></i>ยังไม่เคย <b id="castLikedRateNotLikedCount">—</b></span>
+            </div>
+          </div>
+          <div class="summary-card donut-card">
+            <p class="summary-label">นักแสดงขาประจำ (≥3 เรื่อง)</p>
+            <div class="donut-wrap">
+              <canvas id="castRegularDonutChart"></canvas>
+              <div class="donut-center" id="castRegularDonutCenter" hidden>
+                <span class="donut-center-value" id="castRegularPct">—</span>
+                <span class="donut-center-label">ขาประจำ</span>
+              </div>
+            </div>
+            <p class="chart-empty" id="castRegularDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
+            <div class="donut-legend">
+              <span class="legend-item"><i class="legend-dot" style="background:var(--gold)"></i>ขาประจำ <b id="castRegularCount">—</b></span>
+              <span class="legend-item"><i class="legend-dot neutral"></i>ผ่านตา <b id="castOccasionalCount">—</b></span>
+            </div>
           </div>
         </div>
 
-        <div class="chart-card">
-          <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่ดูบ่อย แต่ยังไม่เคยติด "ถูกใจ"</h3>
-          <p class="genre-table-title" style="margin:0 0 4px;">อาจเป็นนักแสดงที่คุณมองข้าม ลองย้อนดูผลงานพวกเขาอีกครั้ง</p>
-          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;">*นับเฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป แต่ยังไม่เคยติด "ถูกใจ" เลยสักเรื่อง</p>
-          <div class="databar-wrap always-visible" id="castUnderratedBar"></div>
-          <p class="chart-empty" id="castUnderratedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ หรือดูครบทุกคนที่ถูกใจแล้ว 🎉</p>
-        </div>
-
+        <!-- Hero chart: นักแสดงที่ดูมากที่สุด แยกถูกใจ/เฉยๆ -->
         <div class="chart-card">
           <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่ดูมากที่สุด (แยกถูกใจ / เฉยๆ)</h3>
-          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงจากจำนวนเรื่องมากไปน้อย เลื่อนดูคนถัดไปได้ — คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน</p>
+          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงจากจำนวนเรื่องมากไปน้อย เลื่อนดูคนถัดไปได้ — คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านล่าง</p>
           <div class="cast-stacked-scroll" id="castStackedScroll">
             <div class="cast-stacked-inner" id="castStackedInner">
               <canvas id="castStackedChart"></canvas>
             </div>
           </div>
           <p class="chart-empty" id="castStackedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ</p>
+        </div>
+
+        <!-- ผลลัพธ์: รายชื่อเรื่องของนักแสดงที่คลิก อยู่ติดกับ hero chart ให้ไม่ต้องเลื่อนไกล -->
+        <div class="chart-card">
+          <div class="genre-table-wrap">
+            <p class="genre-table-title" id="castTableTitle">คลิกชื่อนักแสดงในกราฟเพื่อดูรายชื่อเรื่อง</p>
+            <div class="genre-table-scroll" hidden>
+              <table class="genre-table">
+                <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
+                <tbody id="castTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- อันดับรอง: ถูกใจมากที่สุด + ดูบ่อยแต่ยังไม่เคยถูกใจ วางคู่กัน ความยาวใกล้เคียงกัน -->
+        <div class="chart-card">
+          <div class="genre-section-3">
+            <div class="genre-col">
+              <h3 class="genre-col-title">Top 10 นักแสดงที่ถูกใจมากที่สุด</h3>
+              <div class="databar-wrap always-visible" id="castDataBarLiked"></div>
+              <p class="chart-empty" id="castDataBarLikedEmpty" hidden>ยังไม่มีข้อมูลนักแสดง</p>
+            </div>
+            <div class="genre-col">
+              <h3 class="genre-col-title">ดูบ่อย แต่ยังไม่เคยติด "ถูกใจ"</h3>
+              <div class="databar-wrap always-visible" id="castUnderratedBar"></div>
+              <p class="chart-empty" id="castUnderratedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ หรือดูครบทุกคนที่ถูกใจแล้ว 🎉</p>
+            </div>
+          </div>
+          <p style="font-size:0.68rem; color:var(--text-dim); margin:10px 0 0;">*ทั้งสองอันดับนับเฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป</p>
         </div>
       </section>
 
@@ -3850,13 +3883,68 @@
     return topWatched.filter(([actor]) => !likedSet.has(actor)).slice(0, n);
   }
 
+  let castLikedRateDonutInstance = null;
+  function renderCastLikedRateDonut() {
+    const canvas = document.getElementById('castLikedRateDonutChart'), emptyMsg = document.getElementById('castLikedRateDonutEmpty');
+    const centerEl = document.getElementById('castLikedRateDonutCenter'), pctEl = document.getElementById('castLikedRatePct');
+    const likedEl = document.getElementById('castLikedRateLikedCount'), notLikedEl = document.getElementById('castLikedRateNotLikedCount');
+    if (!canvas) return;
+    const total = getUniqueCastCount();
+    if (typeof Chart === 'undefined' || !diaryLoaded || total === 0) {
+      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
+      likedEl.textContent = '—'; notLikedEl.textContent = '—';
+      if (castLikedRateDonutInstance) { castLikedRateDonutInstance.destroy(); castLikedRateDonutInstance = null; }
+      return;
+    }
+    canvas.hidden = false; centerEl.hidden = false; emptyMsg.hidden = true;
+    const likedCount = getCastLikedSet().size, notLikedCount = total - likedCount;
+    const pct = Math.round((likedCount/total)*100);
+    pctEl.textContent = pct+'%'; likedEl.textContent = likedCount; notLikedEl.textContent = notLikedCount;
+    if (castLikedRateDonutInstance) castLikedRateDonutInstance.destroy();
+    try {
+      castLikedRateDonutInstance = new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: { labels:['เคยถูกใจ','ยังไม่เคย'], datasets:[{ data:[likedCount, notLikedCount], backgroundColor:['#46D369','#3A3A3A'], borderColor:'#1F1F1F', borderWidth:2, hoverOffset:4 }] },
+        options: { responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'} } }
+      });
+    } catch(err) { canvas.hidden=true; centerEl.hidden=true; emptyMsg.hidden=false; }
+  }
+
+  let castRegularDonutInstance = null;
+  function renderCastRegularDonut() {
+    const canvas = document.getElementById('castRegularDonutChart'), emptyMsg = document.getElementById('castRegularDonutEmpty');
+    const centerEl = document.getElementById('castRegularDonutCenter'), pctEl = document.getElementById('castRegularPct');
+    const regularEl = document.getElementById('castRegularCount'), occasionalEl = document.getElementById('castOccasionalCount');
+    if (!canvas) return;
+    const summaryShows = getSummaryShows(), totalCounts = {};
+    summaryShows.forEach(s => splitCast(s.cast).forEach(c => { if(c) totalCounts[c] = (totalCounts[c]||0)+1; }));
+    const allActors = Object.keys(totalCounts), total = allActors.length;
+    if (typeof Chart === 'undefined' || !diaryLoaded || total === 0) {
+      canvas.hidden = true; centerEl.hidden = true; emptyMsg.hidden = false;
+      regularEl.textContent = '—'; occasionalEl.textContent = '—';
+      if (castRegularDonutInstance) { castRegularDonutInstance.destroy(); castRegularDonutInstance = null; }
+      return;
+    }
+    canvas.hidden = false; centerEl.hidden = false; emptyMsg.hidden = true;
+    const regularCount = allActors.filter(c => totalCounts[c] >= MIN_CAST_SHOWS).length, occasionalCount = total - regularCount;
+    const pct = Math.round((regularCount/total)*100);
+    pctEl.textContent = pct+'%'; regularEl.textContent = regularCount; occasionalEl.textContent = occasionalCount;
+    if (castRegularDonutInstance) castRegularDonutInstance.destroy();
+    try {
+      castRegularDonutInstance = new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: { labels:['ขาประจำ','ผ่านตา'], datasets:[{ data:[regularCount, occasionalCount], backgroundColor:['#E6B91E','#3A3A3A'], borderColor:'#1F1F1F', borderWidth:2, hoverOffset:4 }] },
+        options: { responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'} } }
+      });
+    } catch(err) { canvas.hidden=true; centerEl.hidden=true; emptyMsg.hidden=false; }
+  }
+
   function updateCastView() {
     const uniqueEl = document.getElementById('castUniqueCount'), uniqueSubEl = document.getElementById('castUniqueCountSub');
     const favNameEl = document.getElementById('castFavoriteName'), favSubEl = document.getElementById('castFavoriteSub');
     if (!diaryLoaded) {
       uniqueEl.textContent = '…'; uniqueSubEl.textContent = 'กำลังโหลดข้อมูล...';
       favNameEl.textContent = '…'; favSubEl.textContent = '';
-      document.getElementById('castDataBarWatched').innerHTML = '';
       document.getElementById('castDataBarLiked').innerHTML = '';
       document.getElementById('castUnderratedBar').innerHTML = '';
       return;
@@ -3881,12 +3969,12 @@
     renderCastTable();
     renderCastUnderrated();
     renderCastStackedChart();
+    renderCastLikedRateDonut();
+    renderCastRegularDonut();
   }
 
   function renderCastBars() {
-    const top10Watched = getTopCast(10);
     const top10Liked = getTopCastLiked(10);
-    renderSingleCastBar('castDataBarWatched', 'castDataBarWatchedEmpty', top10Watched, '#E50914', 'watched');
     renderSingleCastBar('castDataBarLiked', 'castDataBarLikedEmpty', top10Liked, '#46D369', 'liked');
   }
 
