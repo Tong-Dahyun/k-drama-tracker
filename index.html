@@ -2461,7 +2461,7 @@
           <!-- controls: Watchlist -->
           <div class="sidebar-controls page-section" id="controls-watchlist">
             <button class="clear-filters-btn" id="clearFiltersPending" title="ล้างตัวกรอง"><svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4 H20"/><path d="M4 4 L12 13"/><path d="M20 4 L12 13"/><path d="M12 13 L12 21"/></svg></button>
-            <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่องที่อยากดู...">
+            <input type="text" id="searchPending" class="search-box" placeholder="ค้นหาชื่อเรื่อง, แนว, นักแสดง...">
             <div class="filter-pills">
               <button class="pill active" data-ptype="all">ทั้งหมด</button>
               <button class="pill" data-ptype="series">ซีรีส์</button>
@@ -2480,7 +2480,7 @@
           <!-- controls: Dropped -->
           <div class="sidebar-controls page-section" id="controls-dropped">
             <button class="clear-filters-btn" id="clearFiltersDropped" title="ล้างตัวกรอง"><svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4 H20"/><path d="M4 4 L12 13"/><path d="M20 4 L12 13"/><path d="M12 13 L12 21"/></svg></button>
-            <input type="text" id="searchDropped" class="search-box" placeholder="ค้นหาชื่อเรื่องที่ดรอป...">
+            <input type="text" id="searchDropped" class="search-box" placeholder="ค้นหาชื่อเรื่อง, แนว, นักแสดง...">
             <select id="yearFilterDropped" class="sort-select"><option value="all">ทุกปี</option></select>
             <select id="genreFilterDropped" class="sort-select"><option value="all">ทุกแนว</option></select>
             <select id="sortDropped" class="sort-select">
@@ -3122,7 +3122,7 @@
     const query = searchInputPending.value.trim().toLowerCase();
     let filtered = pending.filter(s => {
       return (activeTypePending==='all'||s.type===activeTypePending)
-          && (!query||s.title.toLowerCase().includes(query))
+          && (!query||matchesSearch(s, query))
           && (activeYearPending==='all'||String(s.year)===activeYearPending)
           && (activeGenrePending==='all'||s.genres.includes(activeGenrePending))
           && (activeCastPending==='all'||splitCast(s.cast).includes(activeCastPending));
@@ -3178,7 +3178,7 @@
     if (!droppedLoaded) { clearSkeletonMode(gridDropped); gridDropped.innerHTML=''; emptyStateDropped.hidden=true; document.getElementById('paginationDropped').innerHTML=''; return; }
     const query = searchInputDropped.value.trim().toLowerCase();
     let filtered = dropped.filter(s => {
-      return (!query || s.title.toLowerCase().includes(query))
+      return (!query || matchesSearch(s, query))
           && (activeYearDropped==='all' || String(s.year)===activeYearDropped)
           && (activeGenreDropped==='all' || s.genres.includes(activeGenreDropped))
           && (activeCastDropped==='all' || splitCast(s.cast).includes(activeCastDropped));
