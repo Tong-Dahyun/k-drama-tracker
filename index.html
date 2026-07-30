@@ -778,6 +778,13 @@
     color: var(--text-soft);
   }
 
+  /* ต้อง specificity สูงกว่า .dashboard-slicer .pill ด้านบน ไม่งั้นสถานะ active จะโดนสีเทาทับ */
+  .dashboard-slicer .pill.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
   .sort-select {
     width: auto;
     flex: 0 1 130px;
