@@ -2383,60 +2383,75 @@
           <button class="pill" id="castSlicerVariety" data-summary-type="variety">Variety</button>
         </div>
 
-        <!-- ภาพรวม: การ์ดตัวเลข + โดนัท (เลย์เอาต์เดียวกับหน้า Summary) -->
-        <div class="summary-grid-2" style="margin-bottom:10px;">
-          <div class="summary-card">
-            <div class="summary-card-head">
-              <div class="summary-icon gold">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <!-- ภาพรวม: การ์ดตัวเลข + โดนัท (ฝั่งซ้าย) + ตารางผลลัพธ์ (ฝั่งขวา) — เลย์เอาต์เดียวกับหน้า Summary -->
+        <div class="summary-layout">
+          <div class="summary-left">
+            <div class="summary-grid-2">
+              <div class="summary-card">
+                <div class="summary-card-head">
+                  <div class="summary-icon gold">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </div>
+                  <p class="summary-label">นักแสดงทั้งหมดที่เคยดู</p>
+                </div>
+                <p class="summary-value" id="castUniqueCount">—</p>
+                <p class="summary-sub" id="castUniqueCountSub"></p>
               </div>
-              <p class="summary-label">นักแสดงทั้งหมดที่เคยดู</p>
-            </div>
-            <p class="summary-value" id="castUniqueCount">—</p>
-            <p class="summary-sub" id="castUniqueCountSub"></p>
-          </div>
-          <div class="summary-card">
-            <div class="summary-card-head">
-              <div class="summary-icon red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <div class="summary-card">
+                <div class="summary-card-head">
+                  <div class="summary-icon red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  </div>
+                  <p class="summary-label">นักแสดงคนโปรด</p>
+                </div>
+                <p class="summary-value text-value" id="castFavoriteName">—</p>
+                <p class="summary-sub" id="castFavoriteSub"></p>
               </div>
-              <p class="summary-label">นักแสดงคนโปรด</p>
             </div>
-            <p class="summary-value text-value" id="castFavoriteName">—</p>
-            <p class="summary-sub" id="castFavoriteSub"></p>
-          </div>
-        </div>
-        <p style="font-size:0.68rem; color:var(--text-dim); text-align:right; margin:0 0 20px;">*"คนโปรด" นับเฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงตามสัดส่วนที่ถูกใจสูงสุด</p>
 
-        <div class="summary-grid-2" style="margin-bottom:20px;">
-          <div class="summary-card donut-card">
-            <p class="summary-label">นักแสดงที่เคยถูกใจ</p>
-            <div class="donut-wrap">
-              <canvas id="castLikedRateDonutChart"></canvas>
-              <div class="donut-center" id="castLikedRateDonutCenter" hidden>
-                <span class="donut-center-value" id="castLikedRatePct">—</span>
-                <span class="donut-center-label">เคยถูกใจ</span>
+            <div class="summary-grid-2">
+              <div class="summary-card donut-card">
+                <p class="summary-label">นักแสดงที่เคยถูกใจ</p>
+                <div class="donut-wrap">
+                  <canvas id="castLikedRateDonutChart"></canvas>
+                  <div class="donut-center" id="castLikedRateDonutCenter" hidden>
+                    <span class="donut-center-value" id="castLikedRatePct">—</span>
+                    <span class="donut-center-label">เคยถูกใจ</span>
+                  </div>
+                </div>
+                <p class="chart-empty" id="castLikedRateDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
+                <div class="donut-legend">
+                  <span class="legend-item"><i class="legend-dot liked"></i>เคยถูกใจ <b id="castLikedRateLikedCount">—</b></span>
+                  <span class="legend-item"><i class="legend-dot neutral"></i>ยังไม่เคย <b id="castLikedRateNotLikedCount">—</b></span>
+                </div>
               </div>
-            </div>
-            <p class="chart-empty" id="castLikedRateDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
-            <div class="donut-legend">
-              <span class="legend-item"><i class="legend-dot liked"></i>เคยถูกใจ <b id="castLikedRateLikedCount">—</b></span>
-              <span class="legend-item"><i class="legend-dot neutral"></i>ยังไม่เคย <b id="castLikedRateNotLikedCount">—</b></span>
+              <div class="summary-card donut-card">
+                <p class="summary-label">นักแสดงขาประจำ (≥3 เรื่อง)</p>
+                <div class="donut-wrap">
+                  <canvas id="castRegularDonutChart"></canvas>
+                  <div class="donut-center" id="castRegularDonutCenter" hidden>
+                    <span class="donut-center-value" id="castRegularPct">—</span>
+                    <span class="donut-center-label">ขาประจำ</span>
+                  </div>
+                </div>
+                <p class="chart-empty" id="castRegularDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
+                <div class="donut-legend">
+                  <span class="legend-item"><i class="legend-dot" style="background:var(--gold)"></i>ขาประจำ <b id="castRegularCount">—</b></span>
+                  <span class="legend-item"><i class="legend-dot neutral"></i>ผ่านตา <b id="castOccasionalCount">—</b></span>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="summary-card donut-card">
-            <p class="summary-label">นักแสดงขาประจำ (≥3 เรื่อง)</p>
-            <div class="donut-wrap">
-              <canvas id="castRegularDonutChart"></canvas>
-              <div class="donut-center" id="castRegularDonutCenter" hidden>
-                <span class="donut-center-value" id="castRegularPct">—</span>
-                <span class="donut-center-label">ขาประจำ</span>
+
+          <div class="summary-right chart-card">
+            <div class="genre-table-wrap" style="height:100%; display:flex; flex-direction:column;">
+              <p class="genre-table-title" id="castTableTitle">คลิกชื่อนักแสดงในกราฟเพื่อดูรายชื่อเรื่อง</p>
+              <div class="genre-table-scroll" id="castTableScroll" hidden style="flex:1; max-height:none;">
+                <table class="genre-table">
+                  <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
+                  <tbody id="castTableBody"></tbody>
+                </table>
               </div>
-            </div>
-            <p class="chart-empty" id="castRegularDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
-            <div class="donut-legend">
-              <span class="legend-item"><i class="legend-dot" style="background:var(--gold)"></i>ขาประจำ <b id="castRegularCount">—</b></span>
-              <span class="legend-item"><i class="legend-dot neutral"></i>ผ่านตา <b id="castOccasionalCount">—</b></span>
             </div>
           </div>
         </div>
@@ -2444,26 +2459,13 @@
         <!-- Hero chart: นักแสดงที่ดูมากที่สุด แยกถูกใจ/เฉยๆ -->
         <div class="chart-card">
           <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่ดูมากที่สุด (แยกถูกใจ / เฉยๆ)</h3>
-          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงจากจำนวนเรื่องมากไปน้อย เลื่อนดูคนถัดไปได้ — คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านล่าง</p>
+          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงจากจำนวนเรื่องมากไปน้อย เลื่อนดูคนถัดไปได้ — คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน</p>
           <div class="cast-stacked-scroll" id="castStackedScroll">
             <div class="cast-stacked-inner" id="castStackedInner">
               <canvas id="castStackedChart"></canvas>
             </div>
           </div>
           <p class="chart-empty" id="castStackedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ</p>
-        </div>
-
-        <!-- ผลลัพธ์: รายชื่อเรื่องของนักแสดงที่คลิก อยู่ติดกับ hero chart ให้ไม่ต้องเลื่อนไกล -->
-        <div class="chart-card">
-          <div class="genre-table-wrap">
-            <p class="genre-table-title" id="castTableTitle">คลิกชื่อนักแสดงในกราฟเพื่อดูรายชื่อเรื่อง</p>
-            <div class="genre-table-scroll" hidden>
-              <table class="genre-table">
-                <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
-                <tbody id="castTableBody"></tbody>
-              </table>
-            </div>
-          </div>
         </div>
 
         <!-- อันดับรอง: ถูกใจมากที่สุด + ดูบ่อยแต่ยังไม่เคยถูกใจ วางคู่กัน ความยาวใกล้เคียงกัน -->
@@ -4145,7 +4147,7 @@
     const suffix = selectedCastSource==='liked' ? ' (เฉพาะที่ถูกใจ)' : selectedCastSource==='underrated' ? ' (ยังไม่เคยถูกใจ)' : '';
     titleEl.textContent = `${selectedCast} — ${list.length} เรื่อง${suffix}`;
     if (!list.length) { tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่อง</td></tr>'; return; }
-    tbody.innerHTML = list.map(s => `<tr><td>${s.title}</td><td>${s.liked ? '❤️ ชอบ' : '—'}</td></tr>`).join('');
+    tbody.innerHTML = list.map(s => `<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.liked ? '<span class="liked-tag liked">♥ ชอบ</span>' : '<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
   }
 
   // ============================================================
