@@ -766,6 +766,18 @@
     transform: scale(1.03);
   }
 
+  /* Dashboard slicer (Summary/Cast) — ปุ่ม Series/Variety สไตล์ Power BI button slicer
+     ค่าเริ่มต้นเทากลืนพื้นหลัง กดแล้วแดง เลือกได้ทีละปุ่มเท่านั้น */
+  .dashboard-slicer .pill {
+    background: var(--surface-soft);
+    border-color: transparent;
+    color: var(--text-dim);
+  }
+
+  .dashboard-slicer .pill:hover:not(.active) {
+    color: var(--text-soft);
+  }
+
   .sort-select {
     width: auto;
     flex: 0 1 130px;
@@ -2216,8 +2228,8 @@
       <!-- Summary -->
       <section class="view-section active" id="view-summary">
         <div class="dashboard-slicer">
-          <button class="pill active" id="slicerSeries" data-summary-type="series">Series</button>
-          <button class="pill active" id="slicerVariety" data-summary-type="variety">Variety</button>
+          <button class="pill" id="slicerSeries" data-summary-type="series">Series</button>
+          <button class="pill" id="slicerVariety" data-summary-type="variety">Variety</button>
         </div>
 
         <div class="summary-layout">
@@ -2360,8 +2372,8 @@
       <!-- Cast -->
       <section class="view-section" id="view-cast">
         <div class="dashboard-slicer">
-          <button class="pill active" id="castSlicerSeries" data-summary-type="series">Series</button>
-          <button class="pill active" id="castSlicerVariety" data-summary-type="variety">Variety</button>
+          <button class="pill" id="castSlicerSeries" data-summary-type="series">Series</button>
+          <button class="pill" id="castSlicerVariety" data-summary-type="variety">Variety</button>
         </div>
 
         <!-- ภาพรวม: การ์ดตัวเลข + โดนัท (เลย์เอาต์เดียวกับหน้า Summary) -->
@@ -2862,6 +2874,7 @@
     return false;
   }
   let summaryTypeFilter = { series: true, variety: true };
+  let castTypeFilter = { series: true, variety: true };
 
   // ============================================================
   // Row parsers
@@ -3063,7 +3076,7 @@
   // ============================================================
   // Stats
   // ============================================================
-  function getSummaryShows() { return shows.filter(s => summaryTypeFilter[s.type]); }
+  function getSummaryShows(filterOverride) { const f = filterOverride || summaryTypeFilter; return shows.filter(s => f[s.type]); }
 
   function updateStats() {
     if (!statsEl) return;
@@ -3409,7 +3422,9 @@
   }
 
   // ============================================================
-  // Slicer
+  // Slicer — สไตล์ Power BI button slicer
+  // ค่าเริ่มต้น = ทั้งคู่เทา (โชว์ทั้งหมด) / เลือกได้ทีละปุ่ม (แดง) / กดซ้ำปุ่มที่เลือกอยู่ = กลับไปโชว์ทั้งหมด
+  // หน้า Summary กับ Cast มี state แยกกันคนละชุด ไม่ sync กัน
   // ============================================================
   const slicerSeriesBtn  = document.getElementById('slicerSeries');
   const slicerVarietyBtn = document.getElementById('slicerVariety');
@@ -3417,24 +3432,36 @@
   const castSlicerVarietyBtn = document.getElementById('castSlicerVariety');
 
   function refreshSlicerButtons() {
-    slicerSeriesBtn.classList.toggle('active', summaryTypeFilter.series);
-    slicerVarietyBtn.classList.toggle('active', summaryTypeFilter.variety);
-    castSlicerSeriesBtn?.classList.toggle('active', summaryTypeFilter.series);
-    castSlicerVarietyBtn?.classList.toggle('active', summaryTypeFilter.variety);
+    // active (แดง) เฉพาะตอนเลือกแบบ exclusive เท่านั้น — ถ้าทั้งคู่ true (ค่าเริ่มต้น/โชว์ทั้งหมด) ให้เป็นเทาทั้งคู่
+    const summaryExclusive = summaryTypeFilter.series !== summaryTypeFilter.variety;
+    slicerSeriesBtn.classList.toggle('active', summaryExclusive && summaryTypeFilter.series);
+    slicerVarietyBtn.classList.toggle('active', summaryExclusive && summaryTypeFilter.variety);
+
+    const castExclusive = castTypeFilter.series !== castTypeFilter.variety;
+    castSlicerSeriesBtn?.classList.toggle('active', castExclusive && castTypeFilter.series);
+    castSlicerVarietyBtn?.classList.toggle('active', castExclusive && castTypeFilter.variety);
   }
 
   function toggleSummaryType(type) {
-    const next = { ...summaryTypeFilter, [type]: !summaryTypeFilter[type] };
-    summaryTypeFilter = (!next.series && !next.variety) ? { series:true, variety:true } : next;
+    const other = type === 'series' ? 'variety' : 'series';
+    const isExclusivelyThis = summaryTypeFilter[type] && !summaryTypeFilter[other];
+    summaryTypeFilter = isExclusivelyThis ? { series:true, variety:true } : { [type]:true, [other]:false };
     refreshSlicerButtons();
     updateSummary();
-    if (document.getElementById('view-cast')?.classList.contains('active')) updateCastView();
+  }
+
+  function toggleCastType(type) {
+    const other = type === 'series' ? 'variety' : 'series';
+    const isExclusivelyThis = castTypeFilter[type] && !castTypeFilter[other];
+    castTypeFilter = isExclusivelyThis ? { series:true, variety:true } : { [type]:true, [other]:false };
+    refreshSlicerButtons();
+    updateCastView();
   }
 
   slicerSeriesBtn.addEventListener('click',  () => toggleSummaryType('series'));
   slicerVarietyBtn.addEventListener('click', () => toggleSummaryType('variety'));
-  castSlicerSeriesBtn?.addEventListener('click',  () => toggleSummaryType('series'));
-  castSlicerVarietyBtn?.addEventListener('click', () => toggleSummaryType('variety'));
+  castSlicerSeriesBtn?.addEventListener('click',  () => toggleCastType('series'));
+  castSlicerVarietyBtn?.addEventListener('click', () => toggleCastType('variety'));
 
 
   // ============================================================
@@ -3829,25 +3856,25 @@
   let selectedCast = null, selectedCastSource = null;
 
   function getTopCast(n) {
-    const summaryShows = getSummaryShows(), counts = {};
+    const summaryShows = getSummaryShows(castTypeFilter), counts = {};
     summaryShows.forEach(s => splitCast(s.cast).forEach(c => { if(!c) return; counts[c] = (counts[c]||0)+1; }));
     return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
   }
 
   function getTopCastLiked(n) {
-    const summaryShows = getSummaryShows(), counts = {};
+    const summaryShows = getSummaryShows(castTypeFilter), counts = {};
     summaryShows.filter(s=>s.liked).forEach(s => splitCast(s.cast).forEach(c => { if(!c) return; counts[c] = (counts[c]||0)+1; }));
     return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
   }
 
   function getCastLikedSet() {
-    const summaryShows = getSummaryShows(), set = new Set();
+    const summaryShows = getSummaryShows(castTypeFilter), set = new Set();
     summaryShows.filter(s=>s.liked).forEach(s => splitCast(s.cast).forEach(c => { if(c) set.add(c); }));
     return set;
   }
 
   function getUniqueCastCount() {
-    const summaryShows = getSummaryShows(), set = new Set();
+    const summaryShows = getSummaryShows(castTypeFilter), set = new Set();
     summaryShows.forEach(s => splitCast(s.cast).forEach(c => { if(c) set.add(c); }));
     return set.size;
   }
@@ -3860,7 +3887,7 @@
   // เลือกคนที่มี "สัดส่วนเรื่องที่ถูกใจ" (ถูกใจ/ทั้งหมด) สูงที่สุด ไม่ใช่แค่นับจำนวนถูกใจดิบๆ
   // (กันไม่ให้นักแสดงที่เล่นเรื่องเดียวแล้วถูกใจ ถูกจัดเป็นคนโปรดเหนือคนที่เล่น 30 เรื่อง ถูกใจ 15 เรื่อง)
   function getFavoriteCastActor() {
-    const summaryShows = getSummaryShows();
+    const summaryShows = getSummaryShows(castTypeFilter);
     const totalCounts = {}, likedCounts = {};
     summaryShows.forEach(s => {
       splitCast(s.cast).forEach(c => {
@@ -3916,7 +3943,7 @@
     const centerEl = document.getElementById('castRegularDonutCenter'), pctEl = document.getElementById('castRegularPct');
     const regularEl = document.getElementById('castRegularCount'), occasionalEl = document.getElementById('castOccasionalCount');
     if (!canvas) return;
-    const summaryShows = getSummaryShows(), totalCounts = {};
+    const summaryShows = getSummaryShows(castTypeFilter), totalCounts = {};
     summaryShows.forEach(s => splitCast(s.cast).forEach(c => { if(c) totalCounts[c] = (totalCounts[c]||0)+1; }));
     const allActors = Object.keys(totalCounts), total = allActors.length;
     if (typeof Chart === 'undefined' || !diaryLoaded || total === 0) {
@@ -3953,7 +3980,7 @@
     // การ์ดสรุป
     const uniqueCount = getUniqueCastCount();
     uniqueEl.textContent = uniqueCount;
-    uniqueSubEl.textContent = uniqueCount ? `จากทั้งหมด ${getSummaryShows().length} เรื่อง` : 'ยังไม่มีข้อมูลนักแสดง';
+    uniqueSubEl.textContent = uniqueCount ? `จากทั้งหมด ${getSummaryShows(castTypeFilter).length} เรื่อง` : 'ยังไม่มีข้อมูลนักแสดง';
 
     const favorite = getFavoriteCastActor();
     if (favorite) {
@@ -3985,7 +4012,7 @@
 
   // นักแสดงที่ดูมากที่สุด แยกถูกใจ(แดง)/เฉยๆ(เทา) เป็น stacked bar — เฉพาะคนที่เล่นอย่างน้อย MIN_CAST_SHOWS เรื่องขึ้นไป
   function getCastStackedData() {
-    const summaryShows = getSummaryShows();
+    const summaryShows = getSummaryShows(castTypeFilter);
     const totalCounts = {}, likedCounts = {};
     summaryShows.forEach(s => {
       splitCast(s.cast).forEach(c => {
@@ -4105,7 +4132,7 @@
     if (scrollWrap) scrollWrap.scrollTop = 0;
     if (!selectedCast) { tbody.innerHTML=''; titleEl.textContent='คลิกชื่อนักแสดงเพื่อดูรายชื่อเรื่อง'; if(scrollWrap) scrollWrap.hidden=true; return; }
     if (scrollWrap) scrollWrap.hidden = false;
-    const summaryShows = getSummaryShows();
+    const summaryShows = getSummaryShows(castTypeFilter);
     let list = summaryShows.filter(s => splitCast(s.cast).includes(selectedCast));
     if (selectedCastSource === 'liked') list = list.filter(s => s.liked);
     const suffix = selectedCastSource==='liked' ? ' (เฉพาะที่ถูกใจ)' : selectedCastSource==='underrated' ? ' (ยังไม่เคยถูกใจ)' : '';
