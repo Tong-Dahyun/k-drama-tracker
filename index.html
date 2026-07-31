@@ -2476,23 +2476,6 @@
           </div>
           <p class="chart-empty" id="castStackedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ</p>
         </div>
-
-        <!-- อันดับรอง: ถูกใจมากที่สุด + ดูบ่อยแต่ยังไม่เคยถูกใจ วางคู่กัน ความยาวใกล้เคียงกัน -->
-        <div class="chart-card">
-          <div class="genre-section-3">
-            <div class="genre-col">
-              <h3 class="genre-col-title">Top 10 นักแสดงที่ถูกใจมากที่สุด</h3>
-              <div class="databar-wrap always-visible" id="castDataBarLiked"></div>
-              <p class="chart-empty" id="castDataBarLikedEmpty" hidden>ยังไม่มีข้อมูลนักแสดง</p>
-            </div>
-            <div class="genre-col">
-              <h3 class="genre-col-title">ดูบ่อย แต่ยังไม่เคยติด "ถูกใจ"</h3>
-              <div class="databar-wrap always-visible" id="castUnderratedBar"></div>
-              <p class="chart-empty" id="castUnderratedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ หรือดูครบทุกคนที่ถูกใจแล้ว 🎉</p>
-            </div>
-          </div>
-          <p style="font-size:0.68rem; color:var(--text-dim); margin:10px 0 0;">*ทั้งสองอันดับนับเฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป</p>
-        </div>
       </section>
 
       <!-- Detail: Watched / Watchlist / Dropped -->
@@ -3878,18 +3861,6 @@
   // ============================================================
   let selectedCast = null, selectedCastSource = null;
 
-  function getTopCast(n) {
-    const summaryShows = getSummaryShows(castTypeFilter), counts = {};
-    summaryShows.forEach(s => splitCast(s.cast).forEach(c => { if(!c) return; counts[c] = (counts[c]||0)+1; }));
-    return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
-  }
-
-  function getTopCastLiked(n) {
-    const summaryShows = getSummaryShows(castTypeFilter), counts = {};
-    summaryShows.filter(s=>s.liked).forEach(s => splitCast(s.cast).forEach(c => { if(!c) return; counts[c] = (counts[c]||0)+1; }));
-    return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
-  }
-
   function getCastLikedSet() {
     const summaryShows = getSummaryShows(castTypeFilter), set = new Set();
     summaryShows.filter(s=>s.liked).forEach(s => splitCast(s.cast).forEach(c => { if(c) set.add(c); }));
@@ -3902,7 +3873,7 @@
     return set.size;
   }
 
-  // เกณฑ์ขั้นต่ำ: นักแสดงต้องเล่นอย่างน้อย 3 เรื่องขึ้นไป ถึงจะถูกนำมาคิด "คนโปรด" หรือ "underrated"
+  // เกณฑ์ขั้นต่ำ: นักแสดงต้องเล่นอย่างน้อย 3 เรื่องขึ้นไป ถึงจะถูกนำมาคิด "คนโปรด"
   // กันไม่ให้นักแสดงที่โผล่แค่ 1 เรื่องแล้วบังเอิญถูกใจ/ไม่ถูกใจ ติดอันดับทั้งที่ข้อมูลยังน้อยเกินไปจะสรุปได้
   const MIN_CAST_SHOWS = 3;
 
@@ -3924,13 +3895,6 @@
       .map(c => ({ name:c, liked:likedCounts[c], total:totalCounts[c], ratio: likedCounts[c]/totalCounts[c] }))
       .sort((a,b) => b.ratio - a.ratio || b.liked - a.liked);
     return candidates.length ? candidates[0] : null;
-  }
-
-  // "ดูบ่อยแต่ยังไม่เคยถูกใจ" = นักแสดงที่เล่นอย่างน้อย MIN_CAST_SHOWS เรื่องขึ้นไป แต่ไม่เคยติด "ถูกใจ" เลยสักเรื่อง
-  function getUnderratedCast(n) {
-    const topWatched = getTopCast(50).filter(([,count]) => count >= MIN_CAST_SHOWS);
-    const likedSet = getCastLikedSet();
-    return topWatched.filter(([actor]) => !likedSet.has(actor)).slice(0, n);
   }
 
   let castLikedRateDonutInstance = null;
@@ -3995,8 +3959,6 @@
     if (!diaryLoaded) {
       uniqueEl.textContent = '…'; uniqueSubEl.textContent = 'กำลังโหลดข้อมูล...';
       favNameEl.textContent = '…'; favSubEl.textContent = '';
-      document.getElementById('castDataBarLiked').innerHTML = '';
-      document.getElementById('castUnderratedBar').innerHTML = '';
       return;
     }
 
@@ -4015,22 +3977,10 @@
       favSubEl.textContent = `ยังไม่มีนักแสดงที่เล่นครบ ${MIN_CAST_SHOWS} เรื่องขึ้นไป`;
     }
 
-    renderCastBars();
     renderCastTable();
-    renderCastUnderrated();
     renderCastStackedChart();
     renderCastLikedRateDonut();
     renderCastRegularDonut();
-  }
-
-  function renderCastBars() {
-    const top10Liked = getTopCastLiked(10);
-    renderSingleCastBar('castDataBarLiked', 'castDataBarLikedEmpty', top10Liked, '#46D369', 'liked');
-  }
-
-  function renderCastUnderrated() {
-    const underrated = getUnderratedCast(8);
-    renderSingleCastBar('castUnderratedBar', 'castUnderratedEmpty', underrated, '#E6A817', 'underrated');
   }
 
   // นักแสดงที่ดูมากที่สุด แยกถูกใจ(แดง)/เฉยๆ(เทา) เป็น stacked bar — เฉพาะคนที่เล่นอย่างน้อย MIN_CAST_SHOWS เรื่องขึ้นไป
@@ -4120,44 +4070,6 @@
           y: { stacked: true, beginAtZero:true, ticks: { color:'#B3B3B3', precision:0 }, grid:{color:'rgba(255,255,255,0.06)'} }
         }
       }
-    });
-  }
-
-  function renderSingleCastBar(containerId, emptyId, data, color, source) {
-    const wrap = document.getElementById(containerId), emptyEl = document.getElementById(emptyId);
-    if (!wrap) return;
-    if (!data.length) { wrap.innerHTML = ''; if(emptyEl) emptyEl.hidden = false; return; }
-    if (emptyEl) emptyEl.hidden = true;
-    const maxVal = data[0][1];
-    const selectedClass = source==='watched' ? 'selected' : source==='liked' ? 'selected-liked' : 'selected-underrated';
-    wrap.innerHTML = data.map(([cast, count]) => {
-      const pct = Math.round((count / maxVal) * 100);
-      const isSelected = selectedCast === cast && selectedCastSource === source;
-      return `<div class="databar-row ${isSelected ? selectedClass : ''}" data-cast="${cast}" data-source="${source}">
-        <span class="databar-label" title="${cast}">${cast}</span>
-        <div class="databar-bar-wrap">
-          <div class="databar-bar" style="width:${pct}%; background:${color};opacity:${isSelected?1:0.7};"></div>
-        </div>
-        <span class="databar-value">${count}</span>
-      </div>`;
-    }).join('');
-
-    wrap.querySelectorAll('.databar-row').forEach(row => {
-      row.addEventListener('click', () => {
-        const cast = row.dataset.cast;
-        const src = row.dataset.source;
-        if (selectedCast === cast && selectedCastSource === src) {
-          selectedCast = null; selectedCastSource = null;
-        } else {
-          selectedCast = cast; selectedCastSource = src;
-        }
-        renderCastTable();
-        renderCastBars();
-        renderCastUnderrated();
-        if (selectedCast) {
-          document.getElementById('castTableTitle')?.scrollIntoView({behavior:'smooth', block:'center'});
-        }
-      });
     });
   }
 
