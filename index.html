@@ -2924,9 +2924,10 @@
   }
 
   function rowToDropped(row) {
+    const typeRaw = (row['ประเภท'] || '').trim().toLowerCase();
     return {
       title: (row['Series Name'] || row['ชื่อเรื่อง'] || '').trim(),
-      type: 'series',
+      type: (typeRaw === 'วาไรตี้' || typeRaw === 'variety') ? 'variety' : 'series',
       year: Number(row['ปีที่ออกอากาศ']) || '',
       episodes: Number(row['จำนวนตอน']) || 0,
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
@@ -3253,7 +3254,7 @@
         : (s.episodes ? `0 / ${s.episodes} ตอน` : '');
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-type dropped">ดรอป</span>
+          <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
           <button class="card-menu-btn" data-title="${s.title}">⋮</button>
           <div class="card-menu" hidden>
             <button class="menu-edit edit-dropped-btn" data-title="${s.title}">แก้ไข</button>
@@ -3473,7 +3474,7 @@
   // ============================================================
   // Nav
   // ============================================================
-  navItems.forEach(tab => tab.addEventListener('click', () => {
+  navItems.forEach(tab => tab.addEventListener('click', async () => {
     navItems.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     window.scrollTo(0,0);
@@ -3484,6 +3485,7 @@
       updateSummary();
     } else if (tab.dataset.nav === 'cast') {
       document.getElementById('view-cast').classList.add('active');
+      if (!droppedLoaded) await loadDropped();
       updateCastView();
     } else if (tab.dataset.nav === 'mode') {
       document.getElementById('view-mode').classList.add('active');
@@ -3983,8 +3985,17 @@
     renderCastRegularDonut();
   }
 
-  // นักแสดงที่ดูมากที่สุด แยกถูกใจ(แดง)/เฉยๆ(เทา) เป็น stacked bar — เฉพาะคนที่เล่นอย่างน้อย MIN_CAST_SHOWS เรื่องขึ้นไป
+  // นักแสดงที่ดูมากที่สุด แยกถูกใจ(แดง)/เฉยๆ(เทา)/Watchlist(เขียว)/Dropped(ส้ม) เป็น stacked bar
+  // เกณฑ์ขั้นต่ำ (MIN_CAST_SHOWS) และการเรียงลำดับ นับจากฝั่ง Watched เท่านั้น — Watchlist/Dropped เป็นแค่ข้อมูลเสริมที่บวกเพิ่มให้คนที่ผ่านเกณฑ์แล้ว
   let castStackedSortMode = 'total'; // 'total' = เรียงตามจำนวนเรื่องรวม, 'liked' = เรียงตามจำนวนที่ถูกใจ (ถูกใจเท่ากัน ใช้จำนวนรวมตัดสิน)
+
+  function countCastAppearances(list) {
+    const counts = {};
+    list.filter(s => castTypeFilter[s.type]).forEach(s => {
+      splitCast(s.cast).forEach(c => { if (c) counts[c] = (counts[c]||0)+1; });
+    });
+    return counts;
+  }
 
   function getCastStackedData() {
     const summaryShows = getSummaryShows(castTypeFilter);
@@ -3996,9 +4007,18 @@
         if (s.liked) likedCounts[c] = (likedCounts[c]||0)+1;
       });
     });
+    const watchlistCounts = countCastAppearances(pending);
+    const droppedCounts = countCastAppearances(dropped);
     const list = Object.keys(totalCounts)
       .filter(c => totalCounts[c] >= MIN_CAST_SHOWS)
-      .map(c => ({ name:c, total:totalCounts[c], liked:likedCounts[c]||0, neutral: totalCounts[c]-(likedCounts[c]||0) }));
+      .map(c => ({
+        name:c,
+        total:totalCounts[c],
+        liked:likedCounts[c]||0,
+        neutral: totalCounts[c]-(likedCounts[c]||0),
+        watchlist: watchlistCounts[c]||0,
+        droppedCount: droppedCounts[c]||0
+      }));
     if (castStackedSortMode === 'liked') {
       list.sort((a,b) => b.liked - a.liked || b.total - a.total);
     } else {
@@ -4018,7 +4038,7 @@
     const noteEl = document.getElementById('castStackedNote');
     if (noteEl) {
       const sortLabel = castStackedSortMode === 'liked' ? 'จำนวนที่ถูกใจมากไปน้อย (ถูกใจเท่ากันเรียงตามจำนวนเรื่องรวม)' : 'จำนวนเรื่องรวมมากไปน้อย';
-      noteEl.textContent = `*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงตาม${sortLabel} เลื่อนดูคนถัดไปได้ — คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน`;
+      noteEl.textContent = `*เฉพาะนักแสดงที่ดู (Watched) อย่างน้อย 3 เรื่องขึ้นไป เรียงตาม${sortLabel} — สีเขียว/ส้มคือจำนวนเรื่องใน Watchlist/Dropped ของนักแสดงคนนั้นเพิ่มเติม เลื่อนดูคนถัดไปได้ คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน`;
     }
 
     if (!data.length) {
@@ -4036,6 +4056,8 @@
     const labels = data.map(d => d.name);
     const likedData = data.map(d => d.liked);
     const neutralData = data.map(d => d.neutral);
+    const watchlistData = data.map(d => d.watchlist);
+    const droppedData = data.map(d => d.droppedCount);
 
     if (castStackedChartInstance) castStackedChartInstance.destroy();
     castStackedChartInstance = new Chart(canvas.getContext('2d'), {
@@ -4044,7 +4066,9 @@
         labels,
         datasets: [
           { label: 'ถูกใจ', data: likedData, backgroundColor: '#E50914', hoverBackgroundColor: '#ff1a26', stack: 'cast', maxBarThickness: 32 },
-          { label: 'เฉยๆ', data: neutralData, backgroundColor: '#4A4A4A', hoverBackgroundColor: '#5c5c5c', stack: 'cast', borderRadius: {topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}, maxBarThickness: 32 }
+          { label: 'เฉยๆ', data: neutralData, backgroundColor: '#4A4A4A', hoverBackgroundColor: '#5c5c5c', stack: 'cast', maxBarThickness: 32 },
+          { label: 'Watchlist', data: watchlistData, backgroundColor: '#46D369', hoverBackgroundColor: '#5fe081', stack: 'cast', maxBarThickness: 32 },
+          { label: 'Dropped', data: droppedData, backgroundColor: '#F97316', hoverBackgroundColor: '#ff8c3d', stack: 'cast', borderRadius: {topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}, maxBarThickness: 32 }
         ]
       },
       options: {
@@ -4080,13 +4104,25 @@
     if (scrollWrap) scrollWrap.scrollTop = 0;
     if (!selectedCast) { tbody.innerHTML=''; titleEl.textContent='คลิกชื่อนักแสดงเพื่อดูรายชื่อเรื่อง'; if(scrollWrap) scrollWrap.hidden=true; return; }
     if (scrollWrap) scrollWrap.hidden = false;
-    const summaryShows = getSummaryShows(castTypeFilter);
-    let list = summaryShows.filter(s => splitCast(s.cast).includes(selectedCast));
+
+    const watchedList   = getSummaryShows(castTypeFilter).filter(s => splitCast(s.cast).includes(selectedCast));
+    const watchlistList = pending.filter(s => castTypeFilter[s.type] && splitCast(s.cast).includes(selectedCast));
+    const droppedList   = dropped.filter(s => castTypeFilter[s.type] && splitCast(s.cast).includes(selectedCast));
+
+    let list = watchedList;
     if (selectedCastSource === 'liked') list = list.filter(s => s.liked);
     const suffix = selectedCastSource==='liked' ? ' (เฉพาะที่ถูกใจ)' : selectedCastSource==='underrated' ? ' (ยังไม่เคยถูกใจ)' : '';
-    titleEl.textContent = `${selectedCast} — ${list.length} เรื่อง${suffix}`;
-    if (!list.length) { tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่อง</td></tr>'; return; }
-    tbody.innerHTML = list.map(s => `<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.liked ? '<span class="liked-tag liked">♥ ชอบ</span>' : '<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
+
+    const totalCount = list.length + watchlistList.length + droppedList.length;
+    titleEl.textContent = `${selectedCast} — ${totalCount} เรื่อง${suffix}`;
+    if (!totalCount) { tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่อง</td></tr>'; return; }
+
+    const rowHtml = (s, feelingHtml) => `<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${feelingHtml}</td></tr>`;
+
+    tbody.innerHTML =
+      list.map(s => rowHtml(s, s.liked ? '<span class="liked-tag liked">♥ ชอบ</span>' : '<span class="liked-tag neutral">♡ เฉยๆ</span>')).join('') +
+      watchlistList.map(s => rowHtml(s, '<span class="liked-tag neutral">Watchlist</span>')).join('') +
+      droppedList.map(s => rowHtml(s, '<span class="liked-tag neutral">Dropped</span>')).join('');
   }
 
   // ============================================================
