@@ -638,6 +638,7 @@
   .liked-tag.liked   { color: var(--mint); }
   .liked-tag.neutral { color: var(--text-dim); }
   .liked-tag.dropped { color: var(--amber); }
+  .liked-tag.watchlist { color: var(--mint); }
 
   .donut-card { display: flex; flex-direction: column; min-width: 0; }
 
@@ -4121,8 +4122,8 @@
 
     tbody.innerHTML =
       list.map(s => rowHtml(s, s.liked ? '<span class="liked-tag liked">♥ ชอบ</span>' : '<span class="liked-tag neutral">♡ เฉยๆ</span>')).join('') +
-      watchlistList.map(s => rowHtml(s, '<span class="liked-tag neutral">Watchlist</span>')).join('') +
-      droppedList.map(s => rowHtml(s, '<span class="liked-tag neutral">Dropped</span>')).join('');
+      watchlistList.map(s => rowHtml(s, '<span class="liked-tag watchlist">Watchlist</span>')).join('') +
+      droppedList.map(s => rowHtml(s, '<span class="liked-tag dropped">Dropped</span>')).join('');
   }
 
   // ============================================================
