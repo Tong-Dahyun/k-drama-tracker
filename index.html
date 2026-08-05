@@ -3286,18 +3286,18 @@
     const page  = tag.dataset.page;
 
     if (page === 'diary') {
-      activeGenre = genre;
-      genreFilter.value = genre;
+      activeGenre = (activeGenre === genre) ? 'all' : genre;
+      genreFilter.value = activeGenre;
       currentPage = 1;
       render();
     } else if (page === 'watchlist') {
-      activeGenrePending = genre;
-      genreFilterPending.value = genre;
+      activeGenrePending = (activeGenrePending === genre) ? 'all' : genre;
+      genreFilterPending.value = activeGenrePending;
       currentPagePending = 1;
       renderPending();
     } else if (page === 'dropped') {
-      activeGenreDropped = genre;
-      genreFilterDropped.value = genre;
+      activeGenreDropped = (activeGenreDropped === genre) ? 'all' : genre;
+      genreFilterDropped.value = activeGenreDropped;
       currentPageDropped = 1;
       renderDropped();
     }
@@ -3315,11 +3315,11 @@
     const page = castTag.dataset.page;
 
     if (page === 'diary') {
-      activeCast = cast; currentPage = 1; render();
+      activeCast = (activeCast === cast) ? 'all' : cast; currentPage = 1; render();
     } else if (page === 'watchlist') {
-      activeCastPending = cast; currentPagePending = 1; renderPending();
+      activeCastPending = (activeCastPending === cast) ? 'all' : cast; currentPagePending = 1; renderPending();
     } else if (page === 'dropped') {
-      activeCastDropped = cast; currentPageDropped = 1; renderDropped();
+      activeCastDropped = (activeCastDropped === cast) ? 'all' : cast; currentPageDropped = 1; renderDropped();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
