@@ -46,48 +46,6 @@
     --text-dim: #888888;
   }
 
-  /* ---------- VIU mode — โทนเขียวมิ้นท์/ฟ้าอมเขียวแบบ VIU ---------- */
-  body.viu-mode {
-    --bg: #0A1918;
-    --surface: #142825;
-    --surface-soft: #1D3733;
-    --border: #2E4A45;
-    --red: #00C9B7;
-    --red-soft: rgba(0,201,183,0.16);
-    --red-muted: rgba(0,201,183,0.32);
-    --text: #FFFFFF;
-    --text-soft: #9FC4BE;
-    --text-dim: #5E8A83;
-  }
-
-  /* ---------- Disney+ mode — โทนกรมท่าเข้มแบบ Disney+ ---------- */
-  body.disney-mode {
-    --bg: #040714;
-    --surface: #0E1626;
-    --surface-soft: #16213A;
-    --border: #253758;
-    --red: #0F7BFF;
-    --red-soft: rgba(15,123,255,0.16);
-    --red-muted: rgba(15,123,255,0.32);
-    --text: #FFFFFF;
-    --text-soft: #9FB0D4;
-    --text-dim: #5E6E93;
-  }
-
-  /* ---------- iQIYI mode — โทนเขียวสดแบบ iQIYI ---------- */
-  body.iqiyi-mode {
-    --bg: #121212;
-    --surface: #1C1C1C;
-    --surface-soft: #272727;
-    --border: #3A3A3A;
-    --red: #00C853;
-    --red-soft: rgba(0,200,83,0.16);
-    --red-muted: rgba(0,200,83,0.32);
-    --text: #FFFFFF;
-    --text-soft: #B0B0B0;
-    --text-dim: #757575;
-  }
-
   /* smooth transition เมื่อสลับ mode */
   body, .sidebar, .ticket, .chart-card, .summary-card,
   .modal-box, .card-menu, .sort-select, .search-box,
@@ -2162,9 +2120,6 @@
 
   .mode-preview-dark  { background: #141414; }
   .mode-preview-light { background: #F4F4F4; border: 1px solid #D4D4D4; }
-  .mode-preview-viu    { background: #0A1918; }
-  .mode-preview-disney { background: #040714; }
-  .mode-preview-iqiyi  { background: #121212; }
 
   .mode-preview-bar {
     height: 8px;
@@ -2174,9 +2129,6 @@
 
   .mode-preview-dark  .mode-preview-bar  { background: #E50914; }
   .mode-preview-light .mode-preview-bar  { background: #E50914; }
-  .mode-preview-viu    .mode-preview-bar { background: #00C9B7; }
-  .mode-preview-disney .mode-preview-bar { background: #0F7BFF; }
-  .mode-preview-iqiyi  .mode-preview-bar { background: #00C853; }
 
   .mode-preview-card {
     height: 20px;
@@ -2185,9 +2137,6 @@
 
   .mode-preview-dark  .mode-preview-card { background: #1F1F1F; }
   .mode-preview-light .mode-preview-card { background: #FFFFFF; border: 1px solid #D4D4D4; }
-  .mode-preview-viu    .mode-preview-card { background: #142825; }
-  .mode-preview-disney .mode-preview-card { background: #0E1626; }
-  .mode-preview-iqiyi  .mode-preview-card { background: #1C1C1C; }
 
   .mode-card-label {
     display: flex;
@@ -2635,39 +2584,6 @@
             <div class="mode-card-label">
               <span class="mode-card-name">☀️ Light Mode</span>
               <span class="mode-card-check" id="modeLightCheck"></span>
-            </div>
-          </button>
-          <button class="mode-card" id="modeViuBtn">
-            <div class="mode-preview mode-preview-viu">
-              <div class="mode-preview-bar"></div>
-              <div class="mode-preview-card"></div>
-              <div class="mode-preview-card"></div>
-            </div>
-            <div class="mode-card-label">
-              <span class="mode-card-name">🟢 VIU</span>
-              <span class="mode-card-check" id="modeViuCheck"></span>
-            </div>
-          </button>
-          <button class="mode-card" id="modeDisneyBtn">
-            <div class="mode-preview mode-preview-disney">
-              <div class="mode-preview-bar"></div>
-              <div class="mode-preview-card"></div>
-              <div class="mode-preview-card"></div>
-            </div>
-            <div class="mode-card-label">
-              <span class="mode-card-name">🔵 Disney+</span>
-              <span class="mode-card-check" id="modeDisneyCheck"></span>
-            </div>
-          </button>
-          <button class="mode-card" id="modeIqiyiBtn">
-            <div class="mode-preview mode-preview-iqiyi">
-              <div class="mode-preview-bar"></div>
-              <div class="mode-preview-card"></div>
-              <div class="mode-preview-card"></div>
-            </div>
-            <div class="mode-card-label">
-              <span class="mode-card-name">🍏 iQIYI</span>
-              <span class="mode-card-check" id="modeIqiyiCheck"></span>
             </div>
           </button>
         </div>
@@ -5115,30 +5031,24 @@
   // Dark / Light mode
   // ============================================================
   const MODE_KEY = 'ktracker_mode';
-  const MODE_CLASSES = { dark: '', light: 'light-mode', viu: 'viu-mode', disney: 'disney-mode', iqiyi: 'iqiyi-mode' };
 
   function applyMode(mode) {
-    if (!(mode in MODE_CLASSES)) mode = 'dark';
-    Object.values(MODE_CLASSES).forEach(cls => { if (cls) document.body.classList.remove(cls); });
-    if (MODE_CLASSES[mode]) document.body.classList.add(MODE_CLASSES[mode]);
+    document.body.classList.toggle('light-mode', mode === 'light');
     try { localStorage.setItem(MODE_KEY, mode); } catch(e) {}
     updateModeCards();
   }
 
   function updateModeCards() {
-    let current = 'dark';
-    for (const [mode, cls] of Object.entries(MODE_CLASSES)) {
-      if (cls && document.body.classList.contains(cls)) { current = mode; break; }
-    }
-    const btnMap = { dark:'modeDarkBtn', light:'modeLightBtn', viu:'modeViuBtn', disney:'modeDisneyBtn', iqiyi:'modeIqiyiBtn' };
-    const checkMap = { dark:'modeDarkCheck', light:'modeLightCheck', viu:'modeViuCheck', disney:'modeDisneyCheck', iqiyi:'modeIqiyiCheck' };
-    const darkBtn = document.getElementById('modeDarkBtn');
+    const isLight = document.body.classList.contains('light-mode');
+    const darkBtn    = document.getElementById('modeDarkBtn');
+    const lightBtn   = document.getElementById('modeLightBtn');
+    const darkCheck  = document.getElementById('modeDarkCheck');
+    const lightCheck = document.getElementById('modeLightCheck');
     if (!darkBtn) return;
-    Object.keys(btnMap).forEach(mode => {
-      const btn = document.getElementById(btnMap[mode]), check = document.getElementById(checkMap[mode]);
-      if (btn) btn.classList.toggle('active', mode === current);
-      if (check) check.textContent = mode === current ? '✓' : '';
-    });
+    darkBtn.classList.toggle('active', !isLight);
+    lightBtn.classList.toggle('active', isLight);
+    darkCheck.textContent  = !isLight ? '✓' : '';
+    lightCheck.textContent =  isLight ? '✓' : '';
   }
 
   // restore mode จาก localStorage
@@ -5149,9 +5059,6 @@
 
   document.getElementById('modeDarkBtn')?.addEventListener('click',  () => applyMode('dark'));
   document.getElementById('modeLightBtn')?.addEventListener('click', () => applyMode('light'));
-  document.getElementById('modeViuBtn')?.addEventListener('click',    () => applyMode('viu'));
-  document.getElementById('modeDisneyBtn')?.addEventListener('click', () => applyMode('disney'));
-  document.getElementById('modeIqiyiBtn')?.addEventListener('click',  () => applyMode('iqiyi'));
 
   // ============================================================
   // Synopsis Modal — อ่านจากคอลัมน์ "เรื่องย่อ" ใน Google Sheet
