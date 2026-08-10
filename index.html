@@ -4474,7 +4474,7 @@
       }
 
       const maxNo = shows.reduce((m,s) => Math.max(m, s.no||0), 0);
-      shows = [{ ...entry, liked, no: maxNo + 1 }, ...shows];
+      shows = [{ ...entry, liked, no: maxNo + 1, watchedDate: new Date() }, ...shows];
       usingFallback = false; diaryLoaded = true;
       populateFilters(); render(); updateStats();
       showToast(`ย้าย "${entry.title}" ไป Watched แล้ว ${liked ? '♥' : '♡'}`);
