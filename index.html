@@ -2187,9 +2187,6 @@
 .podium-title { margin:12px 0 0; font-weight:700; font-size:0.92rem; line-height:1.3; max-width:100%; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; }
 .podium-card.p1 .podium-title { font-size:1.02rem; }
 .podium-meta { margin:3px 0 0; font-size:0.7rem; color:var(--text-dim); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.podium-score { margin-top:8px; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.7rem; line-height:1; color:var(--medal); }
-.podium-score small { font-size:0.75rem; color:var(--text-dim); margin-left:2px; }
-.podium-card.p1 .podium-score { font-size:2.1rem; }
 
 .top-list-card { margin-top:22px; }
 .top-list-card[hidden] { display:none; }
@@ -2204,10 +2201,6 @@
 .top-series-info { flex:1; min-width:0; }
 .top-series-title { margin:0; font-weight:700; font-size:0.92rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .top-series-meta { margin:2px 0 0; font-size:0.72rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.top-series-bar { height:5px; margin-top:7px; border-radius:99px; background:rgba(128,128,128,0.2); overflow:hidden; }
-.top-series-bar > span { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#B80000,#FF4040); }
-.top-series-score { flex:0 0 64px; text-align:right; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.4rem; color:var(--red); letter-spacing:.5px; }
-.top-series-score small { font-size:0.7rem; color:var(--text-dim); margin-left:1px; }
 @media (max-width:700px) {
   .top-stats { grid-template-columns:1fr; gap:8px; }
   .top-stat { padding:10px 14px; }
@@ -2217,8 +2210,6 @@
   .podium-title { font-size:0.74rem; }
   .podium-card.p1 .podium-title { font-size:0.82rem; }
   .podium-meta { display:none; }
-  .podium-score { font-size:1.3rem; }
-  .podium-card.p1 .podium-score { font-size:1.6rem; }
   .podium-medal { width:28px; height:28px; top:-13px; font-size:1.1rem; }
   .top-series-item { gap:10px; padding:8px 10px; }
   .top-series-rank { flex-basis:26px; font-size:1.35rem; }
@@ -2466,19 +2457,19 @@
         <div class="top-hero">
           <div>
             <h2 class="top-hero-title">My Top 10</h2>
-            <p class="top-hero-sub">ซีรีส์ที่ชอบที่สุด เรียงตามคะแนนที่ให้ · คะแนนเท่ากันให้เรื่องที่ดูจบล่าสุดขึ้นก่อน</p>
+            <p class="top-hero-sub">ซีรีส์ที่ชอบที่สุด 10 เรื่อง เรียงตามอันดับที่คุณกำหนดในชีต</p>
           </div>
         </div>
         <div class="top-stats">
-          <div class="top-stat"><p class="summary-label">ซีรีส์ที่ให้คะแนนแล้ว</p><p class="top-stat-value" id="topStatRated">—</p></div>
-          <div class="top-stat"><p class="summary-label">คะแนนเฉลี่ย Top 10</p><p class="top-stat-value" id="topStatAvg">—</p></div>
-          <div class="top-stat"><p class="summary-label">แนวที่พบบ่อยใน Top 10</p><p class="top-stat-value top-stat-text" id="topStatGenre">—</p><p class="summary-sub" id="topStatGenreSub"></p></div>
+          <div class="top-stat"><p class="summary-label">จัดอันดับแล้ว</p><p class="top-stat-value" id="topStatRated">—</p></div>
+          <div class="top-stat"><p class="summary-label">ปีที่พบบ่อยใน My Top 10</p><p class="top-stat-value" id="topStatYear">—</p><p class="summary-sub" id="topStatYearSub"></p></div>
+          <div class="top-stat"><p class="summary-label">แนวที่พบบ่อยใน My Top 10</p><p class="top-stat-value top-stat-text" id="topStatGenre">—</p><p class="summary-sub" id="topStatGenreSub"></p></div>
         </div>
         <div class="top-podium" id="topPodium"></div>
         <div class="chart-card top-list-card" id="topListCard">
           <ol class="top-series-list" id="topSeriesList"></ol>
         </div>
-        <p class="chart-empty" id="topSeriesEmpty" hidden>ยังไม่มีซีรีส์ที่ใส่คะแนน — เพิ่มคอลัมน์ "คะแนน" ในชีต Series แล้วใส่ตัวเลข 1-10 ได้เลย</p>
+        <p class="chart-empty" id="topSeriesEmpty" hidden>ยังไม่มีซีรีส์ที่จัดอันดับ — เพิ่มคอลัมน์ "อันดับ" ในชีต Series แล้วใส่เลข 1-10 ได้เลย</p>
       </section>
 
       <!-- Cast -->
@@ -2787,7 +2778,7 @@
             <div class="form-field"><label for="editEpisodes">จำนวนตอน</label><input type="number" id="editEpisodes" min="0"></div>
             <div class="form-field"><label for="editPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editPoster" placeholder="https://..."></div>
             <div class="form-checkbox" id="editLikedRow"><input type="checkbox" id="editLiked"><label for="editLiked">ชอบเรื่องนี้</label></div>
-            <div class="form-field" id="editScoreRow"><label for="editScore">คะแนน (1-10, ใช้จัดอันดับ Top 10 ซีรีส์)</label><input type="number" id="editScore" min="0" max="10" step="0.5" placeholder="เว้นว่างถ้าไม่ให้คะแนน"></div>
+            <div class="form-field" id="editRankRow"><label for="editRank">อันดับ My Top 10 (1-10)</label><input type="number" id="editRank" min="1" max="10" step="1" placeholder="เว้นว่างถ้าไม่อยู่ใน Top 10"></div>
             <div class="form-checkbox" id="editFinishedRow"><input type="checkbox" id="editFinished"><label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
           </div>
           <div class="edit-form-right">
@@ -3002,7 +2993,7 @@
       liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE',
       no: Number(row['No.'] || row['ลำดับ']) || 0,
       watchedDate: parseSheetDate(row['วันที่ดูจบ'] || row['วันที่จบ'] || ''),
-      score: parseFloat(row['คะแนน']) || 0,
+      rank: (() => { const r = parseInt(row['อันดับ'], 10); return (r >= 1 && r <= 10) ? r : 0; })(),
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
       cast: (row['นักแสดง'] || '').trim()
@@ -3893,7 +3884,7 @@
     } catch(err){canvas.hidden=true;emptyMsg.hidden=false;}
   }
 
-  // Top 10 Series — เฉพาะ Series ที่ใส่ "คะแนน" (โพเดียม 3 อันดับแรก + รายการอันดับ 4-10)
+  // My Top 10 — เฉพาะ Series ที่ใส่ "อันดับ" (1-10) (โพเดียม 3 อันดับแรก + รายการอันดับ 4-10)
   function posterFallbackEl(title) {
     const d=document.createElement('div'); d.className='poster-fallback';
     d.textContent=(title||'?').trim().charAt(0).toUpperCase(); return d;
@@ -3906,25 +3897,24 @@
     }
     return posterFallbackEl(show.title);
   }
-  function scoreEl(cls, score) {
-    const sc=document.createElement('span'); sc.className=cls; sc.textContent=String(score);
-    const small=document.createElement('small'); small.textContent='/10'; sc.appendChild(small); return sc;
-  }
   function renderTopSeries() {
     const list=document.getElementById('topSeriesList'), podium=document.getElementById('topPodium'), empty=document.getElementById('topSeriesEmpty');
     if(!list||!podium) return;
     list.innerHTML=''; podium.innerHTML='';
-    const rated=shows.filter(s=>s.type==='series' && s.score>0);
-    const ranked=rated.slice().sort((a,b)=>{
-        if(b.score!==a.score) return b.score-a.score;
+    // เรียงตามคอลัมน์ "อันดับ" (1 = ดีที่สุด) — ถ้าเลขซ้ำให้เรื่องที่ดูจบล่าสุดขึ้นก่อน
+    const ranked=shows.filter(s=>s.type==='series' && s.rank>0).sort((a,b)=>{
+        if(a.rank!==b.rank) return a.rank-b.rank;
         const aT=a.watchedDate instanceof Date?a.watchedDate.getTime():0, bT=b.watchedDate instanceof Date?b.watchedDate.getTime():0;
         if(bT!==aT) return bT-aT;
         return (b.no||0)-(a.no||0);
       }).slice(0,10);
 
     // สถิติสรุป
-    document.getElementById('topStatRated').textContent = diaryLoaded ? rated.length : '…';
-    document.getElementById('topStatAvg').textContent = ranked.length ? (ranked.reduce((t,s)=>t+s.score,0)/ranked.length).toFixed(1) : '—';
+    document.getElementById('topStatRated').textContent = diaryLoaded ? `${ranked.length}/10` : '…';
+    const yc={}; ranked.forEach(s=>{ if(s.year) yc[s.year]=(yc[s.year]||0)+1; });
+    const topY=Object.entries(yc).sort((a,b)=>b[1]-a[1]||b[0]-a[0])[0];
+    document.getElementById('topStatYear').textContent = topY ? topY[0] : '—';
+    document.getElementById('topStatYearSub').textContent = topY ? `${topY[1]} จาก ${ranked.length} เรื่อง` : '';
     const gc={}; ranked.forEach(s=>s.genres.forEach(g=>{gc[g]=(gc[g]||0)+1;}));
     const topG=Object.entries(gc).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
     document.getElementById('topStatGenre').textContent = topG ? topG[0] : '—';
@@ -3933,29 +3923,27 @@
     empty.hidden = ranked.length>0 || !diaryLoaded;
     document.getElementById('topListCard').hidden = ranked.length<=3;
 
-    // โพเดียม
+    // โพเดียม (อันดับที่แสดงคือลำดับหลังเรียง — ถ้ายังไม่ครบ 10 เรื่องก็เรียงต่อกันไป)
     ranked.slice(0,3).forEach((s,i)=>{
       const card=document.createElement('div'); card.className='podium-card p'+(i+1); card.dataset.title=s.title;
-      const medal=document.createElement('span'); medal.className='podium-medal'; medal.textContent=i+1;
+      const medal=document.createElement('span'); medal.className='podium-medal'; medal.textContent=s.rank;
       const pw=document.createElement('div'); pw.className='podium-poster'; pw.appendChild(posterEl(s));
       const t=document.createElement('p'); t.className='podium-title'; t.textContent=s.title;
       const m=document.createElement('p'); m.className='podium-meta'; m.textContent=[s.year,s.genres.slice(0,2).join(' · ')].filter(Boolean).join(' · ');
-      card.append(medal,pw,t,m,scoreEl('podium-score',s.score));
+      card.append(medal,pw,t,m);
       podium.appendChild(card);
     });
 
     // อันดับ 4-10
-    ranked.slice(3).forEach((s,i)=>{
+    ranked.slice(3).forEach(s=>{
       const li=document.createElement('li'); li.className='top-series-item'; li.dataset.title=s.title;
-      const rank=document.createElement('span'); rank.className='top-series-rank'; rank.textContent=i+4;
+      const rank=document.createElement('span'); rank.className='top-series-rank'; rank.textContent=s.rank;
       const pw=document.createElement('span'); pw.className='top-series-poster'; pw.appendChild(posterEl(s));
       const info=document.createElement('div'); info.className='top-series-info';
       const t=document.createElement('p'); t.className='top-series-title'; t.textContent=s.title;
       const m=document.createElement('p'); m.className='top-series-meta'; m.textContent=[s.year,s.genres.slice(0,3).join(' · ')].filter(Boolean).join(' · ');
-      const bar=document.createElement('div'); bar.className='top-series-bar';
-      const fill=document.createElement('span'); fill.style.width=Math.min(100,Math.max(0,s.score*10))+'%'; bar.appendChild(fill);
-      info.append(t,m,bar);
-      li.append(rank,pw,info,scoreEl('top-series-score',s.score));
+      info.append(t,m);
+      li.append(rank,pw,info);
       list.appendChild(li);
     });
   }
@@ -4761,9 +4749,9 @@
     document.getElementById('editEpisodes').value=entry.episodes||'';
     document.getElementById('editSynopsis').value=entry.synopsis||'';
     document.getElementById('editPoster').value=entry.poster||'';
-    const editScoreRow=document.getElementById('editScoreRow');
-    if(source==='pending'){editLikedRow.style.display='none';editScoreRow.style.display='none';editFinishedRow.style.display='flex';document.getElementById('editFinished').checked=!!entry.finished;}
-    else{editLikedRow.style.display='flex';editScoreRow.style.display='';editFinishedRow.style.display='none';document.getElementById('editLiked').checked=!!entry.liked;document.getElementById('editScore').value=entry.score||'';}
+    const editRankRow=document.getElementById('editRankRow');
+    if(source==='pending'){editLikedRow.style.display='none';editRankRow.style.display='none';editFinishedRow.style.display='flex';document.getElementById('editFinished').checked=!!entry.finished;}
+    else{editLikedRow.style.display='flex';editRankRow.style.display='';editFinishedRow.style.display='none';document.getElementById('editLiked').checked=!!entry.liked;document.getElementById('editRank').value=entry.rank||'';}
     editFormStatus.textContent=''; editModalOverlay.hidden=false;
   }
 
@@ -4841,15 +4829,17 @@
     const finished=document.getElementById('editFinished').checked;
     const synopsisStr=document.getElementById('editSynopsis').value.trim();
     const posterStr=document.getElementById('editPoster').value.trim();
-    const scoreNum=parseFloat(document.getElementById('editScore').value)||0;
+    const rankRaw=parseInt(document.getElementById('editRank').value,10);
+    const rankNum=(rankRaw>=1&&rankRaw<=10)?rankRaw:0;
     closeEditModal();
     if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished,cast:castStr,synopsis:synopsisStr,poster:posterStr}:p);renderPending();updateStatsPending();}
-    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked,cast:castStr,synopsis:synopsisStr,poster:posterStr,score:scoreNum}:s);populateFilters();render();updateStats();}
+    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked,cast:castStr,synopsis:synopsisStr,poster:posterStr,rank:rankNum}:s);populateFilters();render();updateStats();}
     showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
+    if(source!=='pending' && rankNum){const dup=shows.find(x=>x.type==='series'&&x.rank===rankNum&&x.title!==newTitle);if(dup) setTimeout(()=>showToast(`อันดับ ${rankNum} ซ้ำกับ "${dup.title}" — ไปเคลียร์อันดับของเรื่องใดเรื่องหนึ่งด้วยนะ`,'info'),600);}
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,...(source==='pending'?{}:{score:scoreNum||''}),year,episodes,liked,finished})});
+        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,...(source==='pending'?{}:{rank:rankNum||''}),year,episodes,liked,finished})});
     } catch(err){console.error(err);}
   });
 
