@@ -2157,22 +2157,69 @@
   }
 
 
-/* ===== Top 10 ซีรีส์ที่ชอบ ===== */
+/* ===== Top 10 Series ===== */
+.top-hero { margin-bottom:14px; }
+.top-hero-title { margin:0; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:2.4rem; letter-spacing:1.5px; line-height:1.05;
+  background:linear-gradient(180deg,#FF4040,#B80000); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.top-hero-sub { margin:4px 0 0; font-size:0.8rem; color:var(--text-dim); }
+.top-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:6px; }
+.top-stat { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:12px 16px; min-width:0; }
+.top-stat-value { margin:4px 0 0; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.9rem; line-height:1.1; color:var(--text); }
+.top-stat-text { font-family:'Sarabun',sans-serif; font-weight:700; font-size:1.05rem; overflow-wrap:anywhere; }
+
+.top-podium { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.18fr) minmax(0,1fr); gap:16px; align-items:end; margin-top:18px; padding:0 4px; }
+.podium-card { --medal:#C0C0C0; position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; min-width:0; cursor:pointer;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--medal) 14%, var(--surface)) 0%, var(--surface) 70%);
+  border:1px solid color-mix(in srgb, var(--medal) 45%, var(--border)); border-radius:16px; padding:26px 12px 14px;
+  box-shadow:0 0 22px color-mix(in srgb, var(--medal) 22%, transparent); transition:transform .18s, box-shadow .18s; }
+.podium-card:hover { transform:translateY(-4px); box-shadow:0 0 30px color-mix(in srgb, var(--medal) 40%, transparent); }
+.podium-card.p1 { --medal:#F5C518; order:2; padding-top:30px; padding-bottom:18px; }
+.podium-card.p2 { --medal:#C0C0C0; order:1; }
+.podium-card.p3 { --medal:#CD7F32; order:3; }
+.podium-medal { position:absolute; top:-15px; left:50%; transform:translateX(-50%); width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.3rem; color:#1a1a1a;
+  background:linear-gradient(145deg, color-mix(in srgb, var(--medal) 70%, #fff), var(--medal)); box-shadow:0 3px 10px rgba(0,0,0,.45); }
+.podium-poster { width:100%; max-width:150px; aspect-ratio:2/3; border-radius:10px; overflow:hidden; background:rgba(128,128,128,0.18); box-shadow:0 6px 16px rgba(0,0,0,.4); }
+.podium-card.p1 .podium-poster { max-width:190px; }
+.podium-poster img { width:100%; height:100%; object-fit:cover; display:block; }
+.poster-fallback { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:2.6rem;
+  color:color-mix(in srgb, var(--medal, var(--red)) 80%, #fff); background:linear-gradient(160deg, color-mix(in srgb, var(--medal, var(--red)) 30%, #222), #161616); }
+.podium-title { margin:12px 0 0; font-weight:700; font-size:0.92rem; line-height:1.3; max-width:100%; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; }
+.podium-card.p1 .podium-title { font-size:1.02rem; }
+.podium-meta { margin:3px 0 0; font-size:0.7rem; color:var(--text-dim); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.podium-score { margin-top:8px; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.7rem; line-height:1; color:var(--medal); }
+.podium-score small { font-size:0.75rem; color:var(--text-dim); margin-left:2px; }
+.podium-card.p1 .podium-score { font-size:2.1rem; }
+
+.top-list-card { margin-top:22px; }
+.top-list-card[hidden] { display:none; }
+.top-stat .summary-sub { text-align:left; margin-top:2px; }
 .top-series-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
-.top-series-item { display:flex; align-items:center; gap:14px; padding:8px 12px; border-radius:12px; background:var(--surface-2, rgba(128,128,128,0.08)); border:1px solid var(--border, rgba(128,128,128,0.2)); cursor:pointer; min-width:0; transition:border-color .15s, transform .15s; }
+.top-series-item { display:flex; align-items:center; gap:14px; padding:8px 14px 8px 10px; border-radius:12px; background:var(--surface-2, rgba(128,128,128,0.08)); border:1px solid var(--border, rgba(128,128,128,0.2)); cursor:pointer; min-width:0; transition:border-color .15s, transform .15s; }
 .top-series-item:hover { border-color:var(--red); transform:translateX(2px); }
 .top-series-rank { flex:0 0 34px; text-align:center; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.7rem; line-height:1; color:var(--text-dim); }
-.top-series-item.rank-1 .top-series-rank { color:var(--gold, #F5C518); }
-.top-series-item.rank-2 .top-series-rank { color:#C0C0C0; }
-.top-series-item.rank-3 .top-series-rank { color:#CD7F32; }
-.top-series-poster { flex:0 0 40px; width:40px; aspect-ratio:2/3; border-radius:5px; overflow:hidden; background:rgba(128,128,128,0.18); }
+.top-series-poster { flex:0 0 42px; width:42px; aspect-ratio:2/3; border-radius:5px; overflow:hidden; background:rgba(128,128,128,0.18); }
 .top-series-poster img { width:100%; height:100%; object-fit:cover; display:block; }
+.top-series-poster .poster-fallback { font-size:1.2rem; }
 .top-series-info { flex:1; min-width:0; }
 .top-series-title { margin:0; font-weight:700; font-size:0.92rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .top-series-meta { margin:2px 0 0; font-size:0.72rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.top-series-score { flex:0 0 auto; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.35rem; color:var(--red); letter-spacing:.5px; }
+.top-series-bar { height:5px; margin-top:7px; border-radius:99px; background:rgba(128,128,128,0.2); overflow:hidden; }
+.top-series-bar > span { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#B80000,#FF4040); }
+.top-series-score { flex:0 0 64px; text-align:right; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.4rem; color:var(--red); letter-spacing:.5px; }
 .top-series-score small { font-size:0.7rem; color:var(--text-dim); margin-left:1px; }
-@media (max-width:560px) {
+@media (max-width:700px) {
+  .top-stats { grid-template-columns:1fr; gap:8px; }
+  .top-stat { padding:10px 14px; }
+  .top-podium { gap:8px; padding:0; }
+  .podium-card { padding:24px 6px 10px; border-radius:12px; }
+  .podium-card.p1 { padding-top:26px; }
+  .podium-title { font-size:0.74rem; }
+  .podium-card.p1 .podium-title { font-size:0.82rem; }
+  .podium-meta { display:none; }
+  .podium-score { font-size:1.3rem; }
+  .podium-card.p1 .podium-score { font-size:1.6rem; }
+  .podium-medal { width:28px; height:28px; top:-13px; font-size:1.1rem; }
   .top-series-item { gap:10px; padding:8px 10px; }
   .top-series-rank { flex-basis:26px; font-size:1.35rem; }
 }
@@ -2235,6 +2282,7 @@
         <div class="page-tabs-sub">
           <button class="page-tab sub-page-tab active" data-nav="summary">Summary</button>
           <button class="page-tab sub-page-tab" data-nav="cast">Cast</button>
+          <button class="page-tab sub-page-tab" data-nav="top">My Top 10</button>
         </div>
 
         <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></span>Series &amp; Variety</div>
@@ -2411,15 +2459,26 @@
           <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
         </div>
 
-        <!-- Top 10 ซีรีส์ที่ชอบ (เรียงตามคอลัมน์ "คะแนน") -->
-        <div class="chart-card" id="topSeriesCard">
-          <div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
-            <h3 style="margin:0;">Top 10 ซีรีส์ที่ชอบที่สุด</h3>
-            <span style="font-size:0.75rem; color:var(--text-dim);">เรียงตามคะแนน · เสมอกันให้เรื่องที่ดูจบล่าสุดก่อน</span>
+      </section>
+
+      <!-- Top 10 Series -->
+      <section class="view-section" id="view-top">
+        <div class="top-hero">
+          <div>
+            <h2 class="top-hero-title">My Top 10</h2>
+            <p class="top-hero-sub">ซีรีส์ที่ชอบที่สุด เรียงตามคะแนนที่ให้ · คะแนนเท่ากันให้เรื่องที่ดูจบล่าสุดขึ้นก่อน</p>
           </div>
-          <ol class="top-series-list" id="topSeriesList"></ol>
-          <p class="chart-empty" id="topSeriesEmpty" hidden>ยังไม่มีซีรีส์ที่ใส่คะแนน — เพิ่มคอลัมน์ "คะแนน" ในชีต Series แล้วใส่ตัวเลขได้เลย</p>
         </div>
+        <div class="top-stats">
+          <div class="top-stat"><p class="summary-label">ซีรีส์ที่ให้คะแนนแล้ว</p><p class="top-stat-value" id="topStatRated">—</p></div>
+          <div class="top-stat"><p class="summary-label">คะแนนเฉลี่ย Top 10</p><p class="top-stat-value" id="topStatAvg">—</p></div>
+          <div class="top-stat"><p class="summary-label">แนวที่พบบ่อยใน Top 10</p><p class="top-stat-value top-stat-text" id="topStatGenre">—</p><p class="summary-sub" id="topStatGenreSub"></p></div>
+        </div>
+        <div class="top-podium" id="topPodium"></div>
+        <div class="chart-card top-list-card" id="topListCard">
+          <ol class="top-series-list" id="topSeriesList"></ol>
+        </div>
+        <p class="chart-empty" id="topSeriesEmpty" hidden>ยังไม่มีซีรีส์ที่ใส่คะแนน — เพิ่มคอลัมน์ "คะแนน" ในชีต Series แล้วใส่ตัวเลข 1-10 ได้เลย</p>
       </section>
 
       <!-- Cast -->
@@ -3548,6 +3607,9 @@
       document.getElementById('view-cast').classList.add('active');
       if (!droppedLoaded) await loadDropped();
       updateCastView();
+    } else if (tab.dataset.nav === 'top') {
+      document.getElementById('view-top').classList.add('active');
+      renderTopSeries();
     } else if (tab.dataset.nav === 'mode') {
       document.getElementById('view-mode').classList.add('active');
       updateModeCards();
@@ -3831,49 +3893,79 @@
     } catch(err){canvas.hidden=true;emptyMsg.hidden=false;}
   }
 
-  // Top 10 ซีรีส์ที่ชอบ — เฉพาะ Series ที่ใส่ "คะแนน" (ไม่ผูกกับปุ่ม Series/Variety ด้านบน)
+  // Top 10 Series — เฉพาะ Series ที่ใส่ "คะแนน" (โพเดียม 3 อันดับแรก + รายการอันดับ 4-10)
+  function posterFallbackEl(title) {
+    const d=document.createElement('div'); d.className='poster-fallback';
+    d.textContent=(title||'?').trim().charAt(0).toUpperCase(); return d;
+  }
+  function posterEl(show) {
+    if(/^https?:\/\//i.test(show.poster||'')){
+      const img=document.createElement('img'); img.alt=show.title; img.referrerPolicy='no-referrer'; img.src=show.poster;
+      img.addEventListener('error',()=>img.replaceWith(posterFallbackEl(show.title)));
+      return img;
+    }
+    return posterFallbackEl(show.title);
+  }
+  function scoreEl(cls, score) {
+    const sc=document.createElement('span'); sc.className=cls; sc.textContent=String(score);
+    const small=document.createElement('small'); small.textContent='/10'; sc.appendChild(small); return sc;
+  }
   function renderTopSeries() {
-    const list=document.getElementById('topSeriesList'), empty=document.getElementById('topSeriesEmpty');
-    if(!list) return;
-    list.innerHTML='';
-    const ranked=shows
-      .filter(s=>s.type==='series' && s.score>0)
-      .sort((a,b)=>{
+    const list=document.getElementById('topSeriesList'), podium=document.getElementById('topPodium'), empty=document.getElementById('topSeriesEmpty');
+    if(!list||!podium) return;
+    list.innerHTML=''; podium.innerHTML='';
+    const rated=shows.filter(s=>s.type==='series' && s.score>0);
+    const ranked=rated.slice().sort((a,b)=>{
         if(b.score!==a.score) return b.score-a.score;
         const aT=a.watchedDate instanceof Date?a.watchedDate.getTime():0, bT=b.watchedDate instanceof Date?b.watchedDate.getTime():0;
         if(bT!==aT) return bT-aT;
         return (b.no||0)-(a.no||0);
-      })
-      .slice(0,10);
+      }).slice(0,10);
+
+    // สถิติสรุป
+    document.getElementById('topStatRated').textContent = diaryLoaded ? rated.length : '…';
+    document.getElementById('topStatAvg').textContent = ranked.length ? (ranked.reduce((t,s)=>t+s.score,0)/ranked.length).toFixed(1) : '—';
+    const gc={}; ranked.forEach(s=>s.genres.forEach(g=>{gc[g]=(gc[g]||0)+1;}));
+    const topG=Object.entries(gc).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+    document.getElementById('topStatGenre').textContent = topG ? topG[0] : '—';
+    document.getElementById('topStatGenreSub').textContent = topG ? `อยู่ใน ${topG[1]} จาก ${ranked.length} เรื่อง` : '';
+
     empty.hidden = ranked.length>0 || !diaryLoaded;
-    ranked.forEach((s,i)=>{
-      const li=document.createElement('li');
-      li.className='top-series-item rank-'+(i+1);
-      li.dataset.title=s.title;
-      const rank=document.createElement('span'); rank.className='top-series-rank'; rank.textContent=i+1;
-      li.appendChild(rank);
-      if(/^https?:\/\//i.test(s.poster||'')){
-        const wrap=document.createElement('span'); wrap.className='top-series-poster';
-        const img=document.createElement('img'); img.alt=''; img.referrerPolicy='no-referrer'; img.src=s.poster;
-        img.addEventListener('error',()=>wrap.remove());
-        wrap.appendChild(img); li.appendChild(wrap);
-      }
+    document.getElementById('topListCard').hidden = ranked.length<=3;
+
+    // โพเดียม
+    ranked.slice(0,3).forEach((s,i)=>{
+      const card=document.createElement('div'); card.className='podium-card p'+(i+1); card.dataset.title=s.title;
+      const medal=document.createElement('span'); medal.className='podium-medal'; medal.textContent=i+1;
+      const pw=document.createElement('div'); pw.className='podium-poster'; pw.appendChild(posterEl(s));
+      const t=document.createElement('p'); t.className='podium-title'; t.textContent=s.title;
+      const m=document.createElement('p'); m.className='podium-meta'; m.textContent=[s.year,s.genres.slice(0,2).join(' · ')].filter(Boolean).join(' · ');
+      card.append(medal,pw,t,m,scoreEl('podium-score',s.score));
+      podium.appendChild(card);
+    });
+
+    // อันดับ 4-10
+    ranked.slice(3).forEach((s,i)=>{
+      const li=document.createElement('li'); li.className='top-series-item'; li.dataset.title=s.title;
+      const rank=document.createElement('span'); rank.className='top-series-rank'; rank.textContent=i+4;
+      const pw=document.createElement('span'); pw.className='top-series-poster'; pw.appendChild(posterEl(s));
       const info=document.createElement('div'); info.className='top-series-info';
       const t=document.createElement('p'); t.className='top-series-title'; t.textContent=s.title;
       const m=document.createElement('p'); m.className='top-series-meta'; m.textContent=[s.year,s.genres.slice(0,3).join(' · ')].filter(Boolean).join(' · ');
-      info.appendChild(t); info.appendChild(m); li.appendChild(info);
-      const sc=document.createElement('span'); sc.className='top-series-score';
-      sc.innerHTML=''; sc.textContent=String(s.score);
-      const small=document.createElement('small'); small.textContent='/10'; sc.appendChild(small);
-      li.appendChild(sc);
+      const bar=document.createElement('div'); bar.className='top-series-bar';
+      const fill=document.createElement('span'); fill.style.width=Math.min(100,Math.max(0,s.score*10))+'%'; bar.appendChild(fill);
+      info.append(t,m,bar);
+      li.append(rank,pw,info,scoreEl('top-series-score',s.score));
       list.appendChild(li);
     });
   }
-  document.getElementById('topSeriesList')?.addEventListener('click',e=>{
-    const li=e.target.closest('.top-series-item'); if(!li) return;
-    const show=shows.find(s=>s.title===li.dataset.title);
+  function openTopSeriesItem(e){
+    const el=e.target.closest('[data-title]'); if(!el) return;
+    const show=shows.find(s=>s.title===el.dataset.title);
     if(show) openSynopsisModal(show);
-  });
+  }
+  document.getElementById('topSeriesList')?.addEventListener('click',openTopSeriesItem);
+  document.getElementById('topPodium')?.addEventListener('click',openTopSeriesItem);
 
   function updateSummary() {
     renderTopSeries();
