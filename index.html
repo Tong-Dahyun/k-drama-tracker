@@ -2157,6 +2157,26 @@
   }
 
 
+/* ===== Top 10 ซีรีส์ที่ชอบ ===== */
+.top-series-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.top-series-item { display:flex; align-items:center; gap:14px; padding:8px 12px; border-radius:12px; background:var(--surface-2, rgba(128,128,128,0.08)); border:1px solid var(--border, rgba(128,128,128,0.2)); cursor:pointer; min-width:0; transition:border-color .15s, transform .15s; }
+.top-series-item:hover { border-color:var(--red); transform:translateX(2px); }
+.top-series-rank { flex:0 0 34px; text-align:center; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.7rem; line-height:1; color:var(--text-dim); }
+.top-series-item.rank-1 .top-series-rank { color:var(--gold, #F5C518); }
+.top-series-item.rank-2 .top-series-rank { color:#C0C0C0; }
+.top-series-item.rank-3 .top-series-rank { color:#CD7F32; }
+.top-series-poster { flex:0 0 40px; width:40px; aspect-ratio:2/3; border-radius:5px; overflow:hidden; background:rgba(128,128,128,0.18); }
+.top-series-poster img { width:100%; height:100%; object-fit:cover; display:block; }
+.top-series-info { flex:1; min-width:0; }
+.top-series-title { margin:0; font-weight:700; font-size:0.92rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.top-series-meta { margin:2px 0 0; font-size:0.72rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.top-series-score { flex:0 0 auto; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.35rem; color:var(--red); letter-spacing:.5px; }
+.top-series-score small { font-size:0.7rem; color:var(--text-dim); margin-left:1px; }
+@media (max-width:560px) {
+  .top-series-item { gap:10px; padding:8px 10px; }
+  .top-series-rank { flex-basis:26px; font-size:1.35rem; }
+}
+
 /* ===== Synopsis modal: poster ===== */
 .synopsis-layout { display:flex; gap:18px; align-items:flex-start; margin-top:16px; }
 .synopsis-poster-wrap { flex:0 0 140px; width:140px; aspect-ratio:2/3; border-radius:8px; overflow:hidden; background:var(--surface-2, rgba(128,128,128,0.15)); border:1px solid var(--border, rgba(128,128,128,0.25)); box-shadow:0 4px 14px rgba(0,0,0,0.35); }
@@ -2389,6 +2409,16 @@
           </div>
           <p class="chart-empty" id="monthlyChartEmpty" hidden>ยังไม่มีข้อมูลวันที่ดูจบสำหรับปีนี้</p>
           <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
+        </div>
+
+        <!-- Top 10 ซีรีส์ที่ชอบ (เรียงตามคอลัมน์ "คะแนน") -->
+        <div class="chart-card" id="topSeriesCard">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+            <h3 style="margin:0;">Top 10 ซีรีส์ที่ชอบที่สุด</h3>
+            <span style="font-size:0.75rem; color:var(--text-dim);">เรียงตามคะแนน · เสมอกันให้เรื่องที่ดูจบล่าสุดก่อน</span>
+          </div>
+          <ol class="top-series-list" id="topSeriesList"></ol>
+          <p class="chart-empty" id="topSeriesEmpty" hidden>ยังไม่มีซีรีส์ที่ใส่คะแนน — เพิ่มคอลัมน์ "คะแนน" ในชีต Series แล้วใส่ตัวเลขได้เลย</p>
         </div>
       </section>
 
@@ -2698,6 +2728,7 @@
             <div class="form-field"><label for="editEpisodes">จำนวนตอน</label><input type="number" id="editEpisodes" min="0"></div>
             <div class="form-field"><label for="editPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editPoster" placeholder="https://..."></div>
             <div class="form-checkbox" id="editLikedRow"><input type="checkbox" id="editLiked"><label for="editLiked">ชอบเรื่องนี้</label></div>
+            <div class="form-field" id="editScoreRow"><label for="editScore">คะแนน (1-10, ใช้จัดอันดับ Top 10 ซีรีส์)</label><input type="number" id="editScore" min="0" max="10" step="0.5" placeholder="เว้นว่างถ้าไม่ให้คะแนน"></div>
             <div class="form-checkbox" id="editFinishedRow"><input type="checkbox" id="editFinished"><label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
           </div>
           <div class="edit-form-right">
@@ -2912,6 +2943,7 @@
       liked: (row['ความชอบส่วนตัว'] || '').trim().toUpperCase() === 'TRUE',
       no: Number(row['No.'] || row['ลำดับ']) || 0,
       watchedDate: parseSheetDate(row['วันที่ดูจบ'] || row['วันที่จบ'] || ''),
+      score: parseFloat(row['คะแนน']) || 0,
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
       cast: (row['นักแสดง'] || '').trim()
@@ -3799,7 +3831,52 @@
     } catch(err){canvas.hidden=true;emptyMsg.hidden=false;}
   }
 
+  // Top 10 ซีรีส์ที่ชอบ — เฉพาะ Series ที่ใส่ "คะแนน" (ไม่ผูกกับปุ่ม Series/Variety ด้านบน)
+  function renderTopSeries() {
+    const list=document.getElementById('topSeriesList'), empty=document.getElementById('topSeriesEmpty');
+    if(!list) return;
+    list.innerHTML='';
+    const ranked=shows
+      .filter(s=>s.type==='series' && s.score>0)
+      .sort((a,b)=>{
+        if(b.score!==a.score) return b.score-a.score;
+        const aT=a.watchedDate instanceof Date?a.watchedDate.getTime():0, bT=b.watchedDate instanceof Date?b.watchedDate.getTime():0;
+        if(bT!==aT) return bT-aT;
+        return (b.no||0)-(a.no||0);
+      })
+      .slice(0,10);
+    empty.hidden = ranked.length>0 || !diaryLoaded;
+    ranked.forEach((s,i)=>{
+      const li=document.createElement('li');
+      li.className='top-series-item rank-'+(i+1);
+      li.dataset.title=s.title;
+      const rank=document.createElement('span'); rank.className='top-series-rank'; rank.textContent=i+1;
+      li.appendChild(rank);
+      if(/^https?:\/\//i.test(s.poster||'')){
+        const wrap=document.createElement('span'); wrap.className='top-series-poster';
+        const img=document.createElement('img'); img.alt=''; img.referrerPolicy='no-referrer'; img.src=s.poster;
+        img.addEventListener('error',()=>wrap.remove());
+        wrap.appendChild(img); li.appendChild(wrap);
+      }
+      const info=document.createElement('div'); info.className='top-series-info';
+      const t=document.createElement('p'); t.className='top-series-title'; t.textContent=s.title;
+      const m=document.createElement('p'); m.className='top-series-meta'; m.textContent=[s.year,s.genres.slice(0,3).join(' · ')].filter(Boolean).join(' · ');
+      info.appendChild(t); info.appendChild(m); li.appendChild(info);
+      const sc=document.createElement('span'); sc.className='top-series-score';
+      sc.innerHTML=''; sc.textContent=String(s.score);
+      const small=document.createElement('small'); small.textContent='/10'; sc.appendChild(small);
+      li.appendChild(sc);
+      list.appendChild(li);
+    });
+  }
+  document.getElementById('topSeriesList')?.addEventListener('click',e=>{
+    const li=e.target.closest('.top-series-item'); if(!li) return;
+    const show=shows.find(s=>s.title===li.dataset.title);
+    if(show) openSynopsisModal(show);
+  });
+
   function updateSummary() {
+    renderTopSeries();
     const summaryTotal=document.getElementById('summaryTotal'), summaryTotalBreakdown=document.getElementById('summaryTotalBreakdown');
     const summaryLiked=document.getElementById('summaryLiked'), summaryLikedBreakdown=document.getElementById('summaryLikedBreakdown');
     if(!diaryLoaded){
@@ -4592,8 +4669,9 @@
     document.getElementById('editEpisodes').value=entry.episodes||'';
     document.getElementById('editSynopsis').value=entry.synopsis||'';
     document.getElementById('editPoster').value=entry.poster||'';
-    if(source==='pending'){editLikedRow.style.display='none';editFinishedRow.style.display='flex';document.getElementById('editFinished').checked=!!entry.finished;}
-    else{editLikedRow.style.display='flex';editFinishedRow.style.display='none';document.getElementById('editLiked').checked=!!entry.liked;}
+    const editScoreRow=document.getElementById('editScoreRow');
+    if(source==='pending'){editLikedRow.style.display='none';editScoreRow.style.display='none';editFinishedRow.style.display='flex';document.getElementById('editFinished').checked=!!entry.finished;}
+    else{editLikedRow.style.display='flex';editScoreRow.style.display='';editFinishedRow.style.display='none';document.getElementById('editLiked').checked=!!entry.liked;document.getElementById('editScore').value=entry.score||'';}
     editFormStatus.textContent=''; editModalOverlay.hidden=false;
   }
 
@@ -4671,14 +4749,15 @@
     const finished=document.getElementById('editFinished').checked;
     const synopsisStr=document.getElementById('editSynopsis').value.trim();
     const posterStr=document.getElementById('editPoster').value.trim();
+    const scoreNum=parseFloat(document.getElementById('editScore').value)||0;
     closeEditModal();
     if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished,cast:castStr,synopsis:synopsisStr,poster:posterStr}:p);renderPending();updateStatsPending();}
-    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked,cast:castStr,synopsis:synopsisStr,poster:posterStr}:s);populateFilters();render();updateStats();}
+    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked,cast:castStr,synopsis:synopsisStr,poster:posterStr,score:scoreNum}:s);populateFilters();render();updateStats();}
     showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,year,episodes,liked,finished})});
+        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,...(source==='pending'?{}:{score:scoreNum||''}),year,episodes,liked,finished})});
     } catch(err){console.error(err);}
   });
 
