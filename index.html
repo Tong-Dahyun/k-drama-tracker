@@ -2216,6 +2216,55 @@
   .top-series-rank { flex-basis:26px; font-size:1.35rem; }
 }
 
+
+/* ===== โปสเตอร์บนตั๋ว ===== */
+.ticket-top { display:flex; gap:10px; align-items:flex-start; }
+.ticket-head { flex:1; min-width:0; }
+.ticket-poster { flex:0 0 52px; width:52px; aspect-ratio:2/3; border-radius:6px; object-fit:cover; display:block;
+  background:rgba(128,128,128,0.18); box-shadow:0 3px 8px rgba(0,0,0,.35); margin-bottom:8px; }
+
+/* ===== แพลตฟอร์ม ===== */
+.platform-tag { --pf:#8A8A8A; display:inline-block; vertical-align:1px; margin-left:6px; font-family:'Inter',sans-serif; font-size:0.6rem; font-weight:700;
+  letter-spacing:.02em; padding:1px 7px; border-radius:5px; cursor:pointer; white-space:nowrap;
+  color:color-mix(in srgb, var(--pf) 80%, var(--text)); background:color-mix(in srgb, var(--pf) 13%, transparent);
+  border:1px solid color-mix(in srgb, var(--pf) 50%, transparent); transition:background .15s, color .15s; }
+.platform-tag.no-year { margin-left:0; }
+.platform-tag:hover { background:color-mix(in srgb, var(--pf) 28%, transparent); }
+.platform-tag.active-filter { background:var(--pf); color:#fff; border-color:var(--pf); }
+.sort-select[hidden] { display:none; }
+
+.platform-bars { display:flex; flex-direction:column; gap:8px; }
+.platform-row { --pf:#8A8A8A; display:grid; grid-template-columns:120px minmax(0,1fr) auto; align-items:center; gap:12px; padding:4px 6px; border-radius:8px; cursor:pointer; }
+.platform-row:hover { background:var(--surface-soft); }
+.platform-name { display:flex; align-items:center; gap:8px; font-weight:700; font-size:0.85rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.platform-name::before { content:''; flex:0 0 9px; height:9px; border-radius:50%; background:var(--pf); }
+.platform-track { position:relative; height:14px; border-radius:99px; background:rgba(128,128,128,0.15); overflow:hidden; }
+.platform-track .pt-total { position:absolute; inset:0 auto 0 0; background:color-mix(in srgb, var(--pf) 38%, transparent); border-radius:99px; }
+.platform-track .pt-liked { position:absolute; inset:0 auto 0 0; background:var(--pf); border-radius:99px; }
+.platform-count { font-size:0.75rem; color:var(--text-soft); white-space:nowrap; font-family:'Inter',sans-serif; }
+.platform-count b { color:var(--text); font-size:0.85rem; }
+.platform-legend { display:flex; gap:14px; font-size:0.72rem; color:var(--text-dim); margin-top:12px; flex-wrap:wrap; }
+.platform-legend i { display:inline-block; width:18px; height:8px; border-radius:99px; margin-right:5px; vertical-align:0; background:#8A8A8A; }
+.platform-legend[hidden] { display:none; }
+.platform-legend i.lt { background:rgba(138,138,138,.4); }
+@media (max-width:560px) {
+  .platform-row { grid-template-columns:86px minmax(0,1fr) auto; gap:8px; }
+  .platform-name { font-size:0.75rem; }
+}
+
+/* ===== กำลังดู (Watchlist) ===== */
+.ticket.watchlist.is-watching { border-color:color-mix(in srgb, var(--mint) 55%, var(--border)); }
+.watch-progress { margin-top:2px; margin-bottom:6px; padding:8px 9px; border-radius:9px; background:var(--mint-soft); }
+.wp-top { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.wp-label { font-family:'Inter','Sarabun',sans-serif; font-size:0.7rem; font-weight:700; color:var(--mint); white-space:nowrap; }
+.wp-btns { display:flex; gap:4px; flex-shrink:0; }
+.ep-btn { border:1px solid color-mix(in srgb, var(--mint) 55%, transparent); background:transparent; color:var(--mint); font-family:'Inter',sans-serif;
+  font-weight:700; font-size:0.68rem; line-height:1; padding:4px 7px; border-radius:6px; cursor:pointer; transition:background .15s, color .15s; }
+.ep-btn:hover { background:var(--mint); color:#0b0b0b; }
+.wp-bar { height:4px; margin-top:7px; border-radius:99px; background:rgba(128,128,128,0.25); overflow:hidden; }
+.wp-bar > span { display:block; height:100%; border-radius:99px; background:var(--mint); transition:width .25s ease; }
+.pill.watching-toggle.active { background:var(--mint); border-color:var(--mint); color:#0b0b0b; }
+
 /* ===== Synopsis modal: poster ===== */
 .synopsis-layout { display:flex; gap:18px; align-items:flex-start; margin-top:16px; }
 .synopsis-poster-wrap { flex:0 0 140px; width:140px; aspect-ratio:2/3; border-radius:8px; overflow:hidden; background:var(--surface-2, rgba(128,128,128,0.15)); border:1px solid var(--border, rgba(128,128,128,0.25)); box-shadow:0 4px 14px rgba(0,0,0,0.35); }
@@ -2451,6 +2500,17 @@
           <p id="monthlyNoDateNote" style="font-size:0.75rem; color:var(--text-dim); margin:10px 0 0; text-align:right;"></p>
         </div>
 
+        <!-- แพลตฟอร์มที่ดู -->
+        <div class="chart-card" id="platformCard">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+            <h3 style="margin:0;">ดูผ่านแพลตฟอร์มไหนบ้าง</h3>
+            <span id="platformNote" style="font-size:0.75rem; color:var(--text-dim);"></span>
+          </div>
+          <div class="platform-bars" id="platformBars"></div>
+          <div class="platform-legend" id="platformLegend"><span><i class="lt"></i>ดูทั้งหมด</span><span><i></i>ถูกใจ</span><span>คลิกแถวเพื่อดูรายชื่อเรื่องในหน้า Watched</span></div>
+          <p class="chart-empty" id="platformEmpty" hidden>ยังไม่มีข้อมูลแพลตฟอร์ม — เพิ่มคอลัมน์ "แพลตฟอร์ม" ในชีตแล้วใส่ชื่อ เช่น Netflix, Viu</p>
+        </div>
+
       </section>
 
       <!-- Top 10 Series -->
@@ -2588,6 +2648,7 @@
               </div>
               <select id="yearFilter" class="sort-select"><option value="all">ทุกปี</option></select>
               <select id="genreFilter" class="sort-select"><option value="all">ทุกแนว</option></select>
+              <select id="platformFilter" class="sort-select" hidden><option value="all">ทุกแพลตฟอร์ม</option></select>
               <select id="sort" class="sort-select">
                 <option value="year-desc">ปีล่าสุดก่อน</option>
                 <option value="recently-watched" selected>ล่าสุดที่ดู</option>
@@ -2606,10 +2667,13 @@
               <button class="pill" data-ptype="series">ซีรีส์</button>
               <button class="pill" data-ptype="variety">วาไรตี้</button>
             </div>
+            <button class="pill watching-toggle" id="watchingOnlyBtn" type="button" title="แสดงเฉพาะเรื่องที่กำลังดู">▶ กำลังดู</button>
             <select id="yearFilterPending" class="sort-select"><option value="all">ทุกปี</option></select>
             <select id="genreFilterPending" class="sort-select"><option value="all">ทุกแนว</option></select>
+            <select id="platformFilterPending" class="sort-select" hidden><option value="all">ทุกแพลตฟอร์ม</option></select>
             <select id="sortPending" class="sort-select">
               <option value="year-desc">ปีล่าสุดก่อน</option>
+              <option value="watching-first">กำลังดูก่อน</option>
               <option value="ready-first">จบแล้วก่อน</option>
               <option value="title">ชื่อ A-Z</option>
             </select>
@@ -2622,6 +2686,7 @@
             <input type="text" id="searchDropped" class="search-box" placeholder="ค้นหาชื่อเรื่อง, แนว, นักแสดง...">
             <select id="yearFilterDropped" class="sort-select"><option value="all">ทุกปี</option></select>
             <select id="genreFilterDropped" class="sort-select"><option value="all">ทุกแนว</option></select>
+            <select id="platformFilterDropped" class="sort-select" hidden><option value="all">ทุกแพลตฟอร์ม</option></select>
             <select id="sortDropped" class="sort-select">
               <option value="no-desc" selected>ล่าสุดที่ดรอป</option>
               <option value="year-desc">ปีล่าสุดก่อน</option>
@@ -2716,6 +2781,8 @@
             <div class="form-field"><label for="newCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="newCast" placeholder="ซอนเยจิน, คิมซูฮยอน"></div>
             <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
             <div class="form-field"><label for="newPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="newPoster" placeholder="https://..."></div>
+            <div class="form-field"><label for="newPlatform">แพลตฟอร์ม</label><input type="text" id="newPlatform" list="platformList" placeholder="เช่น Netflix, Viu"></div>
+            <datalist id="platformList"><option value="Netflix"><option value="Viu"><option value="Disney+"><option value="Prime Video"><option value="iQIYI"><option value="TVING"><option value="WeTV"><option value="Apple TV+"><option value="HBO Max"><option value="Coupang Play"><option value="YouTube"></datalist>
             <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
           </div>
           <div class="edit-form-right">
@@ -2777,9 +2844,11 @@
             <div class="form-field"><label for="editCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="editCast"></div>
             <div class="form-field"><label for="editEpisodes">จำนวนตอน</label><input type="number" id="editEpisodes" min="0"></div>
             <div class="form-field"><label for="editPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editPoster" placeholder="https://..."></div>
+            <div class="form-field"><label for="editPlatform">แพลตฟอร์ม</label><input type="text" id="editPlatform" list="platformList" placeholder="เช่น Netflix, Viu"></div>
             <div class="form-checkbox" id="editLikedRow"><input type="checkbox" id="editLiked"><label for="editLiked">ชอบเรื่องนี้</label></div>
             <div class="form-field" id="editRankRow"><label for="editRank">อันดับ My Top 10 (1-10)</label><input type="number" id="editRank" min="1" max="10" step="1" placeholder="เว้นว่างถ้าไม่อยู่ใน Top 10"></div>
             <div class="form-checkbox" id="editFinishedRow"><input type="checkbox" id="editFinished"><label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
+            <div class="form-field" id="editWatchedEpRow"><label for="editWatchedEp">ดูถึง EP (0 = ยังไม่เริ่มดู)</label><input type="number" id="editWatchedEp" min="0" step="1" placeholder="0"></div>
           </div>
           <div class="edit-form-right">
             <div class="form-field"><label for="editSynopsis">เรื่องย่อ</label><textarea id="editSynopsis" placeholder="เรื่องย่อสั้นๆ (ถ้ามี)"></textarea></div>
@@ -2810,6 +2879,7 @@
         </div>
         <div class="form-field"><label for="editDroppedLastEp">ดูถึง ep (Last Episode)</label><input type="number" id="editDroppedLastEp" min="0" placeholder="0"></div>
         <div class="form-field"><label for="editDroppedPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editDroppedPoster" placeholder="https://..."></div>
+        <div class="form-field"><label for="editDroppedPlatform">แพลตฟอร์ม</label><input type="text" id="editDroppedPlatform" list="platformList" placeholder="เช่น Netflix, Viu"></div>
         <div class="form-field"><label for="editDroppedSynopsis">เรื่องย่อ</label><textarea id="editDroppedSynopsis" rows="3" placeholder="เรื่องย่อสั้นๆ (ถ้ามี)"></textarea></div>
         <p class="form-status" id="editDroppedFormStatus"></p>
         <div class="modal-actions">
@@ -2954,13 +3024,18 @@
   const yearFilterDropped = document.getElementById('yearFilterDropped');
   const genreFilterDropped= document.getElementById('genreFilterDropped');
   const pills        = document.querySelectorAll('#controls-diary .pill');
-  const pillsPending = document.querySelectorAll('#controls-watchlist .pill');
+  const pillsPending = document.querySelectorAll('#controls-watchlist .pill[data-ptype]');
+  const platformFilter        = document.getElementById('platformFilter');
+  const platformFilterPending = document.getElementById('platformFilterPending');
+  const platformFilterDropped = document.getElementById('platformFilterDropped');
+  const watchingOnlyBtn       = document.getElementById('watchingOnlyBtn');
   const statsEl = document.getElementById('stats');
   const navItems = document.querySelectorAll('.page-tabs-sub > .page-tab[data-nav]');
 
   let activeType = 'all', activeYear = 'all', activeGenre = 'all', activeCast = 'all';
   let activeTypePending = 'all', activeYearPending = 'all', activeGenrePending = 'all', activeCastPending = 'all';
   let activeYearDropped = 'all', activeGenreDropped = 'all', activeCastDropped = 'all';
+  let activePlatform = 'all', activePlatformPending = 'all', activePlatformDropped = 'all', watchingOnly = false;
 
   const PAGE_SIZE = 48;
   let currentPage = 1, currentPagePending = 1, currentPageDropped = 1;
@@ -2974,7 +3049,52 @@
     if (s.title.toLowerCase().includes(query)) return true;
     if (s.genres.some(g => g.toLowerCase().includes(query))) return true;
     if (splitCast(s.cast).some(c => c.toLowerCase().includes(query))) return true;
+    if (s.platform && s.platform.toLowerCase().includes(query)) return true;
     return false;
+  }
+
+  // ============================================================
+  // แพลตฟอร์ม / โปสเตอร์บนตั๋ว — helpers
+  // ============================================================
+  const PLATFORM_ALIASES = {
+    'netflix':'Netflix', 'viu':'Viu', 'disney+':'Disney+', 'disney plus':'Disney+', 'disney':'Disney+', 'disney+ hotstar':'Disney+',
+    'prime video':'Prime Video', 'prime':'Prime Video', 'amazon prime':'Prime Video', 'amazon prime video':'Prime Video',
+    'iqiyi':'iQIYI', 'tving':'TVING', 'wetv':'WeTV', 'we tv':'WeTV', 'apple tv+':'Apple TV+', 'apple tv':'Apple TV+',
+    'hbo max':'HBO Max', 'max':'HBO Max', 'hbo':'HBO Max', 'hbo go':'HBO Max', 'coupang play':'Coupang Play', 'youtube':'YouTube',
+    'trueid':'TrueID', 'true id':'TrueID', 'kocowa':'KOCOWA', 'wavve':'Wavve'
+  };
+  const PLATFORM_COLORS = {
+    'Netflix':'#E50914', 'Viu':'#F5B800', 'Disney+':'#3D7BFF', 'Prime Video':'#00A8E1', 'iQIYI':'#00C341', 'TVING':'#FF153C',
+    'WeTV':'#FF6A00', 'Apple TV+':'#B4B4B8', 'HBO Max':'#9B59FF', 'Coupang Play':'#5A6BFF', 'YouTube':'#FF3B30',
+    'TrueID':'#E4002B', 'KOCOWA':'#F25C05', 'Wavve':'#1F6BFF'
+  };
+  function canonicalPlatform(raw) {
+    const t = (raw || '').toString().trim();
+    if (!t) return '';
+    return PLATFORM_ALIASES[t.toLowerCase()] || t;
+  }
+  function platformColor(name) { return PLATFORM_COLORS[name] || '#8A8A8A'; }
+  function escAttr(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+  function platformTagHtml(s, page, active) {
+    if (!s.platform) return '';
+    return `<span class="platform-tag${s.year?'':' no-year'}${s.platform===active?' active-filter':''}" style="--pf:${platformColor(s.platform)}" data-platform="${escAttr(s.platform)}" data-page="${page}">${escAttr(s.platform)}</span>`;
+  }
+  function yearLineHtml(s, page, active) {
+    const tag = platformTagHtml(s, page, active);
+    if (!s.year && !tag) return '';
+    return `<p class="ticket-year">${s.year || ''}${tag}</p>`;
+  }
+  function posterThumbHtml(s) {
+    if (!/^https?:\/\//i.test(s.poster || '')) return '';
+    return `<img class="ticket-poster" src="${escAttr(s.poster)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;
+  }
+  function fillPlatformSelect(sel, list, current) {
+    if (!sel) return 'all';
+    const names = [...new Set(list.map(s => s.platform).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+    sel.innerHTML = '<option value="all">ทุกแพลตฟอร์ม</option>' + names.map(n => `<option value="${escAttr(n)}">${escAttr(n)}</option>`).join('');
+    sel.hidden = names.length === 0;
+    sel.value = names.includes(current) ? current : 'all';
+    return sel.value;
   }
   let summaryTypeFilter = { series: true, variety: true };
   let castTypeFilter = { series: true, variety: true };
@@ -2996,6 +3116,7 @@
       rank: (() => { const r = parseInt(row['อันดับ'], 10); return (r >= 1 && r <= 10) ? r : 0; })(),
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
+      platform: canonicalPlatform(row['แพลตฟอร์ม']),
       cast: (row['นักแสดง'] || '').trim()
     };
   }
@@ -3022,9 +3143,11 @@
       episodes: Number(row['จำนวนตอน']) || 0,
       genres: (row['แนว / หมวด'] || '').split(',').map(g => g.trim()).filter(Boolean),
       finished: (row['จบแล้ว'] || '').trim().toUpperCase() === 'TRUE',
+      watchedEp: Number(row['ดูถึง ep']) || 0,
       no: Number(row['ลำดับ']) || 0,
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
+      platform: canonicalPlatform(row['แพลตฟอร์ม']),
       cast: (row['นักแสดง'] || '').trim()
     };
   }
@@ -3041,6 +3164,7 @@
       no: Number(row['ลำดับ']) || 0,
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
+      platform: canonicalPlatform(row['แพลตฟอร์ม']),
       cast: (row['นักแสดง'] || '').trim()
     };
   }
@@ -3147,6 +3271,7 @@
     const years = [...new Set(shows.map(s => s.year).filter(Boolean))].sort((a,b) => b-a);
     yearFilter.innerHTML = '<option value="all">ทุกปี</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
     updateGenreDropdown();
+    activePlatform = fillPlatformSelect(platformFilter, shows, activePlatform);
   }
 
   function updateGenreDropdown() {
@@ -3162,6 +3287,7 @@
     const years = [...new Set(pending.map(s => s.year).filter(Boolean))].sort((a,b) => b-a);
     yearFilterPending.innerHTML = '<option value="all">ทุกปี</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
     updateGenreDropdownPending();
+    activePlatformPending = fillPlatformSelect(platformFilterPending, pending, activePlatformPending);
   }
 
   function updateGenreDropdownPending() {
@@ -3180,6 +3306,7 @@
     const prev = genreFilterDropped.value;
     genreFilterDropped.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
     genreFilterDropped.value = genres.includes(prev) ? prev : 'all';
+    activePlatformDropped = fillPlatformSelect(platformFilterDropped, dropped, activePlatformDropped);
   }
 
   // ============================================================
@@ -3202,9 +3329,54 @@
     if (!statsEl) return;
     if (!pendingLoaded) { statsEl.textContent = 'กำลังโหลดข้อมูล...'; return; }
     const total = pending.length;
-    statsEl.textContent = total === 0 ? 'ยังไม่มีรายการที่อยากดู' : `สนใจอยู่ ${total} เรื่อง`;
+    const watchingCount = pending.filter(s => s.watchedEp > 0).length;
+    statsEl.textContent = total === 0 ? 'ยังไม่มีรายการที่อยากดู' : `สนใจอยู่ ${total} เรื่อง${watchingCount ? ` · กำลังดู ${watchingCount} เรื่อง` : ''}`;
   }
 
+
+  // ============================================================
+  // กำลังดู (Watchlist) — ความคืบหน้าตอน
+  // ============================================================
+  function progressHtml(s) {
+    if (!(s.watchedEp > 0)) return '';
+    const total = s.episodes || 0;
+    const pct = total ? Math.min(100, Math.round(s.watchedEp / total * 100)) : 0;
+    const t = escAttr(s.title);
+    return `<div class="watch-progress">
+            <div class="wp-top"><span class="wp-label">กำลังดู EP ${s.watchedEp}${total ? ' / ' + total : ''}</span>
+              <span class="wp-btns"><button class="ep-btn ep-minus" data-title="${t}" title="ลดลง 1 ตอน">−</button><button class="ep-btn ep-plus" data-title="${t}" title="ดูเพิ่ม 1 ตอน">+1</button></span></div>
+            ${total ? `<div class="wp-bar"><span style="width:${pct}%"></span></div>` : ''}
+          </div>`;
+  }
+  const progressSaveTimers = {};
+  function saveProgress(title, ep) {
+    clearTimeout(progressSaveTimers[title]);
+    progressSaveTimers[title] = setTimeout(async () => {
+      delete progressSaveTimers[title];
+      if (!APPS_SCRIPT_URL.trim()) return;
+      try {
+        await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({ action:'updateProgress', title, ep })});
+      } catch(err) { console.error(err); }
+    }, 700);
+  }
+  function changeProgress(title, delta) {
+    const entry = pending.find(p => p.title === title);
+    if (!entry) return;
+    const total = entry.episodes || 0;
+    let ep = (entry.watchedEp || 0) + delta;
+    if (ep < 0) ep = 0;
+    if (total && ep > total) ep = total;
+    if (ep === (entry.watchedEp || 0)) return;
+    entry.watchedEp = ep;
+    renderPending(); updateStatsPending();
+    saveProgress(title, ep);
+    if (delta > 0 && total && ep >= total) {
+      showToast(`ดูครบ ${total} ตอนแล้ว — เลือกว่าชอบไหมแล้วย้ายไป Watched ได้เลย`);
+      pendingMoveSource = 'pending';
+      openMoveModal(entry);
+    }
+  }
   // ============================================================
   // Render: Watched
   // ============================================================
@@ -3216,7 +3388,8 @@
           && (!query || matchesSearch(s, query))
           && (activeYear === 'all' || String(s.year) === activeYear)
           && (activeGenre === 'all' || s.genres.includes(activeGenre))
-          && (activeCast === 'all' || splitCast(s.cast).includes(activeCast));
+          && (activeCast === 'all' || splitCast(s.cast).includes(activeCast))
+          && (activePlatform === 'all' || s.platform === activePlatform);
     });
     const sortBy = sortSelect.value;
     filtered.sort((a,b) => {
@@ -3248,14 +3421,16 @@
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
           <button class="card-menu-btn" data-title="${s.title}">⋮</button>
           <div class="card-menu" hidden>
             <button class="menu-edit edit-diary-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-diary-btn" data-title="${s.title}">ลบ</button>
           </div>
-          <h2 class="ticket-title">${s.title}</h2>
-          ${s.year ? `<p class="ticket-year">${s.year}</p>` : ''}
+          <div class="ticket-top">${posterThumbHtml(s)}<div class="ticket-head">
+            <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
+            <h2 class="ticket-title">${s.title}</h2>
+            ${yearLineHtml(s,'diary',activePlatform)}
+          </div></div>
           <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenre?' active-filter':''}" data-genre="${g}" data-page="diary">${g}</span>`).join('')}</div>
           ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCast?' active-filter':''}" data-cast="${c}" data-page="diary">${c}</span>`).join('')}</div>` : ''}
         </div>
@@ -3280,11 +3455,19 @@
           && (!query||matchesSearch(s, query))
           && (activeYearPending==='all'||String(s.year)===activeYearPending)
           && (activeGenrePending==='all'||s.genres.includes(activeGenrePending))
-          && (activeCastPending==='all'||splitCast(s.cast).includes(activeCastPending));
+          && (activeCastPending==='all'||splitCast(s.cast).includes(activeCastPending))
+          && (activePlatformPending==='all'||s.platform===activePlatformPending)
+          && (!watchingOnly||s.watchedEp>0);
     });
     const sortBy = sortSelectPending.value;
     filtered.sort((a,b) => {
       if (sortBy==='ready-first') return (b.finished?1:0)-(a.finished?1:0);
+      if (sortBy==='watching-first') {
+        const aw=a.watchedEp>0?1:0, bw=b.watchedEp>0?1:0;
+        if (aw!==bw) return bw-aw;
+        const diff=b.year-a.year; if (diff!==0) return diff;
+        return (b.no||0)-(a.no||0);
+      }
       if (sortBy==='year-desc') {
         const diff = b.year-a.year;
         if (diff !== 0) return diff;
@@ -3301,23 +3484,27 @@
     const pageItems = filtered.slice((currentPagePending-1)*PAGE_SIZE, currentPagePending*PAGE_SIZE);
     pageItems.forEach((s,i) => {
       const card = document.createElement('article');
-      card.className = 'ticket watchlist';
+      card.className = 'ticket watchlist' + (s.watchedEp>0 ? ' is-watching' : '');
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
       card.dataset.title = s.title;
       const statusClass = s.finished?'ready':'airing';
       const statusLabel = s.finished?'จบแล้ว พร้อมดูยกชุด':'กำลังออกอากาศ';
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
           <button class="card-menu-btn" data-title="${s.title}">⋮</button>
           <div class="card-menu" hidden>
+            ${s.watchedEp>0?'':`<button class="start-watching-btn" data-title="${escAttr(s.title)}">▶ เริ่มดู (EP 1)</button>`}
             <button class="menu-edit edit-pending-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-pending-btn" data-title="${s.title}">ลบ</button>
           </div>
-          <h2 class="ticket-title">${s.title}</h2>
-          ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
+          <div class="ticket-top">${posterThumbHtml(s)}<div class="ticket-head">
+            <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
+            <h2 class="ticket-title">${s.title}</h2>
+            ${yearLineHtml(s,'watchlist',activePlatformPending)}
+          </div></div>
           <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenrePending?' active-filter':''}" data-genre="${g}" data-page="watchlist">${g}</span>`).join('')}</div>
           ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastPending?' active-filter':''}" data-cast="${c}" data-page="watchlist">${c}</span>`).join('')}</div>` : ''}
+          ${progressHtml(s)}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">
@@ -3340,7 +3527,8 @@
       return (!query || matchesSearch(s, query))
           && (activeYearDropped==='all' || String(s.year)===activeYearDropped)
           && (activeGenreDropped==='all' || s.genres.includes(activeGenreDropped))
-          && (activeCastDropped==='all' || splitCast(s.cast).includes(activeCastDropped));
+          && (activeCastDropped==='all' || splitCast(s.cast).includes(activeCastDropped))
+          && (activePlatformDropped==='all' || s.platform===activePlatformDropped);
     });
     const sortBy = sortSelectDropped.value;
     filtered.sort((a,b) => {
@@ -3365,14 +3553,16 @@
         : (s.episodes ? `0 / ${s.episodes} ตอน` : '');
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
           <button class="card-menu-btn" data-title="${s.title}">⋮</button>
           <div class="card-menu" hidden>
             <button class="menu-edit edit-dropped-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-dropped-btn" data-title="${s.title}">ลบ</button>
           </div>
-          <h2 class="ticket-title">${s.title}</h2>
-          ${s.year?`<p class="ticket-year">${s.year}</p>`:''}
+          <div class="ticket-top">${posterThumbHtml(s)}<div class="ticket-head">
+            <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
+            <h2 class="ticket-title">${s.title}</h2>
+            ${yearLineHtml(s,'dropped',activePlatformDropped)}
+          </div></div>
           <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenreDropped?' active-filter':''}" data-genre="${g}" data-page="dropped">${g}</span>`).join('')}</div>
           ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastDropped?' active-filter':''}" data-cast="${c}" data-page="dropped">${c}</span>`).join('')}</div>` : ''}
         </div>
@@ -3414,6 +3604,31 @@
 
     // scroll ขึ้นบนสุดให้เห็น filter bar
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+
+  // ============================================================
+  // Platform tag click → filter ตามแพลตฟอร์ม
+  document.addEventListener('click', e => {
+    const tag = e.target.closest('.platform-tag[data-platform]');
+    if (!tag) return;
+    const name = tag.dataset.platform, page = tag.dataset.page;
+    if (page === 'diary') {
+      activePlatform = (activePlatform === name) ? 'all' : name; platformFilter.value = activePlatform; currentPage = 1; render();
+    } else if (page === 'watchlist') {
+      activePlatformPending = (activePlatformPending === name) ? 'all' : name; platformFilterPending.value = activePlatformPending; currentPagePending = 1; renderPending();
+    } else if (page === 'dropped') {
+      activePlatformDropped = (activePlatformDropped === name) ? 'all' : name; platformFilterDropped.value = activePlatformDropped; currentPageDropped = 1; renderDropped();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  platformFilter?.addEventListener('change', () => { activePlatform = platformFilter.value; currentPage = 1; render(); });
+  platformFilterPending?.addEventListener('change', () => { activePlatformPending = platformFilterPending.value; currentPagePending = 1; renderPending(); });
+  platformFilterDropped?.addEventListener('change', () => { activePlatformDropped = platformFilterDropped.value; currentPageDropped = 1; renderDropped(); });
+  watchingOnlyBtn?.addEventListener('click', () => {
+    watchingOnly = !watchingOnly;
+    watchingOnlyBtn.classList.toggle('active', watchingOnly);
+    currentPagePending = 1; renderPending();
   });
 
   // ============================================================
@@ -3515,7 +3730,7 @@
   function resetDiaryFilters() {
     searchInput.value=''; sortSelect.value='recently-watched';
     yearFilter.value='all'; genreFilter.value='all';
-    activeType='all'; activeYear='all'; activeGenre='all'; activeCast='all'; currentPage=1;
+    activeType='all'; activeYear='all'; activeGenre='all'; activeCast='all'; activePlatform='all'; if(platformFilter) platformFilter.value='all'; currentPage=1;
     pills.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-diary .pill[data-type="all"]').classList.add('active');
   }
@@ -3523,7 +3738,8 @@
   function resetPendingFilters() {
     searchInputPending.value=''; sortSelectPending.value='year-desc';
     yearFilterPending.value='all'; genreFilterPending.value='all';
-    activeTypePending='all'; activeYearPending='all'; activeGenrePending='all'; activeCastPending='all'; currentPagePending=1;
+    activeTypePending='all'; activeYearPending='all'; activeGenrePending='all'; activeCastPending='all'; activePlatformPending='all'; if(platformFilterPending) platformFilterPending.value='all';
+    watchingOnly=false; watchingOnlyBtn?.classList.remove('active'); currentPagePending=1;
     pillsPending.forEach(x=>x.classList.remove('active'));
     document.querySelector('#controls-watchlist .pill[data-ptype="all"]').classList.add('active');
   }
@@ -3531,7 +3747,7 @@
   function resetDroppedFilters() {
     searchInputDropped.value=''; sortSelectDropped.value='no-desc';
     yearFilterDropped.value='all'; genreFilterDropped.value='all';
-    activeYearDropped='all'; activeGenreDropped='all'; activeCastDropped='all'; currentPageDropped=1;
+    activeYearDropped='all'; activeGenreDropped='all'; activeCastDropped='all'; activePlatformDropped='all'; if(platformFilterDropped) platformFilterDropped.value='all'; currentPageDropped=1;
   }
 
   // ============================================================
@@ -3964,8 +4180,44 @@
   document.getElementById('topSeriesList')?.addEventListener('click',openTopSeriesItem);
   document.getElementById('topPodium')?.addEventListener('click',openTopSeriesItem);
 
+  // แพลตฟอร์มที่ดู (หน้า Summary) — ใช้ปุ่ม Series/Variety ของหน้า Summary
+  function renderPlatformChart() {
+    const wrap=document.getElementById('platformBars'), empty=document.getElementById('platformEmpty'),
+          note=document.getElementById('platformNote'), legend=document.getElementById('platformLegend');
+    if(!wrap) return;
+    wrap.innerHTML='';
+    const list=getSummaryShows();
+    const stat={};
+    list.forEach(s=>{ if(!s.platform) return; const o=stat[s.platform]||(stat[s.platform]={total:0,liked:0}); o.total++; if(s.liked) o.liked++; });
+    const rows=Object.entries(stat).sort((a,b)=>b[1].total-a[1].total||b[1].liked-a[1].liked||a[0].localeCompare(b[0]));
+    const noPlatform=list.filter(s=>!s.platform).length;
+    empty.hidden = rows.length>0 || !diaryLoaded;
+    legend.hidden = rows.length===0;
+    note.textContent = rows.length && noPlatform ? `ยังไม่ระบุแพลตฟอร์ม ${noPlatform} เรื่อง` : '';
+    const max=rows.length?rows[0][1].total:1;
+    rows.forEach(([name,o])=>{
+      const row=document.createElement('div'); row.className='platform-row'; row.style.setProperty('--pf',platformColor(name)); row.dataset.platform=name;
+      row.title='ดูรายชื่อเรื่องใน '+name;
+      const nm=document.createElement('span'); nm.className='platform-name'; nm.textContent=name;
+      const tr=document.createElement('div'); tr.className='platform-track';
+      const t1=document.createElement('span'); t1.className='pt-total'; t1.style.width=(o.total/max*100)+'%';
+      const t2=document.createElement('span'); t2.className='pt-liked'; t2.style.width=(o.liked/max*100)+'%';
+      tr.append(t1,t2);
+      const ct=document.createElement('span'); ct.className='platform-count';
+      const b=document.createElement('b'); b.textContent=o.total; ct.append(b, document.createTextNode(` เรื่อง · ♥ ${o.liked}`));
+      row.append(nm,tr,ct); wrap.appendChild(row);
+    });
+  }
+  document.getElementById('platformBars')?.addEventListener('click', e=>{
+    const row=e.target.closest('.platform-row'); if(!row) return;
+    const name=row.dataset.platform;
+    document.querySelector('.page-tab[data-nav="diary"]')?.click();
+    activePlatform=name; if(platformFilter){ platformFilter.value=name; } currentPage=1; render();
+  });
+
   function updateSummary() {
     renderTopSeries();
+    renderPlatformChart();
     const summaryTotal=document.getElementById('summaryTotal'), summaryTotalBreakdown=document.getElementById('summaryTotalBreakdown');
     const summaryLiked=document.getElementById('summaryLiked'), summaryLikedBreakdown=document.getElementById('summaryLikedBreakdown');
     if(!diaryLoaded){
@@ -4518,7 +4770,8 @@
     const finished=document.getElementById('newFinished').checked;
     const synopsisStr=document.getElementById('newSynopsis').value.trim();
     const posterStr=document.getElementById('newPoster').value.trim();
-    const newEntry={ title, type:typeRaw.toLowerCase()==='variety'?'variety':'series', year, episodes, genres:genresStr.split(',').map(g=>g.trim()).filter(Boolean), finished, cast:castStr, synopsis:synopsisStr, poster:posterStr };
+    const platformStr=canonicalPlatform(document.getElementById('newPlatform').value);
+    const newEntry={ title, type:typeRaw.toLowerCase()==='variety'?'variety':'series', year, episodes, genres:genresStr.split(',').map(g=>g.trim()).filter(Boolean), finished, cast:castStr, synopsis:synopsisStr, poster:posterStr, platform:platformStr, watchedEp:0 };
     pending=[newEntry,...pending]; usingFallbackPending=false; pendingLoaded=true;
     populateFiltersPending(); renderPending(); updateStatsPending();
     addModalOverlay.hidden=true; addPendingForm.reset();
@@ -4526,7 +4779,7 @@
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'addPending',title:newEntry.title,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,year:newEntry.year,episodes:newEntry.episodes,finished:newEntry.finished})});
+        body:JSON.stringify({action:'addPending',title:newEntry.title,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,year:newEntry.year,episodes:newEntry.episodes,finished:newEntry.finished})});
     } catch(err){console.error(err);}
   });
 
@@ -4617,7 +4870,9 @@
       btnNo.classList.add('dimmed');
       epField.hidden = false;
       epField.style.display = 'flex';
-      document.getElementById('moveLastEpInput').focus();
+      const epInput = document.getElementById('moveLastEpInput');
+      if (!epInput.value && pendingMoveEntry && pendingMoveEntry.watchedEp > 0) epInput.value = pendingMoveEntry.watchedEp;
+      epInput.focus();
     }
     // enable ปุ่มตกลงหลังเลือกแล้ว
     const confirmBtn = document.getElementById('confirmMoveBtn');
@@ -4640,7 +4895,7 @@
       usingFallbackPending = false; pendingLoaded = true;
       // เพิ่มเข้า dropped array
       const maxNo = dropped.reduce((m,d) => Math.max(m, d.no||0), 0);
-      dropped = [{ ...entry, lastEp, no: maxNo + 1 }, ...dropped];
+      dropped = [{ ...entry, lastEp, watchedEp: 0, no: maxNo + 1 }, ...dropped];
       droppedLoaded = true;
       populateFiltersPending(); renderPending(); updateStatsPending();
       renderDropped();
@@ -4651,7 +4906,7 @@
         await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
           body: JSON.stringify({ action:'movePendingToDropped', title:entry.title,
             type:entry.type==='variety'?'Variety':'Series',
-            genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', year:entry.year,
+            genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year,
             episodes:entry.episodes, lastEp })});
       } catch(err) { console.error(err); }
 
@@ -4679,12 +4934,12 @@
         if (source === 'dropped') {
           await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
             body: JSON.stringify({ action:'moveDroppedToWatched', title:entry.title, type:'Series',
-              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', year:entry.year, episodes:entry.episodes, liked })});
+              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year, episodes:entry.episodes, liked })});
         } else {
           await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
             body: JSON.stringify({ action:'moveToWatched', title:entry.title,
               type:entry.type==='variety'?'Variety':'Series',
-              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', year:entry.year, episodes:entry.episodes, liked })});
+              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year, episodes:entry.episodes, liked })});
         }
       } catch(err) { console.error(err); }
     }
@@ -4758,6 +5013,9 @@
     document.getElementById('editEpisodes').value=entry.episodes||'';
     document.getElementById('editSynopsis').value=entry.synopsis||'';
     document.getElementById('editPoster').value=entry.poster||'';
+    document.getElementById('editPlatform').value=entry.platform||'';
+    document.getElementById('editWatchedEp').value=entry.watchedEp||'';
+    document.getElementById('editWatchedEpRow').style.display=source==='pending'?'':'none';
     const editRankRow=document.getElementById('editRankRow');
     if(source==='pending'){editLikedRow.style.display='none';editRankRow.style.display='none';editFinishedRow.style.display='flex';document.getElementById('editFinished').checked=!!entry.finished;}
     else{editLikedRow.style.display='flex';editRankRow.style.display='';editFinishedRow.style.display='none';document.getElementById('editLiked').checked=!!entry.liked;document.getElementById('editRank').value=entry.rank||'';}
@@ -4798,6 +5056,10 @@
 
   // Grid: Watchlist — รวม mark-watched + edit/delete ในที่เดียว
   gridPending.addEventListener('click', e => {
+    const epBtn = e.target.closest('.ep-btn');
+    if (epBtn) { changeProgress(epBtn.dataset.title, epBtn.classList.contains('ep-plus') ? 1 : -1); return; }
+    const startBtn = e.target.closest('.start-watching-btn');
+    if (startBtn) { closeAllCardMenus(); changeProgress(startBtn.dataset.title, 1); return; }
     const menuBtn = e.target.closest('.card-menu-btn');
     if (menuBtn) { const menu=menuBtn.nextElementSibling; const wasHidden=menu.hidden; closeAllCardMenus(); menu.hidden=!wasHidden; return; }
     const editBtn = e.target.closest('.edit-pending-btn');
@@ -4838,17 +5100,19 @@
     const finished=document.getElementById('editFinished').checked;
     const synopsisStr=document.getElementById('editSynopsis').value.trim();
     const posterStr=document.getElementById('editPoster').value.trim();
+    const platformStr=canonicalPlatform(document.getElementById('editPlatform').value);
+    const watchedEpNum=Math.max(0,parseInt(document.getElementById('editWatchedEp').value,10)||0);
     const rankRaw=parseInt(document.getElementById('editRank').value,10);
     const rankNum=(rankRaw>=1&&rankRaw<=10)?rankRaw:0;
     closeEditModal();
-    if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished,cast:castStr,synopsis:synopsisStr,poster:posterStr}:p);renderPending();updateStatsPending();}
-    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked,cast:castStr,synopsis:synopsisStr,poster:posterStr,rank:rankNum}:s);populateFilters();render();updateStats();}
+    if(source==='pending'){pending=pending.map(p=>p.title===originalTitle?{...p,title:newTitle,type,year,genres,episodes,finished,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,watchedEp:watchedEpNum}:p);populateFiltersPending();renderPending();updateStatsPending();}
+    else{shows=shows.map(s=>s.title===originalTitle?{...s,title:newTitle,type,year,genres,episodes,liked,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,rank:rankNum}:s);populateFilters();render();updateStats();}
     showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(source!=='pending' && rankNum){const dup=shows.find(x=>x.type==='series'&&x.rank===rankNum&&x.title!==newTitle);if(dup) setTimeout(()=>showToast(`อันดับ ${rankNum} ซ้ำกับ "${dup.title}" — ไปเคลียร์อันดับของเรื่องใดเรื่องหนึ่งด้วยนะ`,'info'),600);}
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,...(source==='pending'?{}:{rank:rankNum||''}),year,episodes,liked,finished})});
+        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,...(source==='pending'?{watchedEp:watchedEpNum}:{rank:rankNum||''}),year,episodes,liked,finished})});
     } catch(err){console.error(err);}
   });
 
@@ -4877,7 +5141,7 @@
   let editDroppedContext = null;
 
   function openEditDroppedModal(entry) {
-    editDroppedContext = { originalTitle: entry.title };
+    editDroppedContext = { originalTitle: entry.title, type: entry.type };
     document.getElementById('editDroppedTitle').value    = entry.title;
     document.getElementById('editDroppedYear').value     = entry.year || '';
     document.getElementById('editDroppedEpisodes').value = entry.episodes || '';
@@ -4886,6 +5150,7 @@
     document.getElementById('editDroppedLastEp').value   = entry.lastEp || '';
     document.getElementById('editDroppedSynopsis').value = entry.synopsis||'';
     document.getElementById('editDroppedPoster').value   = entry.poster||'';
+    document.getElementById('editDroppedPlatform').value = entry.platform||'';
     editDroppedFormStatus.textContent = '';
     editDroppedModalOverlay.hidden = false;
   }
@@ -4909,14 +5174,16 @@
     const lastEp=Number(document.getElementById('editDroppedLastEp').value)||0;
     const synopsisStr=document.getElementById('editDroppedSynopsis').value.trim();
     const posterStr=document.getElementById('editDroppedPoster').value.trim();
+    const platformStr=canonicalPlatform(document.getElementById('editDroppedPlatform').value);
+    const droppedType=editDroppedContext.type==='variety'?'Variety':'Series';
     closeEditDroppedModal();
-    dropped=dropped.map(d=>d.title===originalTitle?{...d,title:newTitle,year,episodes,genres,lastEp,cast:castStr,synopsis:synopsisStr,poster:posterStr}:d);
-    renderDropped();
+    dropped=dropped.map(d=>d.title===originalTitle?{...d,title:newTitle,year,episodes,genres,lastEp,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr}:d);
+    populateFiltersDropped(); renderDropped();
     showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:'dropped',originalTitle,title:newTitle,year,episodes,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,lastEp})});
+        body:JSON.stringify({action:'update',sheet:'dropped',originalTitle,title:newTitle,type:droppedType,platform:platformStr,year,episodes,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,lastEp})});
     } catch(err){console.error(err);}
   });
 
@@ -5313,7 +5580,8 @@
   document.addEventListener('click', e => {
     if (e.target.closest('.card-menu-btn') || e.target.closest('.card-menu') ||
         e.target.closest('.genre-tag') || e.target.closest('.mark-watched-btn') ||
-        e.target.closest('.mark-dropped-watched-btn')) return;
+        e.target.closest('.mark-dropped-watched-btn') || e.target.closest('.ep-btn') ||
+        e.target.closest('.platform-tag') || e.target.closest('.watch-progress')) return;
 
     // หาว่าคลิกอยู่ใน grid ไหน
     const card = e.target.closest('#grid .ticket, #gridPending .ticket, #gridDropped .ticket');
