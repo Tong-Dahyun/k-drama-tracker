@@ -2229,6 +2229,7 @@
   color:color-mix(in srgb, var(--pf) 80%, var(--text)); background:color-mix(in srgb, var(--pf) 13%, transparent);
   border:1px solid color-mix(in srgb, var(--pf) 50%, transparent); transition:background .15s, color .15s; }
 .platform-tag.no-year { margin-left:0; }
+.platform-tag + .platform-tag { margin-left:4px; }
 .platform-tag:hover { background:color-mix(in srgb, var(--pf) 28%, transparent); }
 .platform-tag.active-filter { background:var(--pf); color:#fff; border-color:var(--pf); }
 .sort-select[hidden] { display:none; }
@@ -2781,7 +2782,7 @@
             <div class="form-field"><label for="newCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="newCast" placeholder="ซอนเยจิน, คิมซูฮยอน"></div>
             <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
             <div class="form-field"><label for="newPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="newPoster" placeholder="https://..."></div>
-            <div class="form-field"><label for="newPlatform">แพลตฟอร์ม</label><input type="text" id="newPlatform" list="platformList" placeholder="เช่น Netflix, Viu"></div>
+            <div class="form-field"><label for="newPlatform">แพลตฟอร์ม (คั่นด้วยจุลภาค)</label><input type="text" id="newPlatform" list="platformList" placeholder="คั่นด้วยจุลภาค เช่น Netflix, Viu"></div>
             <datalist id="platformList"><option value="Netflix"><option value="Viu"><option value="Disney+"><option value="Prime Video"><option value="iQIYI"><option value="TVING"><option value="WeTV"><option value="Apple TV+"><option value="HBO Max"><option value="Coupang Play"><option value="YouTube"></datalist>
             <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
           </div>
@@ -2844,7 +2845,7 @@
             <div class="form-field"><label for="editCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="editCast"></div>
             <div class="form-field"><label for="editEpisodes">จำนวนตอน</label><input type="number" id="editEpisodes" min="0"></div>
             <div class="form-field"><label for="editPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editPoster" placeholder="https://..."></div>
-            <div class="form-field"><label for="editPlatform">แพลตฟอร์ม</label><input type="text" id="editPlatform" list="platformList" placeholder="เช่น Netflix, Viu"></div>
+            <div class="form-field"><label for="editPlatform">แพลตฟอร์ม (คั่นด้วยจุลภาค)</label><input type="text" id="editPlatform" list="platformList" placeholder="คั่นด้วยจุลภาค เช่น Netflix, Viu"></div>
             <div class="form-checkbox" id="editLikedRow"><input type="checkbox" id="editLiked"><label for="editLiked">ชอบเรื่องนี้</label></div>
             <div class="form-field" id="editRankRow"><label for="editRank">อันดับ My Top 10 (1-10)</label><input type="number" id="editRank" min="1" max="10" step="1" placeholder="เว้นว่างถ้าไม่อยู่ใน Top 10"></div>
             <div class="form-checkbox" id="editFinishedRow"><input type="checkbox" id="editFinished"><label for="editFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
@@ -2879,7 +2880,7 @@
         </div>
         <div class="form-field"><label for="editDroppedLastEp">ดูถึง ep (Last Episode)</label><input type="number" id="editDroppedLastEp" min="0" placeholder="0"></div>
         <div class="form-field"><label for="editDroppedPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editDroppedPoster" placeholder="https://..."></div>
-        <div class="form-field"><label for="editDroppedPlatform">แพลตฟอร์ม</label><input type="text" id="editDroppedPlatform" list="platformList" placeholder="เช่น Netflix, Viu"></div>
+        <div class="form-field"><label for="editDroppedPlatform">แพลตฟอร์ม (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedPlatform" list="platformList" placeholder="คั่นด้วยจุลภาค เช่น Netflix, Viu"></div>
         <div class="form-field"><label for="editDroppedSynopsis">เรื่องย่อ</label><textarea id="editDroppedSynopsis" rows="3" placeholder="เรื่องย่อสั้นๆ (ถ้ามี)"></textarea></div>
         <p class="form-status" id="editDroppedFormStatus"></p>
         <div class="modal-actions">
@@ -3049,7 +3050,7 @@
     if (s.title.toLowerCase().includes(query)) return true;
     if (s.genres.some(g => g.toLowerCase().includes(query))) return true;
     if (splitCast(s.cast).some(c => c.toLowerCase().includes(query))) return true;
-    if (s.platform && s.platform.toLowerCase().includes(query)) return true;
+    if (pfList(s).some(p => p.toLowerCase().includes(query))) return true;
     return false;
   }
 
@@ -3073,11 +3074,18 @@
     if (!t) return '';
     return PLATFORM_ALIASES[t.toLowerCase()] || t;
   }
+  // ใส่ได้หลายแพลตฟอร์ม คั่นด้วยจุลภาค (หรือ / | 、) → คืนเป็นข้อความที่จัดรูปแล้ว เช่น "Netflix, Viu"
+  function normalizePlatforms(raw) {
+    const list = (raw || '').toString().split(/[,\/／、|]+/).map(canonicalPlatform).filter(Boolean);
+    return [...new Set(list)].join(', ');
+  }
+  function pfList(s) { return s && s.platform ? s.platform.split(', ').filter(Boolean) : []; }
   function platformColor(name) { return PLATFORM_COLORS[name] || '#8A8A8A'; }
   function escAttr(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
   function platformTagHtml(s, page, active) {
-    if (!s.platform) return '';
-    return `<span class="platform-tag${s.year?'':' no-year'}${s.platform===active?' active-filter':''}" style="--pf:${platformColor(s.platform)}" data-platform="${escAttr(s.platform)}" data-page="${page}">${escAttr(s.platform)}</span>`;
+    return pfList(s).map((name, i) =>
+      `<span class="platform-tag${(i===0 && !s.year)?' no-year':''}${name===active?' active-filter':''}" style="--pf:${platformColor(name)}" data-platform="${escAttr(name)}" data-page="${page}">${escAttr(name)}</span>`
+    ).join('');
   }
   function yearLineHtml(s, page, active) {
     const tag = platformTagHtml(s, page, active);
@@ -3090,7 +3098,7 @@
   }
   function fillPlatformSelect(sel, list, current) {
     if (!sel) return 'all';
-    const names = [...new Set(list.map(s => s.platform).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+    const names = [...new Set(list.flatMap(pfList))].sort((a,b) => a.localeCompare(b));
     sel.innerHTML = '<option value="all">ทุกแพลตฟอร์ม</option>' + names.map(n => `<option value="${escAttr(n)}">${escAttr(n)}</option>`).join('');
     sel.hidden = names.length === 0;
     sel.value = names.includes(current) ? current : 'all';
@@ -3116,7 +3124,7 @@
       rank: (() => { const r = parseInt(row['อันดับ'], 10); return (r >= 1 && r <= 10) ? r : 0; })(),
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
-      platform: canonicalPlatform(row['แพลตฟอร์ม']),
+      platform: normalizePlatforms(row['แพลตฟอร์ม']),
       cast: (row['นักแสดง'] || '').trim()
     };
   }
@@ -3147,7 +3155,7 @@
       no: Number(row['ลำดับ']) || 0,
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
-      platform: canonicalPlatform(row['แพลตฟอร์ม']),
+      platform: normalizePlatforms(row['แพลตฟอร์ม']),
       cast: (row['นักแสดง'] || '').trim()
     };
   }
@@ -3164,7 +3172,7 @@
       no: Number(row['ลำดับ']) || 0,
       synopsis: (row['เรื่องย่อ'] || '').trim(),
       poster: (row['โปสเตอร์'] || '').trim(),
-      platform: canonicalPlatform(row['แพลตฟอร์ม']),
+      platform: normalizePlatforms(row['แพลตฟอร์ม']),
       cast: (row['นักแสดง'] || '').trim()
     };
   }
@@ -3389,7 +3397,7 @@
           && (activeYear === 'all' || String(s.year) === activeYear)
           && (activeGenre === 'all' || s.genres.includes(activeGenre))
           && (activeCast === 'all' || splitCast(s.cast).includes(activeCast))
-          && (activePlatform === 'all' || s.platform === activePlatform);
+          && (activePlatform === 'all' || pfList(s).includes(activePlatform));
     });
     const sortBy = sortSelect.value;
     filtered.sort((a,b) => {
@@ -3456,7 +3464,7 @@
           && (activeYearPending==='all'||String(s.year)===activeYearPending)
           && (activeGenrePending==='all'||s.genres.includes(activeGenrePending))
           && (activeCastPending==='all'||splitCast(s.cast).includes(activeCastPending))
-          && (activePlatformPending==='all'||s.platform===activePlatformPending)
+          && (activePlatformPending==='all'||pfList(s).includes(activePlatformPending))
           && (!watchingOnly||s.watchedEp>0);
     });
     const sortBy = sortSelectPending.value;
@@ -3528,7 +3536,7 @@
           && (activeYearDropped==='all' || String(s.year)===activeYearDropped)
           && (activeGenreDropped==='all' || s.genres.includes(activeGenreDropped))
           && (activeCastDropped==='all' || splitCast(s.cast).includes(activeCastDropped))
-          && (activePlatformDropped==='all' || s.platform===activePlatformDropped);
+          && (activePlatformDropped==='all' || pfList(s).includes(activePlatformDropped));
     });
     const sortBy = sortSelectDropped.value;
     filtered.sort((a,b) => {
@@ -4188,12 +4196,16 @@
     wrap.innerHTML='';
     const list=getSummaryShows();
     const stat={};
-    list.forEach(s=>{ if(!s.platform) return; const o=stat[s.platform]||(stat[s.platform]={total:0,liked:0}); o.total++; if(s.liked) o.liked++; });
+    list.forEach(s=>{ pfList(s).forEach(name=>{ const o=stat[name]||(stat[name]={total:0,liked:0}); o.total++; if(s.liked) o.liked++; }); });
     const rows=Object.entries(stat).sort((a,b)=>b[1].total-a[1].total||b[1].liked-a[1].liked||a[0].localeCompare(b[0]));
     const noPlatform=list.filter(s=>!s.platform).length;
+    const multiPlatform=list.filter(s=>pfList(s).length>1).length;
     empty.hidden = rows.length>0 || !diaryLoaded;
     legend.hidden = rows.length===0;
-    note.textContent = rows.length && noPlatform ? `ยังไม่ระบุแพลตฟอร์ม ${noPlatform} เรื่อง` : '';
+    note.textContent = !rows.length ? '' : [
+      multiPlatform ? `${multiPlatform} เรื่องมีหลายแพลตฟอร์ม (นับในทุกแพลตฟอร์มที่ใส่)` : '',
+      noPlatform ? `ยังไม่ระบุแพลตฟอร์ม ${noPlatform} เรื่อง` : ''
+    ].filter(Boolean).join(' · ');
     const max=rows.length?rows[0][1].total:1;
     rows.forEach(([name,o])=>{
       const row=document.createElement('div'); row.className='platform-row'; row.style.setProperty('--pf',platformColor(name)); row.dataset.platform=name;
@@ -4770,7 +4782,7 @@
     const finished=document.getElementById('newFinished').checked;
     const synopsisStr=document.getElementById('newSynopsis').value.trim();
     const posterStr=document.getElementById('newPoster').value.trim();
-    const platformStr=canonicalPlatform(document.getElementById('newPlatform').value);
+    const platformStr=normalizePlatforms(document.getElementById('newPlatform').value);
     const newEntry={ title, type:typeRaw.toLowerCase()==='variety'?'variety':'series', year, episodes, genres:genresStr.split(',').map(g=>g.trim()).filter(Boolean), finished, cast:castStr, synopsis:synopsisStr, poster:posterStr, platform:platformStr, watchedEp:0 };
     pending=[newEntry,...pending]; usingFallbackPending=false; pendingLoaded=true;
     populateFiltersPending(); renderPending(); updateStatsPending();
@@ -5100,7 +5112,7 @@
     const finished=document.getElementById('editFinished').checked;
     const synopsisStr=document.getElementById('editSynopsis').value.trim();
     const posterStr=document.getElementById('editPoster').value.trim();
-    const platformStr=canonicalPlatform(document.getElementById('editPlatform').value);
+    const platformStr=normalizePlatforms(document.getElementById('editPlatform').value);
     const watchedEpNum=Math.max(0,parseInt(document.getElementById('editWatchedEp').value,10)||0);
     const rankRaw=parseInt(document.getElementById('editRank').value,10);
     const rankNum=(rankRaw>=1&&rankRaw<=10)?rankRaw:0;
@@ -5174,7 +5186,7 @@
     const lastEp=Number(document.getElementById('editDroppedLastEp').value)||0;
     const synopsisStr=document.getElementById('editDroppedSynopsis').value.trim();
     const posterStr=document.getElementById('editDroppedPoster').value.trim();
-    const platformStr=canonicalPlatform(document.getElementById('editDroppedPlatform').value);
+    const platformStr=normalizePlatforms(document.getElementById('editDroppedPlatform').value);
     const droppedType=editDroppedContext.type==='variety'?'Variety':'Series';
     closeEditDroppedModal();
     dropped=dropped.map(d=>d.title===originalTitle?{...d,title:newTitle,year,episodes,genres,lastEp,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr}:d);
