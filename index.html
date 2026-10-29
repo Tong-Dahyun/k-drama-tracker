@@ -242,7 +242,7 @@
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: none; }
   }
 
   /* ---------- Dashboard ---------- */
@@ -1321,6 +1321,55 @@
   .mobile-topbar-title { position:absolute; left:66px; right:16px; top:0; height:56px; display:flex; align-items:center;
     font-family:'Inter','Sarabun',sans-serif; font-weight:700; font-size:0.98rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
+
+  /* ===== มือถือ: แถบเดียว (ค้นหา + ปุ่มตัวกรอง) + แผงตัวกรองจากด้านล่าง ===== */
+  .mobile-filter-btn { display:none; }
+  .filter-sheet, .filter-sheet-dim { display:none; }
+  @media (max-width: 860px) {
+    body.on-detail .mobile-topbar-title { display:none; }
+    body.on-detail .mobile-filter-btn { display:flex; }
+    .mobile-filter-btn { position:absolute; top:9px; right:14px; width:38px; height:38px; border-radius:10px; border:1px solid var(--border);
+      background:var(--surface); color:var(--text); align-items:center; justify-content:center; cursor:pointer; padding:0; }
+    .mobile-filter-btn.has-filter { border-color:var(--red); color:var(--red); }
+    .mobile-filter-badge { position:absolute; top:-6px; right:-6px; min-width:17px; height:17px; padding:0 4px; border-radius:99px; background:var(--red); color:#fff;
+      font:700 10px/17px 'Inter',sans-serif; text-align:center; box-sizing:border-box; }
+    .mobile-filter-badge[hidden] { display:none; }
+
+    /* แถบตัวกรองเดิมของหน้า: เก็บให้ไม่กินพื้นที่ */
+    /* animation ของ view ทำให้ position:fixed ของลูกอิงกับ view แทนหน้าจอ — ปิดไว้บนมือถือ */
+    #view-detail.active { animation:none; opacity:1; transform:none; }
+    #view-detail .detail-topbar { position:static; z-index:auto; padding:0; margin:0; border:none; min-height:0; gap:0; background:none; }
+    #view-detail .sidebar-controls.page-section.active { display:block; }
+    /* ช่องค้นหาย้ายขึ้นไปอยู่ในแถบบนสุด */
+    #view-detail .sidebar-controls.page-section.active .controls-row-1 { position:fixed; top:9px; left:62px; right:62px; z-index:145; display:flex; }
+    #view-detail .controls-row-1 .clear-filters-btn { display:none; }
+    #view-detail .controls-row-1 .search-box { height:38px; padding:0 12px; font-size:0.85rem; flex:1 1 auto; min-width:0; box-sizing:border-box; }
+    /* ปุ่มตัวกรองย้ายเข้าไปอยู่ในแผงด้านล่าง */
+    #view-detail .detail-topbar .controls-row-2 { display:none; }
+    /* ปุ่มเพิ่มเรื่อง (Watchlist) เป็นปุ่มลอยมุมขวาล่าง */
+    #controls-watchlist.active .add-entry-btn { position:fixed; right:16px; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); z-index:130;
+      border-radius:999px; padding:12px 18px; box-shadow:0 8px 22px rgba(0,0,0,.45); }
+    #view-detail .grid { padding-bottom:70px; }
+
+    .filter-sheet-dim { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:300; display:block; animation:overlayIn .2s ease forwards; }
+    .filter-sheet { position:fixed; left:0; right:0; bottom:0; z-index:310; display:flex; flex-direction:column; max-height:78vh;
+      background:var(--surface); border-top:1px solid var(--border); border-radius:18px 18px 0 0; box-shadow:0 -12px 32px rgba(0,0,0,.5);
+      padding:10px 16px calc(16px + env(safe-area-inset-bottom, 0px)); animation:sheetUp .22s ease forwards; }
+    .filter-sheet[hidden], .filter-sheet-dim[hidden] { display:none; }
+    .filter-sheet-grab { width:40px; height:4px; border-radius:4px; background:var(--border); margin:0 auto 10px; flex:0 0 auto; }
+    .filter-sheet-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; font-weight:700; font-size:1rem; color:var(--text); }
+    .filter-sheet-head button { background:none; border:none; color:var(--red); font:600 0.82rem 'Sarabun',sans-serif; cursor:pointer; padding:4px 0; }
+    .filter-sheet-body { overflow-y:auto; min-height:0; }
+    .filter-sheet-body .controls-row-2 { display:flex; flex-wrap:wrap; gap:10px; overflow:visible; }
+    .filter-sheet-body .filter-pills { width:100%; flex-wrap:wrap; }
+    .filter-sheet-body .pill { flex:0 0 auto; }
+    .filter-sheet-body .watching-toggle { flex:0 0 auto; }
+    .filter-sheet-body .sort-select { flex:1 1 calc(50% - 5px); min-width:0; width:auto; height:42px; }
+    .filter-sheet-done { margin-top:16px; flex:0 0 auto; border:none; border-radius:12px; padding:12px; background:var(--red); color:#fff;
+      font:700 0.92rem 'Sarabun',sans-serif; cursor:pointer; }
+  }
+  @keyframes sheetUp { from { transform:translateY(100%); } to { transform:none; } }
+
   /* ---------- Drawer overlay ---------- */
   .drawer-overlay {
     display: none;
@@ -1340,6 +1389,7 @@
 
     /* main content เพิ่ม padding บนให้ไม่ทับปุ่ม */
     main { padding: 66px 16px 20px; }
+    body.on-detail main { padding-top: 68px; }
 
     /* sidebar กลายเป็น drawer เลื่อนจากซ้าย */
     .app-shell { display: block; }
@@ -2375,7 +2425,16 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   </div>
 
   <!-- Mobile top bar (พื้นหลังทึบเต็มความกว้าง กันเนื้อหาเลื่อนมาชนปุ่มเมนูตอน scroll) -->
-  <div class="mobile-topbar" id="mobileTopbar"><span class="mobile-topbar-title" id="mobileTopbarTitle">Summary</span></div>
+  <div class="mobile-topbar" id="mobileTopbar"><span class="mobile-topbar-title" id="mobileTopbarTitle">Summary</span>
+    <button class="mobile-filter-btn" id="mobileFilterBtn" type="button" aria-label="ตัวกรอง"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M7 12h10"/><path d="M10 19h4"/></svg><span class="mobile-filter-badge" id="mobileFilterBadge" hidden>0</span></button>
+  </div>
+  <div class="filter-sheet-dim" id="filterSheetDim" hidden></div>
+  <div class="filter-sheet" id="filterSheet" hidden role="dialog" aria-label="ตัวกรอง">
+    <div class="filter-sheet-grab"></div>
+    <div class="filter-sheet-head"><span>ตัวกรอง</span><button type="button" id="filterSheetClear">ล้างทั้งหมด</button></div>
+    <div class="filter-sheet-body" id="filterSheetBody"></div>
+    <button type="button" class="filter-sheet-done" id="filterSheetDone">ดูผลลัพธ์</button>
+  </div>
 
   <!-- Mobile hamburger button -->
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="เปิดเมนู">☰</button>
@@ -3279,6 +3338,66 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     sel.value = names.includes(current) ? current : 'all';
     return sel.value;
   }
+  // ============================================================
+  // มือถือ: ปุ่มตัวกรอง + แผงตัวกรองจากด้านล่าง (ย้าย row-2 ของหน้าที่เปิดอยู่เข้าไปในแผง)
+  // ============================================================
+  const filterSheet = document.getElementById('filterSheet');
+  const filterSheetDim = document.getElementById('filterSheetDim');
+  const filterSheetBody = document.getElementById('filterSheetBody');
+  const filterSheetDone = document.getElementById('filterSheetDone');
+  const mobileFilterBtn = document.getElementById('mobileFilterBtn');
+  const mobileFilterBadge = document.getElementById('mobileFilterBadge');
+  let sheetMoved = null; // { node, parent, next }
+  const lastFilteredCount = { diary: 0, watchlist: 0, dropped: 0 };
+
+  function currentDetailPage() {
+    const c = document.querySelector('#view-detail .sidebar-controls.page-section.active');
+    if (!c) return null;
+    return c.id === 'controls-diary' ? 'diary' : c.id === 'controls-watchlist' ? 'watchlist' : 'dropped';
+  }
+  function activeFilterCount(page) {
+    const on = v => v !== 'all' ? 1 : 0;
+    if (page === 'diary')     return on(activeType) + on(activeYear) + on(activeGenre) + on(activeCast) + on(activePlatform);
+    if (page === 'watchlist') return on(activeTypePending) + on(activeYearPending) + on(activeGenrePending) + on(activeCastPending) + on(activePlatformPending) + (watchingOnly ? 1 : 0);
+    if (page === 'dropped')   return on(activeYearDropped) + on(activeGenreDropped) + on(activeCastDropped) + on(activePlatformDropped);
+    return 0;
+  }
+  function updateFilterBadge() {
+    const page = currentDetailPage();
+    const n = page ? activeFilterCount(page) : 0;
+    if (mobileFilterBadge) { mobileFilterBadge.hidden = n === 0; mobileFilterBadge.textContent = n; }
+    mobileFilterBtn?.classList.toggle('has-filter', n > 0);
+    if (filterSheetDone && page) filterSheetDone.textContent = `ดูผลลัพธ์ ${lastFilteredCount[page]} เรื่อง`;
+  }
+  function afterFilterRender(page, count) {
+    lastFilteredCount[page] = count;
+    if (page === currentDetailPage()) updateFilterBadge();
+  }
+  function openFilterSheet() {
+    const row = document.querySelector('#view-detail .sidebar-controls.page-section.active .controls-row-2');
+    if (!row) return;
+    sheetMoved = { node: row, parent: row.parentNode, next: row.nextSibling };
+    filterSheetBody.appendChild(row);
+    updateFilterBadge();
+    filterSheet.hidden = false; filterSheetDim.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeFilterSheet() {
+    if (filterSheet.hidden) return;
+    if (sheetMoved) { sheetMoved.parent.insertBefore(sheetMoved.node, sheetMoved.next); sheetMoved = null; }
+    filterSheet.hidden = true; filterSheetDim.hidden = true;
+    document.body.style.overflow = '';
+  }
+  mobileFilterBtn?.addEventListener('click', openFilterSheet);
+  filterSheetDim?.addEventListener('click', closeFilterSheet);
+  filterSheetDone?.addEventListener('click', () => { closeFilterSheet(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  document.getElementById('filterSheetClear')?.addEventListener('click', () => {
+    document.querySelector('#view-detail .sidebar-controls.page-section.active .clear-filters-btn')?.click();
+    updateFilterBadge();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFilterSheet(); });
+  window.matchMedia('(max-width: 860px)').addEventListener?.('change', e => { if (!e.matches) closeFilterSheet(); });
+
   let summaryTypeFilter = { series: true, variety: true };
   let castTypeFilter = { series: true, variety: true };
 
@@ -3592,6 +3711,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       if (sortBy === 'title')            return a.title.localeCompare(b.title);
       return 0;
     });
+    afterFilterRender('diary', filtered.length);
     grid.innerHTML = '';
     if (filtered.length === 0) { emptyState.hidden = false; document.getElementById('paginationDiary').innerHTML = ''; return; }
     emptyState.hidden = true;
@@ -3659,6 +3779,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       if (sortBy==='title')       return a.title.localeCompare(b.title);
       return 0;
     });
+    afterFilterRender('watchlist', filtered.length);
     gridPending.innerHTML = '';
     if (filtered.length===0) { emptyStatePending.hidden=false; document.getElementById('paginationWatchlist').innerHTML=''; return; }
     emptyStatePending.hidden = true;
@@ -3721,6 +3842,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       if (sortBy==='ep-desc')   return (b.lastEp||0)-(a.lastEp||0);
       return 0;
     });
+    afterFilterRender('dropped', filtered.length);
     gridDropped.innerHTML = '';
     if (filtered.length===0) { emptyStateDropped.hidden=false; document.getElementById('paginationDropped').innerHTML=''; return; }
     emptyStateDropped.hidden = true;
@@ -3981,6 +4103,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   });
 
 
+
   // ============================================================
   // Nav
   // ============================================================
@@ -3989,6 +4112,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     tab.classList.add('active');
     const mobileTitle = document.getElementById('mobileTopbarTitle');
     if (mobileTitle) mobileTitle.textContent = tab.textContent.trim();
+    closeFilterSheet();
+    document.body.classList.toggle('on-detail', ['diary','watchlist','dropped'].includes(tab.dataset.nav));
     window.scrollTo(0,0);
     document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
 
@@ -4026,6 +4151,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         resetDroppedFilters();
         if (!droppedLoaded) loadDropped(); else renderDropped();
       }
+      updateFilterBadge();
     }
   }));
 
@@ -5802,7 +5928,10 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
   // ============================================================
   // AI Recommendation
-  // =======================t.getElementById('mobileMenuBtn');
+  // ============================================================
+  // Mobile drawer
+  // ============================================================
+  const mobileMenuBtn  = document.getElementById('mobileMenuBtn');
   const drawerOverlay  = document.getElementById('drawerOverlay');
   const sidebar        = document.querySelector('.sidebar');
 
