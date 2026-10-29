@@ -2157,6 +2157,30 @@
   }
 
 
+
+/* ===== Settings: ตัวเลือกโปสเตอร์บนตั๋ว ===== */
+.poster-opt-note { margin:-4px 0 14px; font-size:0.8rem; color:var(--text-dim); }
+.poster-opt-grid { display:flex; gap:16px; flex-wrap:wrap; }
+.poster-opt .mode-card-name { display:flex; align-items:center; gap:6px; }
+.pl-letter { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 4px; border-radius:5px;
+  background:var(--surface-soft); color:var(--text-soft); font-size:0.66rem; font-weight:700; }
+.poster-opt.active .pl-letter { background:var(--red); color:#fff; }
+.pl-preview { height:80px; border-radius:8px; margin-bottom:12px; padding:8px 26px; background:var(--bg); border:1px solid var(--border); display:flex; }
+.pl-ticket { flex:1; display:flex; flex-direction:column; border-radius:6px; overflow:hidden; background:var(--surface-soft); border:1px solid var(--border); }
+.pl-main { position:relative; flex:1; padding:5px 6px; display:flex; flex-direction:column; gap:3px; overflow:hidden; }
+.pl-stub { position:relative; height:17px; border-top:1px dashed var(--border); display:flex; align-items:center; gap:4px; padding:0 6px; overflow:hidden; }
+.pl-main i, .pl-stub i { position:relative; z-index:1; display:block; height:4px; border-radius:2px; background:var(--text-dim); opacity:.7; }
+.pl-l1 { width:60%; background:var(--text) !important; opacity:.85 !important; height:5px !important; }
+.pl-l2 { width:38%; } .pl-l3 { width:72%; opacity:.4 !important; } .pl-l4 { width:26%; }
+.pl-dot { position:relative; z-index:1; margin-left:auto; width:9px; height:9px; border-radius:50%; border:1.5px solid var(--red); }
+.pl-img, .pl-img2 { display:none; background:linear-gradient(160deg,#d0455a 0%,#7a2a6a 45%,#251640 100%); }
+.pl-banner .pl-img { display:block; height:22px; margin:-5px -6px 2px; -webkit-mask-image:linear-gradient(#000 60%,transparent); mask-image:linear-gradient(#000 60%,transparent); }
+.pl-bg .pl-img { display:block; position:absolute; top:0; right:0; bottom:0; width:62%; opacity:.5; -webkit-mask-image:linear-gradient(to left,#000 30%,transparent); mask-image:linear-gradient(to left,#000 30%,transparent); }
+.pl-thumb .pl-stub .pl-img2 { display:block; position:relative; z-index:1; width:8px; height:12px; border-radius:2px; }
+.pl-full .pl-img { display:block; position:absolute; inset:0; filter:brightness(.6); -webkit-mask-image:linear-gradient(#000 55%,transparent); mask-image:linear-gradient(#000 55%,transparent); }
+.pl-blur .pl-img { display:block; position:absolute; inset:-8px; filter:blur(7px); opacity:.75; }
+.pl-stubbg .pl-stub .pl-img2 { display:block; position:absolute; inset:0; width:auto; height:auto; border-radius:0; filter:brightness(.65); z-index:0; }
+
 /* ===== Top 10 Series ===== */
 .top-hero { margin-bottom:14px; }
 .top-hero-title { margin:0; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:2.4rem; letter-spacing:1.5px; line-height:1.05;
@@ -2234,6 +2258,31 @@ body.poster-bg .ticket-poster.tp-main { display:block; position:absolute; top:0;
   -webkit-mask-image:linear-gradient(to left,#000 25%,transparent 95%); mask-image:linear-gradient(to left,#000 25%,transparent 95%); }
 body.poster-bg .card-menu-btn, body.poster-bg .card-menu { z-index:3; }
 body.light-mode.poster-bg .ticket-poster.tp-main { opacity:.28; }
+
+/* แบบ D — รูปเต็มส่วนบนของตั๋ว (มืดลงเพื่อให้อ่านตัวหนังสือได้) */
+body.poster-full .ticket-main:has(.tp-main) > *:not(.tp-main):not(.card-menu-btn):not(.card-menu) { position:relative; z-index:1; }
+body.poster-full .ticket-poster.tp-main { display:block; position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none;
+  object-position:center 22%; filter:brightness(.42) saturate(1.1);
+  -webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent); mask-image:linear-gradient(to bottom,#000 55%,transparent); }
+body.poster-full .ticket-main:has(.tp-main) .ticket-title { text-shadow:0 2px 8px rgba(0,0,0,.6); }
+body.poster-full .card-menu-btn, body.poster-full .card-menu { z-index:3; }
+body.light-mode.poster-full .ticket-poster.tp-main { filter:none; opacity:.22; }
+body.light-mode.poster-full .ticket-main:has(.tp-main) .ticket-title { text-shadow:none; }
+
+/* แบบ E — สีจากรูปแบบเบลอทั้งใบ (บรรยากาศ ไม่เห็นรายละเอียดรูป) */
+body.poster-blur .ticket-main:has(.tp-main) > *:not(.tp-main):not(.card-menu-btn):not(.card-menu) { position:relative; z-index:1; }
+body.poster-blur .ticket-poster.tp-main { display:block; position:absolute; inset:-30px; width:calc(100% + 60px); height:calc(100% + 60px); z-index:0; pointer-events:none;
+  filter:blur(22px) saturate(1.6) brightness(.7); opacity:.75; }
+body.poster-blur .card-menu-btn, body.poster-blur .card-menu { z-index:3; }
+body.light-mode.poster-blur .ticket-poster.tp-main { filter:blur(22px) saturate(1.4); opacity:.32; }
+
+/* แบบ F — รูปเป็นพื้นหลังของท่อนล่างตั๋ว (ส่วนที่บอกจำนวนตอน) */
+body.poster-stubbg .ticket-stub:has(.tp-stub) { position:relative; overflow:hidden; }
+body.poster-stubbg .ticket-stub:has(.tp-stub) > *:not(.tp-stub) { position:relative; z-index:1; }
+body.poster-stubbg .ticket-poster.tp-stub { display:block; position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none;
+  object-position:center 18%; filter:brightness(.5); }
+body.poster-stubbg .ticket-stub:has(.tp-stub) .ticket-meta { color:#eee; text-shadow:0 1px 4px rgba(0,0,0,.7); }
+body.light-mode.poster-stubbg .ticket-poster.tp-stub { filter:brightness(.75); }
 
 /* แบบ C — รูปเล็กในส่วนล่างของตั๋ว (ข้างจำนวนตอน) */
 body.poster-stub .ticket-poster.tp-stub { display:block; flex:0 0 34px; width:34px; aspect-ratio:2/3; border-radius:5px; box-shadow:0 2px 6px rgba(0,0,0,.35); }
@@ -2762,6 +2811,83 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
             </div>
           </button>
         </div>
+
+        <div class="users-topbar" style="margin-top:32px;">
+          <h2 class="users-heading">โปสเตอร์บนตั๋ว</h2>
+        </div>
+        <p class="poster-opt-note">เลือกว่าจะแสดงรูปโปสเตอร์บนตั๋วในหน้า Watched, Watchlist และ Dropped แบบไหน · เรื่องที่ไม่มีลิงก์รูปจะแสดงเหมือนเดิมทุกแบบ</p>
+        <div class="poster-opt-grid">
+          <button class="mode-card poster-opt" data-poster-layout="none" type="button">
+            <div class="pl-preview pl-none"><div class="pl-ticket">
+              <div class="pl-main"><span class="pl-img"></span><i class="pl-l1"></i><i class="pl-l2"></i><i class="pl-l3"></i></div>
+              <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
+            </div></div>
+            <div class="mode-card-label">
+              <span class="mode-card-name"><span class="pl-letter">Original</span>ไม่มีรูป</span>
+              <span class="mode-card-check"></span>
+            </div>
+          </button>
+          <button class="mode-card poster-opt" data-poster-layout="banner" type="button">
+            <div class="pl-preview pl-banner"><div class="pl-ticket">
+              <div class="pl-main"><span class="pl-img"></span><i class="pl-l1"></i><i class="pl-l2"></i><i class="pl-l3"></i></div>
+              <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
+            </div></div>
+            <div class="mode-card-label">
+              <span class="mode-card-name"><span class="pl-letter">A</span>แถบรูปด้านบน</span>
+              <span class="mode-card-check"></span>
+            </div>
+          </button>
+          <button class="mode-card poster-opt" data-poster-layout="bg" type="button">
+            <div class="pl-preview pl-bg"><div class="pl-ticket">
+              <div class="pl-main"><span class="pl-img"></span><i class="pl-l1"></i><i class="pl-l2"></i><i class="pl-l3"></i></div>
+              <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
+            </div></div>
+            <div class="mode-card-label">
+              <span class="mode-card-name"><span class="pl-letter">B</span>พื้นหลังจางฝั่งขวา</span>
+              <span class="mode-card-check"></span>
+            </div>
+          </button>
+          <button class="mode-card poster-opt" data-poster-layout="stub" type="button">
+            <div class="pl-preview pl-thumb"><div class="pl-ticket">
+              <div class="pl-main"><span class="pl-img"></span><i class="pl-l1"></i><i class="pl-l2"></i><i class="pl-l3"></i></div>
+              <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
+            </div></div>
+            <div class="mode-card-label">
+              <span class="mode-card-name"><span class="pl-letter">C</span>รูปเล็กด้านล่าง</span>
+              <span class="mode-card-check"></span>
+            </div>
+          </button>
+          <button class="mode-card poster-opt" data-poster-layout="full" type="button">
+            <div class="pl-preview pl-full"><div class="pl-ticket">
+              <div class="pl-main"><span class="pl-img"></span><i class="pl-l1"></i><i class="pl-l2"></i><i class="pl-l3"></i></div>
+              <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
+            </div></div>
+            <div class="mode-card-label">
+              <span class="mode-card-name"><span class="pl-letter">D</span>รูปเต็มส่วนบน</span>
+              <span class="mode-card-check"></span>
+            </div>
+          </button>
+          <button class="mode-card poster-opt" data-poster-layout="blur" type="button">
+            <div class="pl-preview pl-blur"><div class="pl-ticket">
+              <div class="pl-main"><span class="pl-img"></span><i class="pl-l1"></i><i class="pl-l2"></i><i class="pl-l3"></i></div>
+              <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
+            </div></div>
+            <div class="mode-card-label">
+              <span class="mode-card-name"><span class="pl-letter">E</span>สีจากรูปแบบเบลอ</span>
+              <span class="mode-card-check"></span>
+            </div>
+          </button>
+          <button class="mode-card poster-opt" data-poster-layout="stubbg" type="button">
+            <div class="pl-preview pl-stubbg"><div class="pl-ticket">
+              <div class="pl-main"><span class="pl-img"></span><i class="pl-l1"></i><i class="pl-l2"></i><i class="pl-l3"></i></div>
+              <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
+            </div></div>
+            <div class="mode-card-label">
+              <span class="mode-card-name"><span class="pl-letter">F</span>รูปที่ท่อนล่างตั๋ว</span>
+              <span class="mode-card-check"></span>
+            </div>
+          </button>
+        </div>
       </section>
 
       <!-- Settings > Users -->
@@ -3109,8 +3235,22 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (!s.year && !tag) return '';
     return `<p class="ticket-year">${s.year || ''}${tag}</p>`;
   }
-  const POSTER_LAYOUT = 'bg'; // 'banner' | 'bg' | 'stub'
-  document.body.classList.add('poster-' + POSTER_LAYOUT);
+  // ตำแหน่งโปสเตอร์บนตั๋ว — เลือกได้ในหน้า Settings → Mode (จำค่าไว้ในเบราว์เซอร์นี้)
+  const POSTER_LAYOUTS = ['none','banner','bg','stub','full','blur','stubbg'];
+  const POSTER_LAYOUT_KEY = 'ktracker_poster_layout';
+  function applyPosterLayout(layout) {
+    if (!POSTER_LAYOUTS.includes(layout)) layout = 'bg';
+    POSTER_LAYOUTS.forEach(l => document.body.classList.remove('poster-' + l));
+    document.body.classList.add('poster-' + layout);
+    try { localStorage.setItem(POSTER_LAYOUT_KEY, layout); } catch(e) {}
+    document.querySelectorAll('.poster-opt').forEach(btn => {
+      const on = btn.dataset.posterLayout === layout;
+      btn.classList.toggle('active', on);
+      const chk = btn.querySelector('.mode-card-check'); if (chk) chk.textContent = on ? '✓' : '';
+    });
+  }
+  (function(){ let saved = null; try { saved = localStorage.getItem(POSTER_LAYOUT_KEY); } catch(e) {} applyPosterLayout(saved || 'bg'); })();
+  document.querySelectorAll('.poster-opt').forEach(btn => btn.addEventListener('click', () => applyPosterLayout(btn.dataset.posterLayout)));
   function posterThumbHtml(s, slot) {
     if (!/^https?:\/\//i.test(s.poster || '')) return '';
     return `<img class="ticket-poster ${slot}" src="${escAttr(s.poster)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;
