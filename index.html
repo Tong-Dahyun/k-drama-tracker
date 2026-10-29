@@ -2218,10 +2218,27 @@
 
 
 /* ===== โปสเตอร์บนตั๋ว ===== */
-.ticket-top { display:flex; gap:10px; align-items:flex-start; }
-.ticket-head { flex:1; min-width:0; }
-.ticket-poster { flex:0 0 52px; width:52px; aspect-ratio:2/3; border-radius:6px; object-fit:cover; display:block;
-  background:rgba(128,128,128,0.18); box-shadow:0 3px 8px rgba(0,0,0,.35); margin-bottom:8px; }
+/* ตำแหน่งโปสเตอร์กำหนดด้วย class บน <body>: poster-banner | poster-bg | poster-stub */
+.ticket-head { min-width:0; }
+.ticket-poster { display:none; object-fit:cover; background:rgba(128,128,128,0.18); }
+
+/* แบบ A — แถบรูปด้านบนตั๋ว */
+body.poster-banner .ticket-poster.tp-main { display:block; width:calc(100% + 28px); height:112px; margin:-14px -14px 10px;
+  object-position:center 22%; -webkit-mask-image:linear-gradient(to bottom,#000 62%,transparent); mask-image:linear-gradient(to bottom,#000 62%,transparent); }
+body.poster-banner .ticket-main:has(.tp-main) .card-menu-btn { background:rgba(0,0,0,.45); color:#fff; z-index:2; }
+
+/* แบบ B — พื้นหลังจางฝั่งขวาของตั๋ว */
+body.poster-bg .ticket-main:has(.tp-main) > *:not(.tp-main):not(.card-menu-btn):not(.card-menu) { position:relative; z-index:1; }
+body.poster-bg .ticket-poster.tp-main { display:block; position:absolute; top:0; right:0; bottom:0; width:68%; height:100%; opacity:.42; z-index:0;
+  pointer-events:none; object-position:center 20%;
+  -webkit-mask-image:linear-gradient(to left,#000 25%,transparent 95%); mask-image:linear-gradient(to left,#000 25%,transparent 95%); }
+body.poster-bg .card-menu-btn, body.poster-bg .card-menu { z-index:3; }
+body.light-mode.poster-bg .ticket-poster.tp-main { opacity:.28; }
+
+/* แบบ C — รูปเล็กในส่วนล่างของตั๋ว (ข้างจำนวนตอน) */
+body.poster-stub .ticket-poster.tp-stub { display:block; flex:0 0 34px; width:34px; aspect-ratio:2/3; border-radius:5px; box-shadow:0 2px 6px rgba(0,0,0,.35); }
+body.poster-stub .ticket-stub:has(.tp-stub) { justify-content:flex-start; }
+body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
 /* ===== แพลตฟอร์ม ===== */
 .platform-tag { --pf:#8A8A8A; display:inline-block; vertical-align:1px; margin-left:6px; font-family:'Inter',sans-serif; font-size:0.6rem; font-weight:700;
@@ -3092,9 +3109,11 @@
     if (!s.year && !tag) return '';
     return `<p class="ticket-year">${s.year || ''}${tag}</p>`;
   }
-  function posterThumbHtml(s) {
+  const POSTER_LAYOUT = 'bg'; // 'banner' | 'bg' | 'stub'
+  document.body.classList.add('poster-' + POSTER_LAYOUT);
+  function posterThumbHtml(s, slot) {
     if (!/^https?:\/\//i.test(s.poster || '')) return '';
-    return `<img class="ticket-poster" src="${escAttr(s.poster)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;
+    return `<img class="ticket-poster ${slot}" src="${escAttr(s.poster)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;
   }
   function fillPlatformSelect(sel, list, current) {
     if (!sel) return 'all';
@@ -3434,7 +3453,7 @@
             <button class="menu-edit edit-diary-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-diary-btn" data-title="${s.title}">ลบ</button>
           </div>
-          <div class="ticket-top">${posterThumbHtml(s)}<div class="ticket-head">
+          ${posterThumbHtml(s,'tp-main')}<div class="ticket-top"><div class="ticket-head">
             <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
             <h2 class="ticket-title">${s.title}</h2>
             ${yearLineHtml(s,'diary',activePlatform)}
@@ -3443,7 +3462,7 @@
           ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCast?' active-filter':''}" data-cast="${c}" data-page="diary">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
-        <div class="ticket-stub">
+        <div class="ticket-stub">${posterThumbHtml(s,'tp-stub')}
           <span class="ticket-meta">${s.episodes} ตอน</span>
           <div class="stamp ${s.liked?'liked':'neutral'}">${s.liked?'♥':'♡'}</div>
         </div>`;
@@ -3505,7 +3524,7 @@
             <button class="menu-edit edit-pending-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-pending-btn" data-title="${s.title}">ลบ</button>
           </div>
-          <div class="ticket-top">${posterThumbHtml(s)}<div class="ticket-head">
+          ${posterThumbHtml(s,'tp-main')}<div class="ticket-top"><div class="ticket-head">
             <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
             <h2 class="ticket-title">${s.title}</h2>
             ${yearLineHtml(s,'watchlist',activePlatformPending)}
@@ -3515,7 +3534,7 @@
           ${progressHtml(s)}
         </div>
         <div class="perforation"></div>
-        <div class="ticket-stub">
+        <div class="ticket-stub">${posterThumbHtml(s,'tp-stub')}
           <span class="ticket-meta">${s.episodes?s.episodes+' ตอน':''}</span>
           <span class="watch-status ${statusClass}">${statusLabel}</span>
         </div>
@@ -3566,7 +3585,7 @@
             <button class="menu-edit edit-dropped-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-dropped-btn" data-title="${s.title}">ลบ</button>
           </div>
-          <div class="ticket-top">${posterThumbHtml(s)}<div class="ticket-head">
+          ${posterThumbHtml(s,'tp-main')}<div class="ticket-top"><div class="ticket-head">
             <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
             <h2 class="ticket-title">${s.title}</h2>
             ${yearLineHtml(s,'dropped',activePlatformDropped)}
@@ -3575,7 +3594,7 @@
           ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastDropped?' active-filter':''}" data-cast="${c}" data-page="dropped">${c}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
-        <div class="ticket-stub">
+        <div class="ticket-stub">${posterThumbHtml(s,'tp-stub')}
           <span class="ticket-meta">ดูถึง</span>
           <div class="stamp dropped-stamp">${epLabel || '—'}</div>
         </div>
