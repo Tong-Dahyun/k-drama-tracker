@@ -3032,7 +3032,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
             <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
             <div class="form-field"><label for="newPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="newPoster" placeholder="https://..."></div>
             <div class="form-field"><label for="newPlatform">แพลตฟอร์ม (คั่นด้วยจุลภาค)</label><input type="text" id="newPlatform" list="platformList" placeholder="คั่นด้วยจุลภาค เช่น Netflix, Viu"></div>
-            <datalist id="platformList"><option value="Netflix"><option value="Viu"><option value="Disney+"><option value="Prime Video"><option value="iQIYI"><option value="TVING"><option value="WeTV"><option value="Apple TV+"><option value="HBO Max"><option value="Coupang Play"><option value="YouTube"></datalist>
+            <datalist id="platformList"><option value="Netflix"><option value="Viu"><option value="Disney+"><option value="Prime Video"><option value="iQIYI"><option value="TVING"><option value="WeTV"><option value="Apple TV+"><option value="HBO Max"><option value="Coupang Play"><option value="YouTube"><option value="Monomax"></datalist>
             <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
           </div>
           <div class="edit-form-right">
@@ -3311,12 +3311,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     'prime video':'Prime Video', 'prime':'Prime Video', 'amazon prime':'Prime Video', 'amazon prime video':'Prime Video',
     'iqiyi':'iQIYI', 'tving':'TVING', 'wetv':'WeTV', 'we tv':'WeTV', 'apple tv+':'Apple TV+', 'apple tv':'Apple TV+',
     'hbo max':'HBO Max', 'max':'HBO Max', 'hbo':'HBO Max', 'hbo go':'HBO Max', 'coupang play':'Coupang Play', 'youtube':'YouTube',
-    'trueid':'TrueID', 'true id':'TrueID', 'kocowa':'KOCOWA', 'wavve':'Wavve'
+    'trueid':'TrueID', 'true id':'TrueID', 'kocowa':'KOCOWA', 'wavve':'Wavve', 'monomax':'Monomax', 'mono max':'Monomax', 'mono29':'Monomax'
   };
   const PLATFORM_COLORS = {
     'Netflix':'#E50914', 'Viu':'#F5B800', 'Disney+':'#3D7BFF', 'Prime Video':'#00A8E1', 'iQIYI':'#00C341', 'TVING':'#FF153C',
     'WeTV':'#FF6A00', 'Apple TV+':'#B4B4B8', 'HBO Max':'#9B59FF', 'Coupang Play':'#5A6BFF', 'YouTube':'#FF3B30',
-    'TrueID':'#E4002B', 'KOCOWA':'#F25C05', 'Wavve':'#1F6BFF'
+    'TrueID':'#E4002B', 'KOCOWA':'#F25C05', 'Wavve':'#1F6BFF', 'Monomax':'#E4007C'
   };
   function canonicalPlatform(raw) {
     const t = (raw || '').toString().trim();
