@@ -862,14 +862,17 @@
     transform: translateY(12px);
     animation: rise .4s ease forwards;
     box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    transition: transform .2s ease, border-color .2s ease;
     cursor: pointer;
-    will-change: transform;
+    /* ตั๋วที่อยู่นอกจอไม่ต้องวาด (ช่วยมากตอนมีหลายสิบใบ + โปสเตอร์) */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 300px;
   }
 
   .ticket:hover,
   article.ticket:hover,
   .ticket.is-hovered {
+    will-change: transform;
     transform: translateY(-8px) scale(1.03);
     box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     border-color: var(--red);
@@ -2349,10 +2352,10 @@ body.light-mode.poster-full .ticket-main:has(.tp-main) .ticket-title { text-shad
 
 /* แบบ E — สีจากรูปแบบเบลอทั้งใบ (บรรยากาศ ไม่เห็นรายละเอียดรูป) */
 body.poster-blur .ticket-main:has(.tp-main) > *:not(.tp-main):not(.card-menu-btn):not(.card-menu) { position:relative; z-index:1; }
-body.poster-blur .ticket-poster.tp-main { display:block; position:absolute; inset:-30px; width:calc(100% + 60px); height:calc(100% + 60px); z-index:0; pointer-events:none;
-  filter:blur(22px) saturate(1.6) brightness(.7); opacity:.75; }
+body.poster-blur .ticket-poster.tp-main { display:block; position:absolute; left:-30px; top:-30px; width:calc((100% + 60px) / 4); height:calc((100% + 60px) / 4); z-index:0; pointer-events:none;
+  transform:scale(4); transform-origin:0 0; filter:blur(5.5px) saturate(1.6) brightness(.7); opacity:.75; }
 body.poster-blur .card-menu-btn, body.poster-blur .card-menu { z-index:3; }
-body.light-mode.poster-blur .ticket-poster.tp-main { filter:blur(22px) saturate(1.4); opacity:.32; }
+body.light-mode.poster-blur .ticket-poster.tp-main { filter:blur(5.5px) saturate(1.4); opacity:.32; }
 
 /* แบบ F — รูปเป็นพื้นหลังของท่อนล่างตั๋ว (ส่วนที่บอกจำนวนตอน) */
 body.poster-stubbg .ticket-stub:has(.tp-stub) { position:relative; overflow:hidden; }
@@ -3754,6 +3757,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     });
     afterFilterRender('diary', filtered.length);
     grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
     if (filtered.length === 0) { emptyState.hidden = false; document.getElementById('paginationDiary').innerHTML = ''; return; }
     emptyState.hidden = true;
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -3783,8 +3787,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           <span class="ticket-meta">${s.episodes} ตอน</span>
           <div class="stamp ${s.liked?'liked':'neutral'}">${s.liked?'♥':'♡'}</div>
         </div>`;
-      grid.appendChild(card);
+      frag.appendChild(card);
     });
+    grid.appendChild(frag);
     renderPaginationControls('paginationDiary', currentPage, totalPages, filtered.length, p => { currentPage=p; window.scrollTo({top:0,behavior:'smooth'}); render(); });
   }
 
@@ -3822,6 +3827,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     });
     afterFilterRender('watchlist', filtered.length);
     gridPending.innerHTML = '';
+    const frag = document.createDocumentFragment();
     if (filtered.length===0) { emptyStatePending.hidden=false; document.getElementById('paginationWatchlist').innerHTML=''; return; }
     emptyStatePending.hidden = true;
     const totalPages = Math.ceil(filtered.length/PAGE_SIZE);
@@ -3857,8 +3863,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           <span class="watch-status ${statusClass}">${statusLabel}</span>
         </div>
         <button class="mark-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
-      gridPending.appendChild(card);
+      frag.appendChild(card);
     });
+    gridPending.appendChild(frag);
     renderPaginationControls('paginationWatchlist', currentPagePending, totalPages, filtered.length, p => { currentPagePending=p; window.scrollTo({top:0,behavior:'smooth'}); renderPending(); });
   }
 
@@ -3885,6 +3892,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     });
     afterFilterRender('dropped', filtered.length);
     gridDropped.innerHTML = '';
+    const frag = document.createDocumentFragment();
     if (filtered.length===0) { emptyStateDropped.hidden=false; document.getElementById('paginationDropped').innerHTML=''; return; }
     emptyStateDropped.hidden = true;
     const totalPages = Math.ceil(filtered.length/PAGE_SIZE);
@@ -3918,8 +3926,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           <div class="stamp dropped-stamp">${epLabel || '—'}</div>
         </div>
         <button class="mark-dropped-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
-      gridDropped.appendChild(card);
+      frag.appendChild(card);
     });
+    gridDropped.appendChild(frag);
     renderPaginationControls('paginationDropped', currentPageDropped, totalPages, filtered.length, p => { currentPageDropped=p; window.scrollTo({top:0,behavior:'smooth'}); renderDropped(); });
   }
 
@@ -4203,6 +4212,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
     Chart.register(ChartDataLabels);
     Chart.defaults.set('plugins.datalabels', { display: false }); // ปิด default ทุก chart ก่อน
+    Chart.defaults.animation.duration = 450; // สั้นลงจากค่าเดิม 1000ms ให้รู้สึกลื่นขึ้น
   }
 
   let yearlyChartInstance = null;
@@ -4831,6 +4841,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   }
 
   let castStackedChartInstance = null;
+  let castStackedSig = '';
 
   function renderCastStackedChart() {
     const canvas = document.getElementById('castStackedChart'), emptyEl = document.getElementById('castStackedEmpty');
@@ -4847,6 +4858,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (!data.length) {
       canvas.hidden = true; if (emptyEl) emptyEl.hidden = false;
       if (castStackedChartInstance) { castStackedChartInstance.destroy(); castStackedChartInstance = null; }
+      castStackedSig = '';
       return;
     }
     canvas.hidden = false; if (emptyEl) emptyEl.hidden = true;
@@ -4854,7 +4866,17 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     // ความกว้าง canvas: ให้พอดีกับพื้นที่มองเห็น ~20 แท่งแรก ที่เหลือเลื่อนดูได้
     const barSlot = 46;
     const visibleWidth = scrollWrap ? scrollWrap.clientWidth : 600;
-    inner.style.width = Math.max(data.length * barSlot, visibleWidth) + 'px';
+    const innerWidth = Math.max(data.length * barSlot, visibleWidth);
+
+    // ข้อมูลเหมือนเดิม (เช่น สลับแท็บไปมา) → ไม่ต้องวาดกราฟใหม่ทั้งหมด
+    const sig = JSON.stringify(data) + '|' + accent() + '|' + innerWidth;
+    if (castStackedChartInstance && sig === castStackedSig) return;
+    castStackedSig = sig;
+    inner.style.width = innerWidth + 'px';
+
+    // จอ Retina (เช่น MacBook) ทำให้ canvas กว้างหลายหมื่นพิกเซล → ลดความละเอียดเฉพาะกราฟที่ยาวมาก
+    const STACKED_MAX_PX = 7000;
+    const chartDpr = Math.max(1, Math.min(window.devicePixelRatio || 1, STACKED_MAX_PX / innerWidth));
 
     const labels = data.map(d => d.name);
     const likedData = data.map(d => d.liked);
@@ -4876,6 +4898,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       },
       options: {
         responsive: true, maintainAspectRatio: false,
+        devicePixelRatio: chartDpr,
+        animation: data.length > 60 ? false : { duration: 350 },
         onClick: (evt, elements) => {
           if (!elements.length) return;
           const actor = labels[elements[0].index];
@@ -4885,7 +4909,6 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
             selectedCast = actor; selectedCastSource = 'stacked';
           }
           renderCastTable();
-          renderCastStackedChart();
         },
         onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; },
         plugins: {
@@ -5974,8 +5997,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   // ============================================================
   document.addEventListener('mouseover', e => {
     const ticket = e.target.closest('.ticket');
-    if (ticket) ticket.classList.add('is-hovered');
-  });
+    if (ticket && !ticket.classList.contains('is-hovered')) ticket.classList.add('is-hovered');
+  }, { passive: true });
   document.addEventListener('mouseout', e => {
     const ticket = e.target.closest('.ticket');
     if (ticket && !ticket.contains(e.relatedTarget)) {
