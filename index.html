@@ -588,6 +588,15 @@
   #castTableScroll { max-height: 300px; }
 
   /* Cast — Stacked bar chart เลื่อนแนวนอนได้เมื่อนักแสดงเยอะ */
+  .cast-overview { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; margin-bottom:16px; }
+  .cast-overview .summary-grid-2 { margin:0; }
+  .cast-stacked-note { font-size:0.72rem; color:var(--text-dim); margin:0 0 12px; }
+  .cast-more-btn { display:block; margin:10px auto 2px; padding:8px 18px; border-radius:999px; border:1px solid var(--border); background:var(--surface-soft);
+    color:var(--text-soft); font:600 0.8rem 'Sarabun',sans-serif; cursor:pointer; }
+  .cast-more-btn:hover { color:var(--text); border-color:var(--red); }
+  .cast-more-btn[hidden] { display:none; }
+  .result-sheet-body .genre-table-wrap[hidden] { display:none; }
+  @media (max-width:860px) { .cast-overview { grid-template-columns:1fr; gap:12px; } }
   .cast-stacked-scroll {
     overflow-x: auto;
     overflow-y: hidden;
@@ -595,6 +604,7 @@
     padding-bottom: 4px;
   }
   .cast-stacked-inner { height: 320px; position: relative; }
+  #castStackedInner { width: 100%; }
 
   .genre-table {
     width: 100%;
@@ -2746,9 +2756,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           <button class="pill" id="castSlicerVariety" data-summary-type="variety">Variety</button>
         </div>
 
-        <!-- ภาพรวม: การ์ดตัวเลข + โดนัท (ฝั่งซ้าย) + ตารางผลลัพธ์ (ฝั่งขวา) — เลย์เอาต์เดียวกับหน้า Summary -->
-        <div class="summary-layout">
-          <div class="summary-left">
+        <!-- ภาพรวม: การ์ดตัวเลข 2 ใบ + โดนัท 2 ใบ (จอคอมเรียง 4 ใบในแถวเดียว) -->
+        <div class="cast-overview">
             <div class="summary-grid-2">
               <div class="summary-card">
                 <div class="summary-card-head">
@@ -2804,36 +2813,34 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="summary-right chart-card">
-            <div class="genre-table-wrap" style="height:100%; display:flex; flex-direction:column;">
-              <p class="genre-table-title" id="castTableTitle">คลิกชื่อนักแสดงในกราฟเพื่อดูรายชื่อเรื่อง</p>
-              <div class="genre-table-scroll" id="castTableScroll" hidden>
-                <table class="genre-table">
-                  <thead><tr><th>ชื่อเรื่อง</th><th>ความรู้สึก</th></tr></thead>
-                  <tbody id="castTableBody"></tbody>
-                </table>
-              </div>
-            </div>
+        </div>
+
+        <!-- ตารางรายชื่อเรื่องของนักแสดง (ย้ายไปแสดงในแผงด้านล่างจอตอนคลิกแท่ง) -->
+        <div class="genre-table-wrap cast-table-wrap" id="castTableWrap" hidden>
+          <p class="genre-table-title" id="castTableTitle">คลิกชื่อนักแสดงในกราฟเพื่อดูรายชื่อเรื่อง</p>
+          <div class="genre-table-scroll" id="castTableScroll" hidden>
+            <table class="genre-table">
+              <thead><tr><th>ชื่อเรื่อง</th><th>สถานะ</th></tr></thead>
+              <tbody id="castTableBody"></tbody>
+            </table>
           </div>
         </div>
 
         <!-- Hero chart: นักแสดงที่ดูมากที่สุด แยกถูกใจ/เฉยๆ -->
         <div class="chart-card">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-            <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่ดูมากที่สุด (แยกถูกใจ / เฉยๆ)</h3>
+            <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่เจอบ่อยที่สุด</h3>
             <select id="castStackedSort" class="sort-select" style="flex:0 0 auto; width:auto; min-width:150px;">
               <option value="total" selected>เรียงตามจำนวนเรื่องรวม</option>
               <option value="liked">เรียงตามจำนวนที่ถูกใจ</option>
             </select>
           </div>
-          <p style="font-size:0.68rem; color:var(--text-dim); margin:0 0 12px;" id="castStackedNote">*เฉพาะนักแสดงที่เล่นอย่างน้อย 3 เรื่องขึ้นไป เรียงจากจำนวนเรื่องมากไปน้อย เลื่อนดูคนถัดไปได้ — คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน</p>
-          <div class="cast-stacked-scroll" id="castStackedScroll">
-            <div class="cast-stacked-inner" id="castStackedInner">
-              <canvas id="castStackedChart"></canvas>
-            </div>
+          <p class="cast-stacked-note" id="castStackedNote"></p>
+          <div class="cast-stacked-inner" id="castStackedInner">
+            <canvas id="castStackedChart"></canvas>
           </div>
+          <button type="button" class="cast-more-btn" id="castMoreBtn" hidden></button>
           <p class="chart-empty" id="castStackedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ</p>
         </div>
       </section>
@@ -4233,6 +4240,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
   document.getElementById('castStackedSort')?.addEventListener('change', e => {
     castStackedSortMode = e.target.value;
+    castShowCount = CAST_PAGE;
     renderCastStackedChart();
   });
 
@@ -4248,6 +4256,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (mobileTitle) mobileTitle.textContent = tab.textContent.trim();
     closeFilterSheet();
     if (dashboardTableState.source) { dashboardTableState = { source:null, value:null }; selectedGenre = null; selectedGenreSource = null; }
+    if (selectedCast) { selectedCast = null; selectedCastSource = null; }
     syncResultSheet();
     document.body.classList.toggle('on-detail', ['diary','watchlist','dropped'].includes(tab.dataset.nav));
     window.scrollTo(0,0);
@@ -4442,20 +4451,39 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   // ============================================================
   const resultSheet = document.getElementById('resultSheet');
   const resultSheetDim = document.getElementById('resultSheetDim');
+  let summarySheetWrap = null, castSheetWrap = null;
   (function mountResultSheet(){
-    const wrap = document.querySelector('#view-summary .genre-table-wrap');
-    const title = document.getElementById('genreTableTitle');
-    if (wrap && resultSheet) {
-      document.getElementById('resultSheetBody').appendChild(wrap);
-      if (title) document.getElementById('resultSheetHead').insertBefore(title, document.getElementById('resultSheetClose'));
-    }
+    if (!resultSheet) return;
+    const body = document.getElementById('resultSheetBody'), head = document.getElementById('resultSheetHead'), closeBtn = document.getElementById('resultSheetClose');
+    summarySheetWrap = document.querySelector('#view-summary .genre-table-wrap');
+    castSheetWrap = document.getElementById('castTableWrap');
+    [[summarySheetWrap,'genreTableTitle'],[castSheetWrap,'castTableTitle']].forEach(([wrap,titleId]) => {
+      if (!wrap) return;
+      body.appendChild(wrap);
+      const t = document.getElementById(titleId); if (t) head.insertBefore(t, closeBtn);
+    });
   })();
+  function resultSheetContext() {
+    if (dashboardTableState.source && document.getElementById('view-summary')?.classList.contains('active')) return 'summary';
+    if (typeof selectedCast !== 'undefined' && selectedCast && document.getElementById('view-cast')?.classList.contains('active')) return 'cast';
+    return null;
+  }
   function syncResultSheet() {
     if (!resultSheet) return;
-    const open = !!dashboardTableState.source && document.getElementById('view-summary')?.classList.contains('active');
+    const ctx = resultSheetContext(), open = !!ctx;
+    if (summarySheetWrap) summarySheetWrap.hidden = ctx !== 'summary';
+    if (castSheetWrap) castSheetWrap.hidden = ctx !== 'cast';
+    const gt = document.getElementById('genreTableTitle'), ct = document.getElementById('castTableTitle');
+    if (gt) gt.hidden = ctx !== 'summary';
+    if (ct) ct.hidden = ctx !== 'cast';
+    resultSheet.setAttribute('aria-labelledby', ctx === 'cast' ? 'castTableTitle' : 'genreTableTitle');
     if (open === !resultSheet.hidden) return;
     resultSheet.hidden = !open; resultSheetDim.hidden = !open;
     document.body.style.overflow = open ? 'hidden' : '';
+  }
+  function closeResultSheet() {
+    if (resultSheetContext() === 'cast') { selectedCast = null; selectedCastSource = null; renderCastTable(); highlightCastBars(); return; }
+    clearDashboardSelection();
   }
   function clearDashboardSelection() {
     const had = !!dashboardTableState.source || !!selectedGenre;
@@ -4466,9 +4494,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (had && window.innerWidth <= 860 && typeof renderDataBars === 'function') renderDataBars();
     renderGenreTable();
   }
-  document.getElementById('resultSheetClose')?.addEventListener('click', clearDashboardSelection);
-  resultSheetDim?.addEventListener('click', clearDashboardSelection);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && resultSheet && !resultSheet.hidden) clearDashboardSelection(); });
+  document.getElementById('resultSheetClose')?.addEventListener('click', closeResultSheet);
+  resultSheetDim?.addEventListener('click', closeResultSheet);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && resultSheet && !resultSheet.hidden) closeResultSheet(); });
 
   function renderGenreTable() {
     const tbody=document.getElementById('genreTableBody'), titleEl=document.getElementById('genreTableTitle');
@@ -4969,93 +4997,123 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   let castStackedChartInstance = null;
   let castStackedSig = '';
 
+  // นักแสดงที่เจอบ่อยที่สุด — กราฟแท่งแนวนอน (ชื่ออ่านง่าย) แสดงทีละ 25 คน กด "แสดงเพิ่ม" ได้
+  const CAST_PAGE = 25;
+  let castShowCount = CAST_PAGE;
+  const CAST_COLORS = {
+    liked:     ['#46D369', 'rgba(70,211,105,0.25)'],
+    neutral:   ['#5A5A5A', 'rgba(90,90,90,0.3)'],
+    watchlist: ['#4C8DFF', 'rgba(76,141,255,0.25)'],
+    dropped:   ['#F97316', 'rgba(249,115,22,0.25)']
+  };
+  function castBarColors(labels, key) {
+    const [on, off] = CAST_COLORS[key];
+    if (!selectedCast || !labels.includes(selectedCast)) return on;
+    return labels.map(l => l === selectedCast ? on : off);
+  }
+  function highlightCastBars() {
+    const ch = castStackedChartInstance; if (!ch) return;
+    const labels = ch.data.labels, keys = ['liked','neutral','watchlist','dropped'];
+    ch.data.datasets.forEach((d, i) => { d.backgroundColor = castBarColors(labels, keys[i]); });
+    ch.update('none');
+  }
+
   function renderCastStackedChart() {
     const canvas = document.getElementById('castStackedChart'), emptyEl = document.getElementById('castStackedEmpty');
-    const inner = document.getElementById('castStackedInner'), scrollWrap = document.getElementById('castStackedScroll');
+    const inner = document.getElementById('castStackedInner'), moreBtn = document.getElementById('castMoreBtn');
     if (!canvas) return;
-    const data = getCastStackedData();
+    const all = getCastStackedData();
 
     const noteEl = document.getElementById('castStackedNote');
-    if (noteEl) {
-      const sortLabel = castStackedSortMode === 'liked' ? 'จำนวนที่ถูกใจมากไปน้อย (ถูกใจเท่ากันเรียงตามจำนวนเรื่องรวม)' : 'จำนวนเรื่องรวมมากไปน้อย';
-      noteEl.textContent = `*เฉพาะนักแสดงที่ดู (Watched) อย่างน้อย 3 เรื่องขึ้นไป เรียงตาม${sortLabel} — สีน้ำเงิน/ส้มคือจำนวนเรื่องใน Watchlist/Dropped ของนักแสดงคนนั้นเพิ่มเติม เลื่อนดูคนถัดไปได้ คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน`;
-    }
+    if (noteEl) noteEl.textContent = `นักแสดงที่อยู่ในเรื่องที่ดูแล้ว ${MIN_CAST_SHOWS} เรื่องขึ้นไป · คลิกแท่งเพื่อดูรายชื่อเรื่อง`;
 
-    if (!data.length) {
-      canvas.hidden = true; if (emptyEl) emptyEl.hidden = false;
+    if (!all.length) {
+      canvas.hidden = true; if (emptyEl) emptyEl.hidden = false; if (moreBtn) moreBtn.hidden = true;
       if (castStackedChartInstance) { castStackedChartInstance.destroy(); castStackedChartInstance = null; }
       castStackedSig = '';
       return;
     }
     canvas.hidden = false; if (emptyEl) emptyEl.hidden = true;
 
-    // ความกว้าง canvas: ให้พอดีกับพื้นที่มองเห็น ~20 แท่งแรก ที่เหลือเลื่อนดูได้
-    const barSlot = 46;
-    const visibleWidth = scrollWrap ? scrollWrap.clientWidth : 600;
-    const innerWidth = Math.max(data.length * barSlot, visibleWidth);
+    const data = all.slice(0, castShowCount);
+    if (moreBtn) {
+      const left = all.length - data.length;
+      moreBtn.hidden = left <= 0 && data.length <= CAST_PAGE;
+      moreBtn.textContent = left > 0 ? `แสดงเพิ่มอีก ${Math.min(CAST_PAGE, left)} คน (เหลือ ${left} คน)` : 'ย่อกลับ';
+    }
 
-    // ข้อมูลเหมือนเดิม (เช่น สลับแท็บไปมา) → ไม่ต้องวาดกราฟใหม่ทั้งหมด
-    const sig = JSON.stringify(data) + '|' + accent() + '|' + innerWidth;
-    if (castStackedChartInstance && sig === castStackedSig) return;
+    const isMobile = window.innerWidth <= 860;
+    const rowH = isMobile ? 26 : 28;
+    const height = data.length * rowH + 70;
+
+    const sig = JSON.stringify(data) + '|' + accent() + '|' + height + '|' + isMobile + '|' + document.body.className;
+    if (castStackedChartInstance && sig === castStackedSig) { highlightCastBars(); return; }
     castStackedSig = sig;
-    inner.style.width = innerWidth + 'px';
+    inner.style.height = height + 'px';
+    inner.style.width = '';
 
-    // จอ Retina (เช่น MacBook) ทำให้ canvas กว้างหลายหมื่นพิกเซล → ลดความละเอียดเฉพาะกราฟที่ยาวมาก
     const STACKED_MAX_PX = 7000;
-    const chartDpr = Math.max(1, Math.min(window.devicePixelRatio || 1, STACKED_MAX_PX / innerWidth));
+    const chartDpr = Math.max(1, Math.min(window.devicePixelRatio || 1, STACKED_MAX_PX / height));
 
     const labels = data.map(d => d.name);
-    const likedData = data.map(d => d.liked);
-    const neutralData = data.map(d => d.neutral);
-    const watchlistData = data.map(d => d.watchlist);
-    const droppedData = data.map(d => d.droppedCount);
-
     if (castStackedChartInstance) castStackedChartInstance.destroy();
     castStackedChartInstance = new Chart(canvas.getContext('2d'), {
       type: 'bar',
       data: {
         labels,
         datasets: [
-          { label: 'ถูกใจ', data: likedData, backgroundColor: '#46D369', hoverBackgroundColor: '#5fe081', stack: 'cast', maxBarThickness: 32 },
-          { label: 'เฉยๆ', data: neutralData, backgroundColor: '#4A4A4A', hoverBackgroundColor: '#5c5c5c', stack: 'cast', maxBarThickness: 32 },
-          { label: 'Watchlist', data: watchlistData, backgroundColor: '#4C8DFF', hoverBackgroundColor: '#6ea3ff', stack: 'cast', maxBarThickness: 32 },
-          { label: 'Dropped', data: droppedData, backgroundColor: '#F97316', hoverBackgroundColor: '#ff8c3d', stack: 'cast', borderRadius: {topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}, maxBarThickness: 32 }
+          { label: 'ถูกใจ',     data: data.map(d => d.liked),        backgroundColor: castBarColors(labels,'liked'),     stack: 'cast', maxBarThickness: 18 },
+          { label: 'เฉยๆ',      data: data.map(d => d.neutral),      backgroundColor: castBarColors(labels,'neutral'),   stack: 'cast', maxBarThickness: 18 },
+          { label: 'Watchlist', data: data.map(d => d.watchlist),    backgroundColor: castBarColors(labels,'watchlist'), stack: 'cast', maxBarThickness: 18 },
+          { label: 'Dropped',   data: data.map(d => d.droppedCount), backgroundColor: castBarColors(labels,'dropped'),   stack: 'cast', maxBarThickness: 18,
+            borderRadius: { topRight: 4, bottomRight: 4, topLeft: 0, bottomLeft: 0 }, borderSkipped: false }
         ]
       },
       options: {
+        indexAxis: 'y',
         responsive: true, maintainAspectRatio: false,
         devicePixelRatio: chartDpr,
-        animation: data.length > 60 ? false : { duration: 350 },
+        animation: data.length > 40 ? false : { duration: 350 },
+        interaction: { mode: 'index', axis: 'y', intersect: false },
         onClick: (evt, elements) => {
           if (!elements.length) return;
           const actor = labels[elements[0].index];
-          if (selectedCast === actor && selectedCastSource === 'stacked') {
-            selectedCast = null; selectedCastSource = null;
-          } else {
-            selectedCast = actor; selectedCastSource = 'stacked';
-          }
+          if (selectedCast === actor) { selectedCast = null; selectedCastSource = null; }
+          else { selectedCast = actor; selectedCastSource = 'stacked'; }
+          highlightCastBars();
           renderCastTable();
         },
         onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; },
         plugins: {
-          legend: { labels: { color:chartC('soft'), font: { family:'Inter', size:11 } } },
-          tooltip: { backgroundColor:chartC('surface'), borderColor:chartC('border'), borderWidth:1, titleColor:chartC('text'), bodyColor:chartC('soft') }
+          legend: { position: 'top', align: 'start', labels: { color: chartC('soft'), font: { family:"'Inter','Sarabun',sans-serif", size: isMobile ? 11 : 12 }, boxWidth: 12, boxHeight: 12,
+            generateLabels: chart => chart.data.datasets.map((d, i) => ({ text: d.label, fillStyle: CAST_COLORS[['liked','neutral','watchlist','dropped'][i]][0], strokeStyle: 'transparent', lineWidth: 0,
+              fontColor: chartC('soft'), datasetIndex: i, hidden: !chart.isDatasetVisible(i) })) } },
+          tooltip: { backgroundColor: chartC('surface'), borderColor: chartC('border'), borderWidth: 1, titleColor: chartC('text'), bodyColor: chartC('soft'),
+            callbacks: { footer: items => 'รวม ' + items.reduce((t, i) => t + (i.parsed.x || 0), 0) + ' เรื่อง' } }
         },
         scales: {
-          x: { stacked: true, ticks: { color:chartC('soft'), font:{size:10}, maxRotation:60, minRotation:60, autoSkip:false }, grid:{color:chartC('grid')} },
-          y: { stacked: true, beginAtZero:true, ticks: { color:chartC('soft'), precision:0 }, grid:{color:chartC('grid')} }
+          x: { stacked: true, beginAtZero: true, position: 'top', ticks: { color: chartC('soft'), precision: 0, font: { size: 10 } }, grid: { color: chartC('grid') } },
+          y: { stacked: true, ticks: { color: chartC('text'), font: { family:"'Inter','Sarabun',sans-serif", size: isMobile ? 11 : 12 }, autoSkip: false,
+                 callback: function(v) { const t = this.getLabelForValue(v); return t.length > 22 ? t.slice(0, 21) + '…' : t; } },
+               grid: { display: false } }
         }
       }
     });
   }
+  document.getElementById('castMoreBtn')?.addEventListener('click', () => {
+    const total = getCastStackedData().length;
+    castShowCount = castShowCount >= total ? CAST_PAGE : castShowCount + CAST_PAGE;
+    renderCastStackedChart();
+  });
 
   function renderCastTable() {
     const tbody = document.getElementById('castTableBody'), titleEl = document.getElementById('castTableTitle');
     if (!tbody) return;
     const scrollWrap = tbody.closest('.genre-table-scroll');
     if (scrollWrap) scrollWrap.scrollTop = 0;
-    if (!selectedCast) { tbody.innerHTML=''; titleEl.textContent='คลิกชื่อนักแสดงเพื่อดูรายชื่อเรื่อง'; if(scrollWrap) scrollWrap.hidden=true; return; }
+    if (!selectedCast) { tbody.innerHTML=''; titleEl.textContent='คลิกชื่อนักแสดงเพื่อดูรายชื่อเรื่อง'; if(scrollWrap) scrollWrap.hidden=true; syncResultSheet(); return; }
     if (scrollWrap) scrollWrap.hidden = false;
+    syncResultSheet();
 
     const watchedList   = getSummaryShows(castTypeFilter).filter(s => splitCast(s.cast).includes(selectedCast));
     const watchlistList = pending.filter(s => castTypeFilter[s.type] && splitCast(s.cast).includes(selectedCast));
