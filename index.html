@@ -200,7 +200,8 @@
   }
 
   .page-tab:focus-visible {
-    outline: none;
+    outline: 2px solid var(--red);
+    outline-offset: -2px;
   }
 
   .page-tabs > .page-tab {
@@ -844,7 +845,8 @@
   .search-box:focus-visible,
   .sort-select:focus-visible,
   .pill:focus-visible {
-    outline: none;
+    outline: 2px solid var(--red);
+    outline-offset: 2px;
   }
 
   .sidebar-controls .add-entry-btn {
@@ -1364,6 +1366,32 @@
     font-family:'Inter','Sarabun',sans-serif; font-weight:700; font-size:0.98rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
 
+
+
+  /* ===== โฟกัสด้วยคีย์บอร์ด (Tab) — แสดงกรอบชัดเจน แต่ไม่แสดงตอนคลิกด้วยเมาส์ ===== */
+  :where(button, a, select, input, textarea, [tabindex]):focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .genre-table tbody tr.row-link:focus-visible, .top-series-item:focus-visible, .podium-card:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  /* ===== ตารางรายชื่อ: คลิกชื่อเรื่องเพื่อเปิดเรื่องย่อ ===== */
+  .genre-table tbody tr.row-link { cursor: pointer; }
+  .genre-table tbody tr.row-link:hover td { background: var(--surface-soft); }
+  .genre-table tbody tr.row-link td:first-child { transition: color .15s; }
+  .genre-table tbody tr.row-link:hover td:first-child { color: var(--red); }
+
+  /* ===== Dashboard ระหว่างโหลดข้อมูล: กรอบเทากระพริบแทน "…" และ "ยังไม่มีข้อมูล" ===== */
+  body.dash-loading :is(#view-summary, #view-cast, #view-top) :is(.summary-card, .chart-card, .top-stat) { position: relative; overflow: hidden; }
+  body.dash-loading :is(#view-summary, #view-cast, #view-top) :is(.summary-card, .chart-card, .top-stat) > * { visibility: hidden; }
+  body.dash-loading :is(#view-summary, #view-cast, #view-top) :is(.summary-card, .chart-card, .top-stat)::after {
+    content: ''; position: absolute; inset: 14px; border-radius: 10px;
+    background: linear-gradient(90deg, var(--surface-soft) 25%, color-mix(in srgb, var(--surface-soft) 55%, var(--surface)) 50%, var(--surface-soft) 75%);
+    background-size: 200% 100%; animation: shimmer 1.4s infinite;
+  }
+  body.dash-loading #view-top .top-list-card, body.dash-loading #topSeriesEmpty { display: none; }
+  body.dash-loading #view-top .top-podium { min-height: 260px; border-radius: 16px;
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface-soft) 50%, var(--surface) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    body.dash-loading :is(.summary-card, .chart-card, .top-stat)::after, body.dash-loading #view-top .top-podium { animation: none; }
+  }
 
   /* ===== แผงรายชื่อเรื่องจากการคลิกกราฟ (Dashboard) ===== */
   .dashboard-hint { margin-left:auto; font-size:0.75rem; color:var(--text-dim); }
@@ -2316,11 +2344,12 @@
   background:linear-gradient(180deg,color-mix(in srgb,var(--red) 78%,#fff),color-mix(in srgb,var(--red) 78%,#000)); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .top-hero-sub { margin:4px 0 0; font-size:0.8rem; color:var(--text-dim); }
 .top-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:6px; }
-.top-stat { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:12px 16px; min-width:0; }
-.top-stat-value { margin:4px 0 0; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.9rem; line-height:1.1; color:var(--text); }
-.top-stat-text { font-family:'Sarabun',sans-serif; font-weight:700; font-size:1.05rem; overflow-wrap:anywhere; }
+.top-stat { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px; min-width:0; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+.top-stat .summary-label { text-align:center; }
+.top-stat-value { margin:0; font-family:'Inter','Sarabun',sans-serif; font-weight:800; font-size:1.8rem; line-height:1.1; color:var(--text); }
+.top-stat-text { font-family:'Sarabun','Inter',sans-serif; font-size:1.25rem; overflow-wrap:anywhere; }
 
-.top-podium { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.18fr) minmax(0,1fr); gap:16px; align-items:end; margin-top:46px; padding:0 4px; }
+.top-podium { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.18fr) minmax(0,1fr); gap:16px; align-items:end; margin:46px auto 0; padding:0 4px; max-width:780px; }
 .podium-card { --medal:#C0C0C0; position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; min-width:0; cursor:pointer;
   background:linear-gradient(180deg, color-mix(in srgb, var(--medal) 14%, var(--surface)) 0%, var(--surface) 70%);
   border:1px solid color-mix(in srgb, var(--medal) 45%, var(--border)); border-radius:16px; padding:26px 12px 14px;
@@ -2343,8 +2372,11 @@
 
 .top-list-card { margin-top:22px; }
 .top-list-card[hidden] { display:none; }
-.top-stat .summary-sub { text-align:left; margin-top:2px; }
+.top-stat .summary-sub { text-align:center; margin:0; }
 .top-series-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+@media (min-width:1100px) {
+  .top-series-list { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); grid-template-rows:repeat(4, auto); grid-auto-flow:column; gap:8px 12px; }
+}
 .top-series-item { display:flex; align-items:center; gap:14px; padding:8px 14px 8px 10px; border-radius:12px; background:var(--surface-2, rgba(128,128,128,0.08)); border:1px solid var(--border, rgba(128,128,128,0.2)); cursor:pointer; min-width:0; transition:border-color .15s, transform .15s; }
 .top-series-item:hover { border-color:var(--red); transform:translateX(2px); }
 .top-series-rank { flex:0 0 34px; text-align:center; font-family:'Bebas Neue','Sarabun',sans-serif; font-size:1.7rem; line-height:1; color:var(--text-dim); }
@@ -2354,9 +2386,14 @@
 .top-series-info { flex:1; min-width:0; }
 .top-series-title { margin:0; font-weight:700; font-size:0.92rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .top-series-meta { margin:2px 0 0; font-size:0.72rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media (max-width:860px) { .top-hero { display:none; } }
 @media (max-width:700px) {
-  .top-stats { grid-template-columns:1fr; gap:8px; }
-  .top-stat { padding:10px 14px; }
+  .top-stats { grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; }
+  .top-stat { padding:10px 6px; border-radius:12px; gap:3px; }
+  .top-stat .summary-label { font-size:0.6rem; line-height:1.25; }
+  .top-stat-value { font-size:1.15rem; }
+  .top-stat-text { font-size:0.85rem; }
+  .top-stat .summary-sub { font-size:0.58rem; }
   .top-podium { gap:8px; padding:0; }
   .podium-card { padding:24px 6px 10px; border-radius:12px; }
   .podium-card.p1 { padding-top:26px; }
@@ -2737,9 +2774,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           </div>
         </div>
         <div class="top-stats">
-          <div class="top-stat"><p class="summary-label">จัดอันดับแล้ว</p><p class="top-stat-value" id="topStatRated">—</p></div>
-          <div class="top-stat"><p class="summary-label">ปีที่พบบ่อยใน My Top 10</p><p class="top-stat-value" id="topStatYear">—</p><p class="summary-sub" id="topStatYearSub"></p></div>
-          <div class="top-stat"><p class="summary-label">แนวที่พบบ่อยใน My Top 10</p><p class="top-stat-value top-stat-text" id="topStatGenre">—</p><p class="summary-sub" id="topStatGenreSub"></p></div>
+          <div class="top-stat"><p class="summary-label">จัดอันดับแล้ว</p><p class="top-stat-value" id="topStatRated">—</p><p class="summary-sub">เรื่อง</p></div>
+          <div class="top-stat"><p class="summary-label">ปีที่พบบ่อย</p><p class="top-stat-value" id="topStatYear">—</p><p class="summary-sub" id="topStatYearSub"></p></div>
+          <div class="top-stat"><p class="summary-label">แนวที่พบบ่อย</p><p class="top-stat-value top-stat-text" id="topStatGenre">—</p><p class="summary-sub" id="topStatGenreSub"></p></div>
         </div>
         <div class="top-podium" id="topPodium"></div>
         <div class="chart-card top-list-card" id="topListCard">
@@ -3201,7 +3238,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   </div>
 
   <!-- Modal: Synopsis -->
-  <div class="modal-overlay" id="synopsisModalOverlay" hidden>
+  <div class="modal-overlay" id="synopsisModalOverlay" hidden style="z-index:400;">
     <div class="modal-box" id="synopsisModalBox" style="max-width:480px;">
       <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:4px;">
         <div>
@@ -3314,6 +3351,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   let shows = [], usingFallback = true, diaryLoaded = false;
   let pending = [], usingFallbackPending = true, pendingLoaded = false;
   let dropped = [], droppedLoaded = false;
+  document.body.classList.add('dash-loading'); // ยังไม่ได้โหลดข้อมูล → Dashboard แสดงกรอบโหลด
 
   const grid        = document.getElementById('grid');
   const gridPending = document.getElementById('gridPending');
@@ -4496,7 +4534,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   }
   document.getElementById('resultSheetClose')?.addEventListener('click', closeResultSheet);
   resultSheetDim?.addEventListener('click', closeResultSheet);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && resultSheet && !resultSheet.hidden) closeResultSheet(); });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const syn = document.getElementById('synopsisModalOverlay');
+    if (syn && !syn.hidden) { syn.hidden = true; return; }      // ปิดเรื่องย่อก่อน (อยู่ชั้นบนสุด)
+    if (resultSheet && !resultSheet.hidden) closeResultSheet();
+  });
 
   function renderGenreTable() {
     const tbody=document.getElementById('genreTableBody'), titleEl=document.getElementById('genreTableTitle');
@@ -4524,9 +4567,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     titleEl.textContent=title;
     if(list.length===0){tbody.innerHTML='<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';return;}
     if(isPending){
-      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
     } else {
-      tbody.innerHTML=list.map(s=>`<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
     }
   }
 
@@ -4635,7 +4678,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     + '<path d="M24 29.5l2.6 5.3 5.9.85-4.25 4.15 1 5.85L24 42.9l-5.25 2.75 1-5.85-4.25-4.15 5.9-.85z" style="fill:color-mix(in srgb,var(--medal) 45%,#fff)"/>'
     + '<path d="M13 31a13 13 0 0 1 9-8" style="fill:none;stroke:rgba(255,255,255,.55);stroke-width:2;stroke-linecap:round"/>'
     + '</svg>';
+  function setDashLoading() { document.body.classList.toggle('dash-loading', !diaryLoaded); }
   function renderTopSeries() {
+    setDashLoading();
     const list=document.getElementById('topSeriesList'), podium=document.getElementById('topPodium'), empty=document.getElementById('topSeriesEmpty');
     if(!list||!podium) return;
     list.innerHTML=''; podium.innerHTML='';
@@ -4656,14 +4701,14 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const gc={}; ranked.forEach(s=>s.genres.forEach(g=>{gc[g]=(gc[g]||0)+1;}));
     const topG=Object.entries(gc).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
     document.getElementById('topStatGenre').textContent = topG ? topG[0] : '—';
-    document.getElementById('topStatGenreSub').textContent = topG ? `อยู่ใน ${topG[1]} จาก ${ranked.length} เรื่อง` : '';
+    document.getElementById('topStatGenreSub').textContent = topG ? `${topG[1]} จาก ${ranked.length} เรื่อง` : '';
 
     empty.hidden = ranked.length>0 || !diaryLoaded;
     document.getElementById('topListCard').hidden = ranked.length<=3;
 
     // โพเดียม (อันดับที่แสดงคือลำดับหลังเรียง — ถ้ายังไม่ครบ 10 เรื่องก็เรียงต่อกันไป)
     ranked.slice(0,3).forEach((s,i)=>{
-      const card=document.createElement('div'); card.className='podium-card p'+(i+1); card.dataset.title=s.title;
+      const card=document.createElement('div'); card.className='podium-card p'+(i+1); card.dataset.title=s.title; card.tabIndex=0; card.setAttribute('role','button'); card.setAttribute('aria-label','อันดับ '+s.rank+' '+s.title);
       const medal=document.createElement('span'); medal.className='podium-medal'; medal.setAttribute('role','img'); medal.setAttribute('aria-label','อันดับ '+(i+1)); medal.innerHTML=MEDAL_SVG;
       const pw=document.createElement('div'); pw.className='podium-poster'; pw.appendChild(posterEl(s));
       const t=document.createElement('p'); t.className='podium-title'; t.textContent=s.title;
@@ -4674,7 +4719,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
     // อันดับ 4-10
     ranked.slice(3).forEach(s=>{
-      const li=document.createElement('li'); li.className='top-series-item'; li.dataset.title=s.title;
+      const li=document.createElement('li'); li.className='top-series-item'; li.dataset.title=s.title; li.tabIndex=0;
       const rank=document.createElement('span'); rank.className='top-series-rank'; rank.textContent=s.rank;
       const pw=document.createElement('span'); pw.className='top-series-poster'; pw.appendChild(posterEl(s));
       const info=document.createElement('div'); info.className='top-series-info';
@@ -4692,6 +4737,22 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   }
   document.getElementById('topSeriesList')?.addEventListener('click',openTopSeriesItem);
   document.getElementById('topPodium')?.addEventListener('click',openTopSeriesItem);
+
+  // คลิก (หรือกด Enter) ที่แถวในตารางรายชื่อ → เปิดเรื่องย่อ
+  function openRowSynopsis(row) {
+    const t = row && row.dataset.title; if (!t) return;
+    const show = shows.find(s => s.title === t) || pending.find(s => s.title === t) || dropped.find(s => s.title === t);
+    if (show) openSynopsisModal(show);
+  }
+  ['genreTableBody','castTableBody'].forEach(id => {
+    const tb = document.getElementById(id); if (!tb) return;
+    tb.addEventListener('click', e => openRowSynopsis(e.target.closest('tr.row-link')));
+    tb.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { const r = e.target.closest('tr.row-link'); if (r) { e.preventDefault(); openRowSynopsis(r); } } });
+  });
+  // My Top 10: กด Enter ที่การ์ด/แถวได้ด้วย
+  ['topSeriesList','topPodium'].forEach(id => document.getElementById(id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { const el = e.target.closest('[data-title]'); if (el) { e.preventDefault(); openTopSeriesItem({ target: el }); } }
+  }));
 
   // แพลตฟอร์มที่ดู (หน้า Summary) — ใช้ปุ่ม Series/Variety ของหน้า Summary
   function renderPlatformChart() {
@@ -4733,6 +4794,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   });
 
   function updateSummary() {
+    setDashLoading();
     renderTopSeries();
     renderPlatformChart();
     const summaryTotal=document.getElementById('summaryTotal'), summaryTotalBreakdown=document.getElementById('summaryTotalBreakdown');
@@ -4923,6 +4985,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   }
 
   function updateCastView() {
+    setDashLoading();
     const uniqueEl = document.getElementById('castUniqueCount'), uniqueSubEl = document.getElementById('castUniqueCountSub');
     const favNameEl = document.getElementById('castFavoriteName'), favSubEl = document.getElementById('castFavoriteSub');
     if (!diaryLoaded) {
@@ -5127,7 +5190,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     titleEl.textContent = `${selectedCast} — ${totalCount} เรื่อง${suffix}`;
     if (!totalCount) { tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่อง</td></tr>'; return; }
 
-    const rowHtml = (s, feelingHtml) => `<tr><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${feelingHtml}</td></tr>`;
+    const rowHtml = (s, feelingHtml) => `<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${feelingHtml}</td></tr>`;
 
     tbody.innerHTML =
       list.map(s => rowHtml(s, s.liked ? '<span class="liked-tag liked">♥ ชอบ</span>' : '<span class="liked-tag neutral">♡ เฉยๆ</span>')).join('') +
