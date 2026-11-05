@@ -34,6 +34,8 @@
     --gold-soft: rgba(230,185,30,0.18);
     --amber: #F97316;
     --amber-soft: rgba(249,115,22,0.15);
+    --blue: #4C8DFF;
+    --blue-soft: rgba(76,141,255,0.15);
     --text: #FFFFFF;
     --text-soft: #B3B3B3;
     --text-dim: #737373;
@@ -664,7 +666,7 @@
   .liked-tag.liked   { color: var(--mint); }
   .liked-tag.neutral { color: var(--text-dim); }
   .liked-tag.dropped { color: var(--amber); }
-  .liked-tag.watchlist { color: var(--mint); }
+  .liked-tag.watchlist { color: var(--blue); }
 
   .donut-card { display: flex; flex-direction: column; min-width: 0; }
 
@@ -1350,6 +1352,28 @@
   .mobile-topbar-title { position:absolute; left:66px; right:16px; top:0; height:56px; display:flex; align-items:center;
     font-family:'Inter','Sarabun',sans-serif; font-weight:700; font-size:0.98rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
+
+
+  /* ===== แผงรายชื่อเรื่องจากการคลิกกราฟ (Dashboard) ===== */
+  .dashboard-hint { margin-left:auto; font-size:0.75rem; color:var(--text-dim); }
+  .result-sheet-dim { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:300; animation:overlayIn .2s ease forwards; }
+  .result-sheet { position:fixed; left:50%; bottom:0; transform:translateX(-50%); width:min(680px, 100%); z-index:310; display:flex; flex-direction:column; max-height:min(78vh, 640px);
+    background:var(--surface); border:1px solid var(--border); border-bottom:none; border-radius:18px 18px 0 0; box-shadow:0 -12px 32px rgba(0,0,0,.45);
+    padding:10px 20px calc(16px + env(safe-area-inset-bottom, 0px)); animation:resultSheetUp .24s ease forwards; box-sizing:border-box; }
+  .result-sheet[hidden], .result-sheet-dim[hidden] { display:none; }
+  @keyframes resultSheetUp { from { transform:translate(-50%, 100%); } to { transform:translate(-50%, 0); } }
+  .result-sheet-head { display:flex; align-items:center; gap:12px; margin:2px 0 10px; }
+  .result-sheet-head .genre-table-title { flex:1; margin:0; min-height:0; font-family:'Sarabun',sans-serif; font-size:1rem; font-weight:700; color:var(--text); }
+  .result-sheet-close { flex:0 0 auto; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:var(--surface-soft); color:var(--text-soft); cursor:pointer; font-size:0.95rem; }
+  .result-sheet-close:hover { color:var(--text); border-color:var(--red); }
+  .result-sheet-body { overflow:hidden; min-height:0; display:flex; flex-direction:column; }
+  .result-sheet-body .genre-table-wrap { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; min-height:0; }
+  .result-sheet-body .genre-table-scroll { max-height:none; flex:1 1 auto; min-height:0; }
+  .result-sheet-body .genre-table th:last-child, .result-sheet-body .genre-table td:last-child { white-space:nowrap; text-align:right; }
+  @media (max-width:860px) {
+    .dashboard-hint { display:none; }
+    .result-sheet { padding-left:14px; padding-right:14px; }
+  }
 
   /* ===== มือถือ: แถบเดียว (ค้นหา + ปุ่มตัวกรอง) + แผงตัวกรองจากด้านล่าง ===== */
   .mobile-filter-btn { display:none; }
@@ -2460,6 +2484,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   <div class="mobile-topbar" id="mobileTopbar"><span class="mobile-topbar-title" id="mobileTopbarTitle">Summary</span>
     <button class="mobile-filter-btn" id="mobileFilterBtn" type="button" aria-label="ตัวกรอง"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M7 12h10"/><path d="M10 19h4"/></svg><span class="mobile-filter-badge" id="mobileFilterBadge" hidden>0</span></button>
   </div>
+  <div class="result-sheet-dim" id="resultSheetDim" hidden></div>
+  <div class="result-sheet" id="resultSheet" hidden role="dialog" aria-modal="true" aria-labelledby="genreTableTitle">
+    <div class="filter-sheet-grab"></div>
+    <div class="result-sheet-head" id="resultSheetHead"><button type="button" class="result-sheet-close" id="resultSheetClose" aria-label="ปิด">✕</button></div>
+    <div class="result-sheet-body" id="resultSheetBody"></div>
+  </div>
   <div class="filter-sheet-dim" id="filterSheetDim" hidden></div>
   <div class="filter-sheet" id="filterSheet" hidden role="dialog" aria-label="ตัวกรอง">
     <div class="filter-sheet-grab"></div>
@@ -2526,8 +2556,10 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       <!-- Summary -->
       <section class="view-section active" id="view-summary">
         <div class="dashboard-slicer">
+          <button class="pill" id="slicerAll" data-summary-type="all">ทั้งหมด</button>
           <button class="pill" id="slicerSeries" data-summary-type="series">Series</button>
           <button class="pill" id="slicerVariety" data-summary-type="variety">Variety</button>
+          <span class="dashboard-hint">คลิกแท่งหรือวงกลมในกราฟเพื่อดูรายชื่อเรื่อง</span>
         </div>
 
         <div class="summary-layout">
@@ -2582,7 +2614,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
                 </div>
                 <p class="chart-empty" id="watchlistDonutEmpty" hidden>ยังไม่มีข้อมูล</p>
                 <div class="donut-legend">
-                  <span class="legend-item"><i class="legend-dot" style="background:var(--mint)"></i>พร้อมดู <b id="watchlistReadyCount">—</b></span>
+                  <span class="legend-item"><i class="legend-dot" style="background:var(--blue)"></i>พร้อมดู <b id="watchlistReadyCount">—</b></span>
                   <span class="legend-item"><i class="legend-dot" style="background:var(--gold)"></i>รออกอากาศ <b id="watchlistAiringCount">—</b></span>
                 </div>
               </div>
@@ -2701,6 +2733,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       <!-- Cast -->
       <section class="view-section" id="view-cast">
         <div class="dashboard-slicer">
+          <button class="pill" id="castSlicerAll" data-summary-type="all">ทั้งหมด</button>
           <button class="pill" id="castSlicerSeries" data-summary-type="series">Series</button>
           <button class="pill" id="castSlicerVariety" data-summary-type="variety">Variety</button>
         </div>
@@ -3443,6 +3476,20 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
 
   // สีหลักของธีม (แดง Netflix / เหลือง Viu) — กราฟอ่านจาก CSS ตอนวาด
+  // สีของกราฟตามธีม (ตัวหนังสือ เส้นตาราง กล่องข้อความ) — อ่านจาก CSS ตอนวาด
+  function chartC(kind) {
+    const cs = getComputedStyle(document.body), v = n => (cs.getPropertyValue(n) || '').trim();
+    const light = document.body.classList.contains('light-mode');
+    switch (kind) {
+      case 'text':    return v('--text') || '#FFFFFF';
+      case 'soft':    return v('--text-soft') || '#B3B3B3';
+      case 'surface': return v('--surface') || '#1F1F1F';
+      case 'border':  return v('--border') || '#3A3A3A';
+      case 'track':   return light ? '#DCDCDC' : (v('--border') || '#3A3A3A');
+      case 'grid':    return light ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.06)';
+    }
+    return '#888';
+  }
   function accent() { return (getComputedStyle(document.body).getPropertyValue('--red') || '').trim() || '#E50914'; }
   function onAccent() { return (getComputedStyle(document.body).getPropertyValue('--on-red') || '').trim() || '#FFFFFF'; }
   function accentA(a) {
@@ -4127,10 +4174,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   function refreshSlicerButtons() {
     // active (แดง) เฉพาะตอนเลือกแบบ exclusive เท่านั้น — ถ้าทั้งคู่ true (ค่าเริ่มต้น/โชว์ทั้งหมด) ให้เป็นเทาทั้งคู่
     const summaryExclusive = summaryTypeFilter.series !== summaryTypeFilter.variety;
+    document.getElementById('slicerAll')?.classList.toggle('active', !summaryExclusive);
     slicerSeriesBtn.classList.toggle('active', summaryExclusive && summaryTypeFilter.series);
     slicerVarietyBtn.classList.toggle('active', summaryExclusive && summaryTypeFilter.variety);
 
     const castExclusive = castTypeFilter.series !== castTypeFilter.variety;
+    document.getElementById('castSlicerAll')?.classList.toggle('active', !castExclusive);
     castSlicerSeriesBtn?.classList.toggle('active', castExclusive && castTypeFilter.series);
     castSlicerVarietyBtn?.classList.toggle('active', castExclusive && castTypeFilter.variety);
   }
@@ -4155,6 +4204,15 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   slicerVarietyBtn.addEventListener('click', () => toggleSummaryType('variety'));
   castSlicerSeriesBtn?.addEventListener('click',  () => toggleCastType('series'));
   castSlicerVarietyBtn?.addEventListener('click', () => toggleCastType('variety'));
+  document.getElementById('slicerAll')?.addEventListener('click', () => {
+    if (summaryTypeFilter.series && summaryTypeFilter.variety) return;
+    summaryTypeFilter = { series:true, variety:true }; refreshSlicerButtons(); updateSummary();
+  });
+  document.getElementById('castSlicerAll')?.addEventListener('click', () => {
+    if (castTypeFilter.series && castTypeFilter.variety) return;
+    castTypeFilter = { series:true, variety:true }; refreshSlicerButtons(); updateCastView();
+  });
+  refreshSlicerButtons();
 
   document.getElementById('castStackedSort')?.addEventListener('change', e => {
     castStackedSortMode = e.target.value;
@@ -4172,6 +4230,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const mobileTitle = document.getElementById('mobileTopbarTitle');
     if (mobileTitle) mobileTitle.textContent = tab.textContent.trim();
     closeFilterSheet();
+    if (dashboardTableState.source) { dashboardTableState = { source:null, value:null }; selectedGenre = null; selectedGenreSource = null; }
+    syncResultSheet();
     document.body.classList.toggle('on-detail', ['diary','watchlist','dropped'].includes(tab.dataset.nav));
     window.scrollTo(0,0);
     document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
@@ -4248,7 +4308,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       yearlyChartInstance = new Chart(canvas.getContext('2d'), {
         data: { labels: years, datasets: [
           { type:'bar',  label:'จำนวนที่ดู',    data:watchedCounts, backgroundColor:accentA(0.75), hoverBackgroundColor:accentA(0.95), borderRadius:6, maxBarThickness:48, yAxisID:'yWatched', order:2 },
-          { type:'line', label:'จำนวนที่ถูกใจ', data:likedCounts,   borderColor:'#46D369', backgroundColor:'#46D369', pointBackgroundColor:'#46D369', pointBorderColor:'#141414', pointRadius:isMobile?2:4, pointHoverRadius:6, borderWidth:2, tension:0.3, yAxisID:'yLiked', order:1 }
+          { type:'line', label:'จำนวนที่ถูกใจ', data:likedCounts,   borderColor:'#46D369', backgroundColor:'#46D369', pointBackgroundColor:'#46D369', pointBorderColor:chartC('surface'), pointRadius:isMobile?2:4, pointHoverRadius:6, borderWidth:2, tension:0.3, yAxisID:'yLiked', order:1 }
         ]},
         options: {
           responsive:true, maintainAspectRatio:false,
@@ -4264,13 +4324,13 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           },
           onHover:(evt,elements)=>{ evt.native.target.style.cursor=elements.length?'pointer':'default'; },
           plugins: {
-            legend:{labels:{color:'#B3B3B3',font:{family:'Inter',size:isMobile?10:12},boxWidth:isMobile?10:40}},
-            tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}
+            legend:{labels:{color:chartC('soft'),font:{family:'Inter',size:isMobile?10:12},boxWidth:isMobile?10:40}},
+            tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft')}
           },
           scales:{
-            x:{ ticks:{color:'#B3B3B3',font:{family:'Inter',size:isMobile?9:12},maxRotation:isMobile?60:0,minRotation:isMobile?60:0,autoSkip:true,maxTicksLimit:isMobile?9:undefined}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:!isMobile,text:'ปีที่ออกอากาศ',color:'#B3B3B3'} },
-            yWatched:{ position:'left',  min:0,max:sharedAxisMax, ticks:{color:'#B3B3B3',precision:0,font:{size:isMobile?9:12}}, grid:{color:'rgba(255,255,255,0.06)'}, title:{display:!isMobile,text:'จำนวนที่ดู (เรื่อง)',color:'#B3B3B3'} },
-            yLiked:  { position:'right', min:0,max:sharedAxisMax, ticks:{display:!isMobile,color:'#B3B3B3',precision:0}, grid:{drawOnChartArea:false}, title:{display:!isMobile,text:'จำนวนที่ถูกใจ (เรื่อง)',color:'#B3B3B3'} }
+            x:{ ticks:{color:chartC('soft'),font:{family:'Inter',size:isMobile?9:12},maxRotation:isMobile?60:0,minRotation:isMobile?60:0,autoSkip:true,maxTicksLimit:isMobile?9:undefined}, grid:{color:chartC('grid')}, title:{display:!isMobile,text:'ปีที่ออกอากาศ',color:chartC('soft')} },
+            yWatched:{ position:'left',  min:0,max:sharedAxisMax, ticks:{color:chartC('soft'),precision:0,font:{size:isMobile?9:12}}, grid:{color:chartC('grid')}, title:{display:!isMobile,text:'จำนวนที่ดู (เรื่อง)',color:chartC('soft')} },
+            yLiked:  { position:'right', min:0,max:sharedAxisMax, ticks:{display:!isMobile,color:chartC('soft'),precision:0}, grid:{drawOnChartArea:false}, title:{display:!isMobile,text:'จำนวนที่ถูกใจ (เรื่อง)',color:chartC('soft')} }
           }
         }
       });
@@ -4298,8 +4358,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     try {
       likedDonutChartInstance=new Chart(canvas.getContext('2d'),{
         type:'doughnut',
-        data:{labels:['ชอบ','เฉยๆ'],datasets:[{data:[likedCount,neutralCount],backgroundColor:['#46D369','#3A3A3A'],borderColor:'#1F1F1F',borderWidth:2,hoverOffset:4}]},
-        options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}}}
+        data:{labels:['ชอบ','เฉยๆ'],datasets:[{data:[likedCount,neutralCount],backgroundColor:['#46D369',chartC('track')],borderColor:chartC('surface'),borderWidth:2,hoverOffset:4}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft')}}}
       });
     } catch(err){canvas.hidden=true;centerText.hidden=true;emptyMsg.hidden=false;}
   }
@@ -4325,9 +4385,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     try {
       watchlistDonutInstance=new Chart(canvas.getContext('2d'),{
         type:'doughnut',
-        data:{labels:['พร้อมดู','รออกอากาศ'],datasets:[{data:[readyCount,airingCount],backgroundColor:['#46D369','#E6B91E'],borderColor:'#1F1F1F',borderWidth:2,hoverOffset:4}]},
+        data:{labels:['พร้อมดู','รออกอากาศ'],datasets:[{data:[readyCount,airingCount],backgroundColor:['#4C8DFF','#E6B91E'],borderColor:chartC('surface'),borderWidth:2,hoverOffset:4}]},
         options:{responsive:true,maintainAspectRatio:false,cutout:'72%',
-          plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'}},
+          plugins:{legend:{display:false},tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft')}},
           onClick:(evt,elements)=>{
             if(!elements.length) return;
             const src=elements[0].index===0?'watchlist-ready':'watchlist-airing';
@@ -4359,14 +4419,49 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     return Object.keys(liked).map(g=>({genre:g,count:liked[g],total:total[g]||0})).sort((a,b)=>b.count-a.count).slice(0,n);
   }
 
+  // ============================================================
+  // แผงรายชื่อเรื่อง: ผลจากการคลิกกราฟใน Summary (รายปี / โดนัท / แนว / รายเดือน)
+  // ย้ายตารางเดิมเข้ามาอยู่ในแผงเดียว เปิดตรงหน้าจอเสมอ ไม่ว่าจะคลิกกราฟไหน
+  // ============================================================
+  const resultSheet = document.getElementById('resultSheet');
+  const resultSheetDim = document.getElementById('resultSheetDim');
+  (function mountResultSheet(){
+    const wrap = document.querySelector('#view-summary .genre-table-wrap');
+    const title = document.getElementById('genreTableTitle');
+    if (wrap && resultSheet) {
+      document.getElementById('resultSheetBody').appendChild(wrap);
+      if (title) document.getElementById('resultSheetHead').insertBefore(title, document.getElementById('resultSheetClose'));
+    }
+  })();
+  function syncResultSheet() {
+    if (!resultSheet) return;
+    const open = !!dashboardTableState.source && document.getElementById('view-summary')?.classList.contains('active');
+    if (open === !resultSheet.hidden) return;
+    resultSheet.hidden = !open; resultSheetDim.hidden = !open;
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  function clearDashboardSelection() {
+    const had = !!dashboardTableState.source || !!selectedGenre;
+    dashboardTableState = { source:null, value:null };
+    selectedGenre = null; selectedGenreSource = null;
+    if (genreChartInstance) { genreChartInstance.data.datasets[0].backgroundColor = genreChartInstance.data.labels.map(() => accentA(0.55)); genreChartInstance.update('none'); }
+    if (genreLikedChartInstance) { genreLikedChartInstance.data.datasets[0].backgroundColor = genreLikedChartInstance.data.labels.map(() => 'rgba(70,211,105,0.55)'); genreLikedChartInstance.update('none'); }
+    if (had && window.innerWidth <= 860 && typeof renderDataBars === 'function') renderDataBars();
+    renderGenreTable();
+  }
+  document.getElementById('resultSheetClose')?.addEventListener('click', clearDashboardSelection);
+  resultSheetDim?.addEventListener('click', clearDashboardSelection);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && resultSheet && !resultSheet.hidden) clearDashboardSelection(); });
+
   function renderGenreTable() {
     const tbody=document.getElementById('genreTableBody'), titleEl=document.getElementById('genreTableTitle');
     if(!tbody) return;
     const scrollWrap=tbody.closest('.genre-table-scroll');
     if(scrollWrap) scrollWrap.scrollTop=0;
     const {source,value}=dashboardTableState;
-    if(!source){tbody.innerHTML='';titleEl.textContent='คลิกข้อมูลในกราฟเพื่อดูรายชื่อเรื่อง';if(scrollWrap) scrollWrap.hidden=true;return;}
+    if(!source){tbody.innerHTML='';titleEl.textContent='คลิกข้อมูลในกราฟเพื่อดูรายชื่อเรื่อง';if(scrollWrap) scrollWrap.hidden=true;syncResultSheet();return;}
     if(scrollWrap) scrollWrap.hidden=false;
+    syncResultSheet();
     const summaryShows=getSummaryShows();
     let list=[],title='',isPending=false;
     if(source==='genre-watched')      {list=summaryShows.filter(s=>s.genres.includes(value));title=`แนว "${value}" — ${list.length} เรื่อง`;}
@@ -4407,10 +4502,10 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         type:'bar',
         data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:accent(),borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'},
+          plugins:{legend:{display:false},tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft')},
             datalabels:{display:true,color:onAccent(),font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}},
-          scales:{x:{min:0,grace:'10%',ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
-            y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun',size:11},autoSkip:false},
+          scales:{x:{min:0,grace:'10%',ticks:{color:chartC('soft'),precision:0},grid:{color:chartC('grid')}},
+            y:{ticks:{color:chartC('soft'),font:{family:'Sarabun',size:11},autoSkip:false},
                afterFit:function(axis){if(window.innerWidth<=860){axis.width=Math.max(axis.width,90);}},
                grid:{display:false}}},
           onClick:(evt,elements)=>{
@@ -4446,12 +4541,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         data:{labels,datasets:[{label:'% ถูกใจ',data:pcts,backgroundColor:barColors,hoverBackgroundColor:'#46D369',borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:false},
-            tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3',
+            tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft'),
               callbacks:{label:ctx=>`${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`}}
             ,datalabels:{display:true,color:onAccent(),font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}
           },
-          scales:{x:{min:0,grace:'10%',ticks:{color:'#B3B3B3',precision:0},grid:{color:'rgba(255,255,255,0.06)'}},
-            y:{ticks:{color:'#B3B3B3',font:{family:'Sarabun',size:11},autoSkip:false},
+          scales:{x:{min:0,grace:'10%',ticks:{color:chartC('soft'),precision:0},grid:{color:chartC('grid')}},
+            y:{ticks:{color:chartC('soft'),font:{family:'Sarabun',size:11},autoSkip:false},
                afterFit:function(axis){if(window.innerWidth<=860){axis.width=Math.max(axis.width,90);}},
                grid:{display:false}}},
           onClick:(evt,elements)=>{
@@ -4674,6 +4769,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         } else {
           selectedGenre = genre; selectedGenreSource = src;
         }
+        dashboardTableState = selectedGenre ? { source: src === 'liked' ? 'genre-liked' : 'genre-watched', value: selectedGenre } : { source:null, value:null };
         renderGenreTable();
         renderDataBars();
       });
@@ -4742,8 +4838,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     try {
       castLikedRateDonutInstance = new Chart(canvas.getContext('2d'), {
         type: 'doughnut',
-        data: { labels:['เคยถูกใจ','ยังไม่เคย'], datasets:[{ data:[likedCount, notLikedCount], backgroundColor:['#46D369','#3A3A3A'], borderColor:'#1F1F1F', borderWidth:2, hoverOffset:4 }] },
-        options: { responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'} } }
+        data: { labels:['เคยถูกใจ','ยังไม่เคย'], datasets:[{ data:[likedCount, notLikedCount], backgroundColor:['#46D369',chartC('track')], borderColor:chartC('surface'), borderWidth:2, hoverOffset:4 }] },
+        options: { responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft')} } }
       });
     } catch(err) { canvas.hidden=true; centerEl.hidden=true; emptyMsg.hidden=false; }
   }
@@ -4771,8 +4867,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     try {
       castRegularDonutInstance = new Chart(canvas.getContext('2d'), {
         type: 'doughnut',
-        data: { labels:['ขาประจำ','ผ่านตา'], datasets:[{ data:[regularCount, occasionalCount], backgroundColor:['#E6B91E','#3A3A3A'], borderColor:'#1F1F1F', borderWidth:2, hoverOffset:4 }] },
-        options: { responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{backgroundColor:'#1F1F1F',borderColor:'#3A3A3A',borderWidth:1,titleColor:'#FFFFFF',bodyColor:'#B3B3B3'} } }
+        data: { labels:['ขาประจำ','ผ่านตา'], datasets:[{ data:[regularCount, occasionalCount], backgroundColor:['#E6B91E',chartC('track')], borderColor:chartC('surface'), borderWidth:2, hoverOffset:4 }] },
+        options: { responsive:true, maintainAspectRatio:false, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft')} } }
       });
     } catch(err) { canvas.hidden=true; centerEl.hidden=true; emptyMsg.hidden=false; }
   }
@@ -4861,7 +4957,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const noteEl = document.getElementById('castStackedNote');
     if (noteEl) {
       const sortLabel = castStackedSortMode === 'liked' ? 'จำนวนที่ถูกใจมากไปน้อย (ถูกใจเท่ากันเรียงตามจำนวนเรื่องรวม)' : 'จำนวนเรื่องรวมมากไปน้อย';
-      noteEl.textContent = `*เฉพาะนักแสดงที่ดู (Watched) อย่างน้อย 3 เรื่องขึ้นไป เรียงตาม${sortLabel} — สีเขียว/ส้มคือจำนวนเรื่องใน Watchlist/Dropped ของนักแสดงคนนั้นเพิ่มเติม เลื่อนดูคนถัดไปได้ คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน`;
+      noteEl.textContent = `*เฉพาะนักแสดงที่ดู (Watched) อย่างน้อย 3 เรื่องขึ้นไป เรียงตาม${sortLabel} — สีน้ำเงิน/ส้มคือจำนวนเรื่องใน Watchlist/Dropped ของนักแสดงคนนั้นเพิ่มเติม เลื่อนดูคนถัดไปได้ คลิกแท่งเพื่อดูรายชื่อเรื่องในตารางด้านบน`;
     }
 
     if (!data.length) {
@@ -4899,9 +4995,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       data: {
         labels,
         datasets: [
-          { label: 'ถูกใจ', data: likedData, backgroundColor: accent(), hoverBackgroundColor: accent(), stack: 'cast', maxBarThickness: 32 },
+          { label: 'ถูกใจ', data: likedData, backgroundColor: '#46D369', hoverBackgroundColor: '#5fe081', stack: 'cast', maxBarThickness: 32 },
           { label: 'เฉยๆ', data: neutralData, backgroundColor: '#4A4A4A', hoverBackgroundColor: '#5c5c5c', stack: 'cast', maxBarThickness: 32 },
-          { label: 'Watchlist', data: watchlistData, backgroundColor: '#46D369', hoverBackgroundColor: '#5fe081', stack: 'cast', maxBarThickness: 32 },
+          { label: 'Watchlist', data: watchlistData, backgroundColor: '#4C8DFF', hoverBackgroundColor: '#6ea3ff', stack: 'cast', maxBarThickness: 32 },
           { label: 'Dropped', data: droppedData, backgroundColor: '#F97316', hoverBackgroundColor: '#ff8c3d', stack: 'cast', borderRadius: {topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}, maxBarThickness: 32 }
         ]
       },
@@ -4921,12 +5017,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         },
         onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; },
         plugins: {
-          legend: { labels: { color: '#B3B3B3', font: { family:'Inter', size:11 } } },
-          tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1, titleColor:'#FFFFFF', bodyColor:'#B3B3B3' }
+          legend: { labels: { color:chartC('soft'), font: { family:'Inter', size:11 } } },
+          tooltip: { backgroundColor:chartC('surface'), borderColor:chartC('border'), borderWidth:1, titleColor:chartC('text'), bodyColor:chartC('soft') }
         },
         scales: {
-          x: { stacked: true, ticks: { color:'#B3B3B3', font:{size:10}, maxRotation:60, minRotation:60, autoSkip:false }, grid:{color:'rgba(255,255,255,0.06)'} },
-          y: { stacked: true, beginAtZero:true, ticks: { color:'#B3B3B3', precision:0 }, grid:{color:'rgba(255,255,255,0.06)'} }
+          x: { stacked: true, ticks: { color:chartC('soft'), font:{size:10}, maxRotation:60, minRotation:60, autoSkip:false }, grid:{color:chartC('grid')} },
+          y: { stacked: true, beginAtZero:true, ticks: { color:chartC('soft'), precision:0 }, grid:{color:chartC('grid')} }
         }
       }
     });
@@ -5088,7 +5184,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
               borderRadius:6, maxBarThickness:48, yAxisID:'yWatched', order:2 },
             { type:'line', label:'จำนวนที่ถูกใจ', data: likedCounts,
               borderColor:'#46D369', backgroundColor:'#46D369',
-              pointBackgroundColor:'#46D369', pointBorderColor:'#141414',
+              pointBackgroundColor:'#46D369', pointBorderColor:chartC('surface'),
               pointRadius:4, pointHoverRadius:6, borderWidth:2, borderDash:[6,4], tension:0.3,
               yAxisID:'yLiked', order:1 }
           ]
@@ -5097,13 +5193,13 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           responsive:true, maintainAspectRatio:false,
           interaction:{ mode:'index', intersect:false },
           plugins: {
-            legend: { labels:{ color:'#B3B3B3', font:{family:'Inter'} } },
-            tooltip: { backgroundColor:'#1F1F1F', borderColor:'#3A3A3A', borderWidth:1, titleColor:'#FFFFFF', bodyColor:'#B3B3B3' }
+            legend: { labels:{ color:chartC('soft'), font:{family:'Inter'} } },
+            tooltip: { backgroundColor:chartC('surface'), borderColor:chartC('border'), borderWidth:1, titleColor:chartC('text'), bodyColor:chartC('soft') }
           },
           scales: {
-            x: { ticks:{ color:'#B3B3B3', font:{family:'Sarabun'} }, grid:{ color:'rgba(255,255,255,0.06)' } },
-            yWatched: { position:'left',  min:0, max:sharedAxisMax, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ color:'rgba(255,255,255,0.06)' }, title:{ display:true, text:'จำนวนที่ดู (เรื่อง)', color:'#B3B3B3' } },
-            yLiked:   { position:'right', min:0, max:sharedAxisMax, ticks:{ color:'#B3B3B3', precision:0 }, grid:{ drawOnChartArea:false }, title:{ display:true, text:'จำนวนที่ถูกใจ (เรื่อง)', color:'#B3B3B3' } }
+            x: { ticks:{ color:chartC('soft'), font:{family:'Sarabun'} }, grid:{ color:chartC('grid') } },
+            yWatched: { position:'left',  min:0, max:sharedAxisMax, ticks:{ color:chartC('soft'), precision:0 }, grid:{ color:chartC('grid') }, title:{ display:true, text:'จำนวนที่ดู (เรื่อง)', color:chartC('soft') } },
+            yLiked:   { position:'right', min:0, max:sharedAxisMax, ticks:{ color:chartC('soft'), precision:0 }, grid:{ drawOnChartArea:false }, title:{ display:true, text:'จำนวนที่ถูกใจ (เรื่อง)', color:chartC('soft') } }
           },
           onClick: (evt, elements) => {
             if (!elements.length) return;
