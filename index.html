@@ -606,11 +606,14 @@
   }
   .cast-stacked-inner { height: 320px; position: relative; }
   /* ตารางนักแสดง × ปีที่ออกอากาศ (heatmap) */
-  .cast-matrix-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--border); border-radius:12px; }
+  /* เลื่อนในกรอบตาราง (ทั้งแนวตั้ง/แนวนอน) เพื่อให้หัวคอลัมน์ปีและคอลัมน์ชื่อตรึงไว้ได้ */
+  .cast-matrix-wrap { overflow:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; border:1px solid var(--border); border-radius:12px;
+    max-height:calc(100vh - 170px); max-height:calc(100dvh - 170px); }
+  @media (max-width:860px) { .cast-matrix-wrap { max-height:calc(100vh - 120px); max-height:calc(100dvh - 120px); } }
   .cast-matrix { border-collapse:separate; border-spacing:0; width:100%; font-family:'Inter','Sarabun',sans-serif; font-size:0.82rem; }
   .cast-matrix th, .cast-matrix td { padding:0; height:34px; text-align:center; border-bottom:1px solid var(--border); white-space:nowrap; }
   .cast-matrix tbody tr:last-child td, .cast-matrix tbody tr:last-child th { border-bottom:none; }
-  .cast-matrix thead th { position:sticky; top:0; z-index:2; background:var(--surface-soft); color:var(--text-soft); font-weight:600; font-size:0.74rem; min-width:46px; padding:0 6px; }
+  .cast-matrix thead th { position:sticky; top:0; z-index:2; box-shadow:0 1px 0 var(--border); background:var(--surface-soft); color:var(--text-soft); font-weight:600; font-size:0.74rem; min-width:46px; padding:0 6px; }
   .cast-matrix thead th.yr { cursor:pointer; user-select:none; }
   .cast-matrix thead th.yr:hover, .cast-matrix thead th.sorted { color:var(--text); }
   .cast-matrix thead th.sorted::after { content:' ▼'; font-size:0.6rem; color:var(--red); }
