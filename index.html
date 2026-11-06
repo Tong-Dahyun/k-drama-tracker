@@ -2496,7 +2496,9 @@
   .mode-card.active .mode-ico { color:var(--red); }
   .nw-wrap { min-width:0; } .nw { white-space:nowrap; display:inline-block; }
   .theme-opt-grid { display:flex; gap:16px; flex-wrap:wrap; }
-  .poster-opt-grid.poster-grid-7 { display:grid; grid-template-columns:repeat(4, 160px); gap:16px; }
+  .poster-opt-grid.poster-grid-7 { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:12px; max-width:1240px; }
+  .poster-grid-7 .mode-card { width:auto; min-width:0; padding:12px; }
+  .poster-grid-7 .pl-preview { padding:8px 14px; }
   .mobile-only-badge { display:inline-block; vertical-align:middle; margin-left:8px; padding:3px 9px; border-radius:999px; font:600 .68rem 'Sarabun',sans-serif;
     background:var(--surface-soft); color:var(--text-soft); border:1px solid var(--border); }
   @media (min-width:861px) { .card-opt-grid { opacity:.6; transition:opacity .15s; } .card-opt-grid:hover { opacity:1; } }
@@ -2505,6 +2507,10 @@
     #view-mode .users-heading { font-size:1rem; }
     .theme-opt-grid, .poster-opt-grid.poster-grid-7, .poster-opt-grid.card-opt-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; }
     #view-mode .mode-card { width:auto; min-width:0; padding:8px; border-radius:12px; }
+    .poster-opt-grid.poster-grid-7 { grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; }
+    #view-mode .poster-grid-7 .mode-card { padding:6px; }
+    #view-mode .poster-grid-7 .pl-preview { height:46px; padding:4px 5px; }
+    #view-mode .poster-grid-7 .mode-card-name { font-size:.64rem; }
     #view-mode .mode-preview, #view-mode .pl-preview, #view-mode .co-preview { height:54px; margin-bottom:7px; }
     #view-mode .mode-preview { padding:7px; gap:4px; } #view-mode .mode-preview-card { height:12px; }
     #view-mode .pl-preview { padding:5px 8px; } #view-mode .co-preview { padding:5px 8px; gap:3px; }
@@ -3263,7 +3269,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
               <div class="pl-stub"><span class="pl-img2"></span><i class="pl-l4"></i><b class="pl-dot"></b></div>
             </div></div>
             <div class="mode-card-label">
-              <span class="mode-card-name"><span class="pl-letter">Original</span>ไม่มีรูป</span>
+              <span class="mode-card-name"><span class="pl-letter">Original</span><span class="nw">ไม่มีรูป</span></span>
               <span class="mode-card-check"></span>
             </div>
           </button>
