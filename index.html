@@ -1497,6 +1497,10 @@
     body.cards-b #view-detail .watch-progress { margin-top:6px; padding:5px 8px; }
     body.cards-b #view-detail .wp-bar { margin-top:5px; }
   }
+  /* มือถือแนวนอน: แบบ A / C เป็น 3 ตั๋วต่อแถว */
+  @media (max-width:860px) and (orientation:landscape) and (min-width:600px) {
+    body:is(.cards-a,.cards-c) #view-detail .grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
+  }
 
   @media (max-width:860px) {
     body:is(.cards-a,.cards-b,.cards-c) #view-detail .stamp.dropped-stamp { width:auto; height:auto; min-width:0; padding:4px 8px; border-radius:8px; font-size:.64rem; white-space:nowrap; }
@@ -3627,7 +3631,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   const CARD_LAYOUTS = ['a','b','c'];
   const CARD_LAYOUT_KEY = 'ktracker_card_layout';
   function applyCardLayout(layout) {
-    if (!CARD_LAYOUTS.includes(layout)) layout = 'b';
+    if (!CARD_LAYOUTS.includes(layout)) layout = 'c';
     CARD_LAYOUTS.forEach(l => document.body.classList.remove('cards-' + l));
     document.body.classList.add('cards-' + layout);
     try { localStorage.setItem(CARD_LAYOUT_KEY, layout); } catch(e) {}
@@ -3637,7 +3641,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       const chk = btn.querySelector('.mode-card-check'); if (chk) chk.textContent = on ? '✓' : '';
     });
   }
-  (function(){ let saved = null; try { saved = localStorage.getItem(CARD_LAYOUT_KEY); } catch(e) {} applyCardLayout(saved || 'b'); })();
+  (function(){ let saved = null; try { saved = localStorage.getItem(CARD_LAYOUT_KEY); } catch(e) {} applyCardLayout(saved || 'c'); })();
   document.querySelectorAll('.card-opt').forEach(btn => btn.addEventListener('click', () => applyCardLayout(btn.dataset.cardLayout)));
 
   // ตำแหน่งโปสเตอร์บนตั๋ว — เลือกได้ในหน้า Settings → Mode (จำค่าไว้ในเบราว์เซอร์นี้)
