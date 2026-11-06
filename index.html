@@ -1419,6 +1419,28 @@
     body.dash-loading :is(.summary-card, .chart-card, .top-stat)::after, body.dash-loading #view-top .top-podium { animation: none; }
   }
 
+
+  /* ตอนเปิดหน้าต่างใดๆ ซ่อนปุ่มลอย "+ เพิ่มเรื่อง" กับช่องค้นหาที่ลอยในแถบบน (มือถือ) ไม่ให้ทับหน้าต่าง */
+  @media (max-width:860px) {
+    body:has(.modal-overlay:not([hidden])) #controls-watchlist.active .add-entry-btn,
+    body:has(.result-sheet:not([hidden])) #controls-watchlist.active .add-entry-btn { display:none; }
+  }
+
+
+  /* ===== แถบจำนวนผลลัพธ์ + ป้ายตัวกรองที่เปิดอยู่ (หน้า Watched / Watchlist / Dropped) ===== */
+  .result-bar { display:flex; align-items:center; flex-wrap:wrap; gap:6px 8px; margin:0 0 12px; min-height:26px; }
+  .result-count { font-family:'Sarabun','Inter',sans-serif; font-size:0.85rem; color:var(--text-soft); margin-right:4px; }
+  .result-count b { color:var(--text); font-family:'Inter',sans-serif; }
+  .filter-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 6px 4px 10px; border-radius:999px; border:1px solid var(--border);
+    background:var(--surface-soft); color:var(--text); font:500 0.76rem 'Sarabun','Inter',sans-serif; cursor:pointer; max-width:220px; }
+  .filter-chip span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .filter-chip i { font-style:normal; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    background:var(--surface); color:var(--text-dim); font-size:0.7rem; flex:0 0 auto; }
+  .filter-chip:hover { border-color:var(--red); }
+  .filter-chip:hover i { background:var(--red); color:var(--on-red, #fff); }
+  .filter-chip-clear { background:none; border:none; color:var(--red); font:600 0.78rem 'Sarabun',sans-serif; cursor:pointer; padding:4px 2px; }
+  @media (max-width:860px) { .result-bar { margin-bottom:10px; } .filter-chip { max-width:170px; } }
+
   /* ===== แผงรายชื่อเรื่องจากการคลิกกราฟ (Dashboard) ===== */
   .dashboard-hint { margin-left:auto; font-size:0.75rem; color:var(--text-dim); }
   .result-sheet-dim { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:300; animation:overlayIn .2s ease forwards; }
@@ -1652,7 +1674,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    z-index: 50;
+    z-index: 450; /* อยู่เหนือแถบบนมือถือ (140-200) และแผงรายชื่อ (310) */
     animation: overlayIn .2s ease forwards;
   }
 
@@ -2976,18 +2998,21 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         </div>
 
         <section class="page-section active" id="page-diary">
+          <div class="result-bar" id="resultBar-diary"></div>
           <div class="grid" id="grid"></div>
           <div class="pagination" id="paginationDiary"></div>
           <div class="empty" id="empty" hidden><div class="stamp-big">NOT FOUND</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
         </section>
 
         <section class="page-section" id="page-watchlist">
+          <div class="result-bar" id="resultBar-watchlist"></div>
           <div class="grid" id="gridPending"></div>
           <div class="pagination" id="paginationWatchlist"></div>
           <div class="empty" id="emptyPending" hidden><div class="stamp-big">NOT FOUND</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
         </section>
 
         <section class="page-section" id="page-dropped">
+          <div class="result-bar" id="resultBar-dropped"></div>
           <div class="grid" id="gridDropped"></div>
           <div class="pagination" id="paginationDropped"></div>
           <div class="empty" id="emptyDropped" hidden><div class="stamp-big">NOT FOUND</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
@@ -3258,7 +3283,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   </div>
 
   <!-- Modal: Synopsis -->
-  <div class="modal-overlay" id="synopsisModalOverlay" hidden style="z-index:400;">
+  <div class="modal-overlay" id="synopsisModalOverlay" hidden style="z-index:460;">
     <div class="modal-box" id="synopsisModalBox" style="max-width:480px;">
       <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:4px;">
         <div>
@@ -3518,8 +3543,86 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     mobileFilterBtn?.classList.toggle('has-filter', n > 0);
     if (filterSheetDone && page) filterSheetDone.textContent = `ดูผลลัพธ์ ${lastFilteredCount[page]} เรื่อง`;
   }
+  // ============================================================
+  // แถบจำนวนผลลัพธ์ + ป้ายตัวกรองที่เปิดอยู่ (กด × เพื่อเอาตัวกรองนั้นออก)
+  // ============================================================
+  function activeFilterChips(page) {
+    const chips = [];
+    const typeLabel = t => t === 'series' ? 'ซีรีส์' : 'วาไรตี้';
+    if (page === 'diary') {
+      const q = searchInput.value.trim();
+      if (q) chips.push(['search', `ค้นหา: “${q}”`]);
+      if (activeType !== 'all') chips.push(['type', typeLabel(activeType)]);
+      if (activeYear !== 'all') chips.push(['year', `ปี ${activeYear}`]);
+      if (activeGenre !== 'all') chips.push(['genre', activeGenre]);
+      if (activeCast !== 'all') chips.push(['cast', activeCast]);
+      if (activePlatform !== 'all') chips.push(['platform', activePlatform]);
+    } else if (page === 'watchlist') {
+      const q = searchInputPending.value.trim();
+      if (q) chips.push(['search', `ค้นหา: “${q}”`]);
+      if (activeTypePending !== 'all') chips.push(['type', typeLabel(activeTypePending)]);
+      if (watchingOnly) chips.push(['watching', 'กำลังดู']);
+      if (activeYearPending !== 'all') chips.push(['year', `ปี ${activeYearPending}`]);
+      if (activeGenrePending !== 'all') chips.push(['genre', activeGenrePending]);
+      if (activeCastPending !== 'all') chips.push(['cast', activeCastPending]);
+      if (activePlatformPending !== 'all') chips.push(['platform', activePlatformPending]);
+    } else {
+      const q = searchInputDropped.value.trim();
+      if (q) chips.push(['search', `ค้นหา: “${q}”`]);
+      if (activeYearDropped !== 'all') chips.push(['year', `ปี ${activeYearDropped}`]);
+      if (activeGenreDropped !== 'all') chips.push(['genre', activeGenreDropped]);
+      if (activeCastDropped !== 'all') chips.push(['cast', activeCastDropped]);
+      if (activePlatformDropped !== 'all') chips.push(['platform', activePlatformDropped]);
+    }
+    return chips;
+  }
+  function renderResultBar(page, count) {
+    const bar = document.getElementById('resultBar-' + page); if (!bar) return;
+    const total = page === 'diary' ? shows.length : page === 'watchlist' ? pending.length : dropped.length;
+    const chips = activeFilterChips(page);
+    const countHtml = chips.length
+      ? `<span class="result-count">พบ <b>${count}</b> จาก ${total} เรื่อง</span>`
+      : `<span class="result-count">ทั้งหมด <b>${total}</b> เรื่อง</span>`;
+    bar.innerHTML = countHtml + chips.map(([k, label]) =>
+      `<button type="button" class="filter-chip" data-chip="${k}" title="เอาตัวกรองนี้ออก"><span>${escAttr(label)}</span><i aria-hidden="true">✕</i></button>`).join('')
+      + (chips.length > 1 ? `<button type="button" class="filter-chip-clear" data-chip="all">ล้างทั้งหมด</button>` : '');
+  }
+  function removeFilterChip(page, key) {
+    if (key === 'all') { document.getElementById(page === 'diary' ? 'clearFiltersDiary' : page === 'watchlist' ? 'clearFiltersPending' : 'clearFiltersDropped')?.click(); return; }
+    if (page === 'diary') {
+      if (key === 'search') searchInput.value = '';
+      if (key === 'type') { activeType = 'all'; pills.forEach(x => x.classList.toggle('active', x.dataset.type === 'all')); updateGenreDropdown(); }
+      if (key === 'year') { activeYear = 'all'; yearFilter.value = 'all'; }
+      if (key === 'genre') { activeGenre = 'all'; genreFilter.value = 'all'; }
+      if (key === 'cast') activeCast = 'all';
+      if (key === 'platform') { activePlatform = 'all'; if (platformFilter) platformFilter.value = 'all'; }
+      currentPage = 1; render();
+    } else if (page === 'watchlist') {
+      if (key === 'search') searchInputPending.value = '';
+      if (key === 'type') { activeTypePending = 'all'; pillsPending.forEach(x => x.classList.toggle('active', x.dataset.ptype === 'all')); updateGenreDropdownPending(); }
+      if (key === 'watching') { watchingOnly = false; watchingOnlyBtn?.classList.remove('active'); }
+      if (key === 'year') { activeYearPending = 'all'; yearFilterPending.value = 'all'; }
+      if (key === 'genre') { activeGenrePending = 'all'; genreFilterPending.value = 'all'; }
+      if (key === 'cast') activeCastPending = 'all';
+      if (key === 'platform') { activePlatformPending = 'all'; if (platformFilterPending) platformFilterPending.value = 'all'; }
+      currentPagePending = 1; renderPending();
+    } else {
+      if (key === 'search') searchInputDropped.value = '';
+      if (key === 'year') { activeYearDropped = 'all'; yearFilterDropped.value = 'all'; }
+      if (key === 'genre') { activeGenreDropped = 'all'; genreFilterDropped.value = 'all'; }
+      if (key === 'cast') activeCastDropped = 'all';
+      if (key === 'platform') { activePlatformDropped = 'all'; if (platformFilterDropped) platformFilterDropped.value = 'all'; }
+      currentPageDropped = 1; renderDropped();
+    }
+  }
+  ['diary','watchlist','dropped'].forEach(page => {
+    document.getElementById('resultBar-' + page)?.addEventListener('click', e => {
+      const b = e.target.closest('[data-chip]'); if (b) removeFilterChip(page, b.dataset.chip);
+    });
+  });
   function afterFilterRender(page, count) {
     lastFilteredCount[page] = count;
+    renderResultBar(page, count);
     if (page === currentDetailPage()) updateFilterBadge();
   }
   function openFilterSheet() {
