@@ -1507,16 +1507,13 @@
   }
 
   /* ===== Series & Variety: ปรับ UX รอบ 2 ===== */
-  /* 8) แถบตัวกรองบนจอคอม: แถว 1 = ค้นหา (+ ปุ่มเพิ่มเรื่องชิดขวา) / แถว 2 = pill + dropdown, ตัวเรียงลำดับชิดขวา */
-  @media (min-width:861px) {
-    #view-detail .sidebar-controls.page-section.active { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:10px; }
-    #view-detail .sidebar-controls .controls-row-1 { display:flex; gap:8px; align-items:center; min-width:0; grid-column:1 / -1; }
-    #view-detail #controls-watchlist .controls-row-1 { grid-column:1; }
-    #view-detail #controls-watchlist .add-entry-btn { grid-column:2; grid-row:1; }
-    #view-detail .sidebar-controls .controls-row-1 .search-box { flex:1 1 auto; min-width:0; max-width:none; }
-    #view-detail .sidebar-controls .controls-row-2 { grid-column:1 / -1; display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; }
-    #view-detail .sidebar-controls .controls-row-2 .sort-select { flex:0 0 auto; min-width:120px; }
-    #view-detail .sidebar-controls .controls-row-2 :is(#sort,#sortPending,#sortDropped) { margin-left:auto; }
+  /* จอคอมกว้าง: ตัวกรองอยู่แถวเดียว (ช่องค้นหา/dropdown หดได้) */
+  @media (min-width:1200px) {
+    #view-detail .sidebar-controls.page-section.active { flex-wrap:nowrap; }
+    #view-detail .sidebar-controls .search-box { flex:1 1 140px; min-width:110px; }
+    #view-detail .sidebar-controls .sort-select { flex:0 1 128px; min-width:92px; padding-left:10px; padding-right:6px; text-overflow:ellipsis; }
+    #view-detail .sidebar-controls .filter-pills { flex-wrap:nowrap; flex-shrink:0; }
+    #view-detail .sidebar-controls .pill, #view-detail .sidebar-controls .add-entry-btn { flex-shrink:0; white-space:nowrap; }
   }
   /* 13) บอกว่าตั๋วคลิกดูเรื่องย่อได้ */
   .ticket-hint { position:absolute !important; top:13px; right:44px; z-index:4; pointer-events:none;
