@@ -3421,22 +3421,26 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
   <!-- Modal: Edit Dropped -->
   <div class="modal-overlay" id="editDroppedModalOverlay" hidden>
-    <div class="modal-box">
+    <div class="modal-box modal-box-wide">
       <h3>แก้ไข Dropped Series</h3>
       <form id="editDroppedForm">
-        <div class="form-field"><label for="editDroppedTitle">ชื่อเรื่อง *</label><input type="text" id="editDroppedTitle" required></div>
-        <div class="form-row">
-          <div class="form-field"><label for="editDroppedYear">ปีที่ออกอากาศ</label><input type="number" id="editDroppedYear" min="1990" max="2100"></div>
-          <div class="form-field"><label for="editDroppedEpisodes">จำนวนตอนทั้งหมด</label><input type="number" id="editDroppedEpisodes" min="0"></div>
+        <div class="edit-form-columns">
+          <div class="edit-form-left">
+            <div class="form-field"><label for="editDroppedTitle">ชื่อเรื่อง *</label><input type="text" id="editDroppedTitle" required></div>
+            <div class="form-row">
+              <div class="form-field"><label for="editDroppedYear">ปีที่ออกอากาศ</label><input type="number" id="editDroppedYear" min="1990" max="2100"></div>
+              <div class="form-field"><label for="editDroppedEpisodes">จำนวนตอนทั้งหมด</label><input type="number" id="editDroppedEpisodes" min="0"></div>
+            </div>
+            <div class="form-field"><label for="editDroppedGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedGenres"></div>
+            <div class="form-field"><label for="editDroppedCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedCast"></div>
+            <div class="form-field"><label for="editDroppedLastEp">ดูถึง ep (Last Episode)</label><input type="number" id="editDroppedLastEp" min="0" placeholder="0"></div>
+            <div class="form-field"><label for="editDroppedPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editDroppedPoster" placeholder="https://..."></div>
+            <div class="form-field"><label for="editDroppedPlatform">แพลตฟอร์ม (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedPlatform" list="platformList" placeholder="คั่นด้วยจุลภาค เช่น Netflix, Viu"></div>
+          </div>
+          <div class="edit-form-right">
+            <div class="form-field"><label for="editDroppedSynopsis">เรื่องย่อ</label><textarea id="editDroppedSynopsis" placeholder="เรื่องย่อสั้นๆ (ถ้ามี)"></textarea></div>
+          </div>
         </div>
-        <div class="form-row">
-          <div class="form-field"><label for="editDroppedGenres">แนว / หมวด (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedGenres"></div>
-          <div class="form-field"><label for="editDroppedCast">นักแสดง (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedCast"></div>
-        </div>
-        <div class="form-field"><label for="editDroppedLastEp">ดูถึง ep (Last Episode)</label><input type="number" id="editDroppedLastEp" min="0" placeholder="0"></div>
-        <div class="form-field"><label for="editDroppedPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="editDroppedPoster" placeholder="https://..."></div>
-        <div class="form-field"><label for="editDroppedPlatform">แพลตฟอร์ม (คั่นด้วยจุลภาค)</label><input type="text" id="editDroppedPlatform" list="platformList" placeholder="คั่นด้วยจุลภาค เช่น Netflix, Viu"></div>
-        <div class="form-field"><label for="editDroppedSynopsis">เรื่องย่อ</label><textarea id="editDroppedSynopsis" rows="3" placeholder="เรื่องย่อสั้นๆ (ถ้ามี)"></textarea></div>
         <p class="form-status" id="editDroppedFormStatus"></p>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="closeEditDroppedModal">ยกเลิก</button>
