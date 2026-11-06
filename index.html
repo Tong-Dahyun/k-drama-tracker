@@ -929,7 +929,7 @@
   }
 
   .ticket.watchlist.is-hovered {
-    border-color: var(--mint);
+    border-color: var(--blue);
   }
 
   .ticket.dropped-card.is-hovered {
@@ -947,7 +947,7 @@
 
   /* Watchlist card: mint accent on hover */
   .ticket.watchlist:hover {
-    border-color: var(--mint);
+    border-color: var(--blue);
   }
 
   @keyframes rise {
@@ -962,11 +962,11 @@
 
   .card-menu-btn {
     position: absolute;
-    top: 12px;
-    right: 10px;
-    width: 26px;
-    height: 26px;
-    border-radius: 6px;
+    top: 8px;
+    right: 6px;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
     border: none;
     background: transparent;
     color: var(--text-dim);
@@ -1092,10 +1092,10 @@
   .cast-tag {
     font-size: 0.65rem;
     background: transparent;
-    border: 1px solid var(--border);
+    border: 1px solid color-mix(in srgb, var(--text-soft) 35%, transparent);
     padding: 1px 7px;
     border-radius: 5px;
-    color: var(--text-dim);
+    color: var(--text-soft);
     cursor: pointer;
     transition: background .15s, color .15s, border-color .15s;
   }
@@ -1270,8 +1270,8 @@
     flex-shrink: 0;
   }
 
-  .watch-status.ready  { background: var(--mint-soft); color: var(--mint); }
-  .watch-status.ready::before { background: var(--mint); }
+  .watch-status.ready  { background: var(--blue-soft); color: var(--blue); }
+  .watch-status.ready::before { background: var(--blue); }
 
   .watch-status.airing { background: var(--gold-soft); color: var(--gold); }
   .watch-status.airing::before {
@@ -1501,6 +1501,41 @@
   @media (max-width:860px) {
     body:is(.cards-a,.cards-b,.cards-c) #view-detail .stamp.dropped-stamp { width:auto; height:auto; min-width:0; padding:4px 8px; border-radius:8px; font-size:.64rem; white-space:nowrap; }
   }
+
+  /* ===== Series & Variety: ปรับ UX รอบ 2 ===== */
+  /* 8) แถบตัวกรองบนจอคอม: แถว 1 = ค้นหา (+ ปุ่มเพิ่มเรื่องชิดขวา) / แถว 2 = pill + dropdown, ตัวเรียงลำดับชิดขวา */
+  @media (min-width:861px) {
+    #view-detail .sidebar-controls.page-section.active { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:10px; }
+    #view-detail .sidebar-controls .controls-row-1 { display:flex; gap:8px; align-items:center; min-width:0; grid-column:1 / -1; }
+    #view-detail #controls-watchlist .controls-row-1 { grid-column:1; }
+    #view-detail #controls-watchlist .add-entry-btn { grid-column:2; grid-row:1; }
+    #view-detail .sidebar-controls .controls-row-1 .search-box { flex:1 1 auto; min-width:0; max-width:none; }
+    #view-detail .sidebar-controls .controls-row-2 { grid-column:1 / -1; display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; }
+    #view-detail .sidebar-controls .controls-row-2 .sort-select { flex:0 0 auto; min-width:120px; }
+    #view-detail .sidebar-controls .controls-row-2 :is(#sort,#sortPending,#sortDropped) { margin-left:auto; }
+  }
+  /* 13) บอกว่าตั๋วคลิกดูเรื่องย่อได้ */
+  .ticket-hint { position:absolute !important; top:13px; right:44px; z-index:4; pointer-events:none;
+    font:600 .66rem 'Sarabun',sans-serif; color:var(--text); background:var(--surface-soft); border:1px solid var(--border);
+    padding:3px 8px; border-radius:999px; opacity:0; transform:translateY(-2px); transition:opacity .15s, transform .15s; }
+  .ticket.is-hovered .ticket-hint, .ticket:focus-visible .ticket-hint { opacity:1; transform:none; }
+  .ticket:focus-visible { outline:2px solid var(--red); outline-offset:3px; }
+  @media (hover:none) { .ticket-hint { display:none; } }
+  /* 6) ปุ่ม ⋮ กดง่ายขึ้น + เมนูสูงพอสำหรับนิ้ว */
+  .card-menu { top:44px; }
+  @media (max-width:860px) { .card-menu button { padding:11px 14px; font-size:.82rem; } }
+  /* 11) หน้าว่าง */
+  .empty-icon { width:64px; height:64px; margin:0 auto 14px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--surface-soft); color:var(--text-dim); }
+  .empty-title { margin:0 0 6px; font:700 1.02rem 'Sarabun',sans-serif; color:var(--text); }
+  .empty-desc { margin:0 0 16px; font-size:.86rem; color:var(--text-dim); }
+  .empty-action { border:1px solid var(--border); background:var(--surface); color:var(--text); border-radius:10px; padding:9px 16px;
+    font:600 .84rem 'Sarabun',sans-serif; cursor:pointer; }
+  .empty-action:hover { border-color:var(--red); color:var(--red); }
+  .empty-action[data-empty="add"] { background:var(--red); border-color:var(--red); color:var(--on-red,#fff); }
+  /* 14) แบ่งหน้า: ช่วงเรื่องอยู่บรรทัดของตัวเอง + ปุ่มใหญ่ขึ้นบนมือถือ */
+  .pagination .page-range { flex-basis:100%; order:2; text-align:center; margin:6px 0 0; }
+  @media (max-width:860px) { .page-btn { min-width:42px; height:42px; font-size:.9rem; } .pagination { gap:8px; } }
   /* Settings: ตัวเลือกตั๋วบนมือถือ */
   .co-preview { height:80px; border-radius:8px; margin-bottom:12px; padding:8px 18px; background:var(--bg); border:1px solid var(--border); display:grid; gap:5px; }
   .co-preview i { display:block; border-radius:4px; background:var(--surface-soft); border:1px solid var(--border); position:relative; }
@@ -3054,6 +3089,11 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
             <input type="text" id="searchDropped" class="search-box" placeholder="ค้นหาชื่อเรื่อง, แนว, นักแสดง...">
             </div>
             <div class="controls-row-2">
+            <div class="filter-pills">
+              <button class="pill active" data-dtype="all">ทั้งหมด</button>
+              <button class="pill" data-dtype="series">ซีรีส์</button>
+              <button class="pill" data-dtype="variety">วาไรตี้</button>
+            </div>
             <select id="yearFilterDropped" class="sort-select"><option value="all">ทุกปี</option></select>
             <select id="genreFilterDropped" class="sort-select"><option value="all">ทุกแนว</option></select>
             <select id="platformFilterDropped" class="sort-select" hidden><option value="all">ทุกแพลตฟอร์ม</option></select>
@@ -3071,21 +3111,21 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           <div class="result-bar" id="resultBar-diary"></div>
           <div class="grid" id="grid"></div>
           <div class="pagination" id="paginationDiary"></div>
-          <div class="empty" id="empty" hidden><div class="stamp-big">NOT FOUND</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
+          <div class="empty" id="empty" hidden></div>
         </section>
 
         <section class="page-section" id="page-watchlist">
           <div class="result-bar" id="resultBar-watchlist"></div>
           <div class="grid" id="gridPending"></div>
           <div class="pagination" id="paginationWatchlist"></div>
-          <div class="empty" id="emptyPending" hidden><div class="stamp-big">NOT FOUND</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
+          <div class="empty" id="emptyPending" hidden></div>
         </section>
 
         <section class="page-section" id="page-dropped">
           <div class="result-bar" id="resultBar-dropped"></div>
           <div class="grid" id="gridDropped"></div>
           <div class="pagination" id="paginationDropped"></div>
-          <div class="empty" id="emptyDropped" hidden><div class="stamp-big">NOT FOUND</div><p>ไม่พบเรื่องที่ตรงกับคำค้นหานี้ ลองคำอื่นดูนะ</p></div>
+          <div class="empty" id="emptyDropped" hidden></div>
         </section>
       </section>
 
@@ -3516,6 +3556,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   const genreFilterDropped= document.getElementById('genreFilterDropped');
   const pills        = document.querySelectorAll('#controls-diary .pill');
   const pillsPending = document.querySelectorAll('#controls-watchlist .pill[data-ptype]');
+  const pillsDropped = document.querySelectorAll('#controls-dropped .pill[data-dtype]');
   const platformFilter        = document.getElementById('platformFilter');
   const platformFilterPending = document.getElementById('platformFilterPending');
   const platformFilterDropped = document.getElementById('platformFilterDropped');
@@ -3525,7 +3566,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
   let activeType = 'all', activeYear = 'all', activeGenre = 'all', activeCast = 'all';
   let activeTypePending = 'all', activeYearPending = 'all', activeGenrePending = 'all', activeCastPending = 'all';
-  let activeYearDropped = 'all', activeGenreDropped = 'all', activeCastDropped = 'all';
+  let activeTypeDropped = 'all', activeYearDropped = 'all', activeGenreDropped = 'all', activeCastDropped = 'all';
   let activePlatform = 'all', activePlatformPending = 'all', activePlatformDropped = 'all', watchingOnly = false;
 
   const PAGE_SIZE = 48;
@@ -3648,7 +3689,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const on = v => v !== 'all' ? 1 : 0;
     if (page === 'diary')     return on(activeType) + on(activeYear) + on(activeGenre) + on(activeCast) + on(activePlatform);
     if (page === 'watchlist') return on(activeTypePending) + on(activeYearPending) + on(activeGenrePending) + on(activeCastPending) + on(activePlatformPending) + (watchingOnly ? 1 : 0);
-    if (page === 'dropped')   return on(activeYearDropped) + on(activeGenreDropped) + on(activeCastDropped) + on(activePlatformDropped);
+    if (page === 'dropped')   return on(activeTypeDropped) + on(activeYearDropped) + on(activeGenreDropped) + on(activeCastDropped) + on(activePlatformDropped);
     return 0;
   }
   function updateFilterBadge() {
@@ -3684,6 +3725,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     } else {
       const q = searchInputDropped.value.trim();
       if (q) chips.push(['search', `ค้นหา: “${q}”`]);
+      if (activeTypeDropped !== 'all') chips.push(['type', typeLabel(activeTypeDropped)]);
       if (activeYearDropped !== 'all') chips.push(['year', `ปี ${activeYearDropped}`]);
       if (activeGenreDropped !== 'all') chips.push(['genre', activeGenreDropped]);
       if (activeCastDropped !== 'all') chips.push(['cast', activeCastDropped]);
@@ -3723,6 +3765,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       currentPagePending = 1; renderPending();
     } else {
       if (key === 'search') searchInputDropped.value = '';
+      if (key === 'type') { activeTypeDropped = 'all'; pillsDropped.forEach(x => x.classList.toggle('active', x.dataset.dtype === 'all')); updateGenreDropdownDropped(); }
       if (key === 'year') { activeYearDropped = 'all'; yearFilterDropped.value = 'all'; }
       if (key === 'genre') { activeGenreDropped = 'all'; genreFilterDropped.value = 'all'; }
       if (key === 'cast') activeCastDropped = 'all';
@@ -3735,8 +3778,38 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       const b = e.target.closest('[data-chip]'); if (b) removeFilterChip(page, b.dataset.chip);
     });
   });
+  // หน้าว่าง: แยก "ยังไม่มีเรื่องเลย" กับ "ตัวกรองไม่เจอ" + ปุ่มทางออก
+  function renderEmptyState(page) {
+    const el = document.getElementById(page === 'diary' ? 'empty' : page === 'watchlist' ? 'emptyPending' : 'emptyDropped');
+    if (!el) return;
+    const total = page === 'diary' ? shows.length : page === 'watchlist' ? pending.length : dropped.length;
+    const chips = activeFilterChips(page);
+    const icon = '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+    if (!total) {
+      const msg = page === 'diary' ? ['ยังไม่มีเรื่องที่ดูแล้ว', 'เมื่อกด "ดูแล้ว ✓" จาก Watchlist เรื่องจะมาอยู่ที่นี่']
+                : page === 'watchlist' ? ['Watchlist ยังว่างอยู่', 'เพิ่มเรื่องที่อยากดูไว้ก่อน แล้วค่อยมาติ๊กว่าดูแล้ว']
+                : ['ยังไม่มีเรื่องที่ดรอป', 'เรื่องที่ดูไม่จบจะมาอยู่ที่นี่'];
+      el.innerHTML = `<div class="empty-icon">${icon}<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M9 6v12M15 6v12" stroke-dasharray="2 2"/></svg></div>
+        <h3 class="empty-title">${msg[0]}</h3><p class="empty-desc">${msg[1]}</p>
+        ${page === 'watchlist' && !document.body.classList.contains('viewer-mode') ? '<button type="button" class="empty-action" data-empty="add">+ เพิ่มเรื่อง</button>' : ''}`;
+    } else {
+      const q = chips.find(c => c[0] === 'search');
+      el.innerHTML = `<div class="empty-icon">${icon}<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5M8.5 11h5"/></svg></div>
+        <h3 class="empty-title">ไม่พบเรื่องที่ตรงกับ${chips.length > 1 ? 'ตัวกรอง' : q ? 'คำค้นหา' : 'ตัวกรอง'}</h3>
+        <p class="empty-desc">${q && chips.length === 1 ? 'ลองสะกดใหม่ หรือค้นด้วยชื่อนักแสดง / แนวแทน' : 'ลองเอาตัวกรองบางอันออก จากทั้งหมด ' + total + ' เรื่อง'}</p>
+        <button type="button" class="empty-action" data-empty="clear">ล้างตัวกรองทั้งหมด</button>`;
+    }
+  }
+  ['empty','emptyPending','emptyDropped'].forEach((id, i) => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      const b = e.target.closest('[data-empty]'); if (!b) return;
+      if (b.dataset.empty === 'add') document.getElementById('openAddModal')?.click();
+      else removeFilterChip(['diary','watchlist','dropped'][i], 'all');
+    });
+  });
   function afterFilterRender(page, count) {
     lastFilteredCount[page] = count;
+    if (!count) renderEmptyState(page);
     renderResultBar(page, count);
     if (page === currentDetailPage()) updateFilterBadge();
   }
@@ -4001,13 +4074,19 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (genreFilterPending.value === 'all' && prev !== 'all') { activeGenrePending = 'all'; renderPending(); }
   }
 
-  function populateFiltersDropped() {
-    const years = [...new Set(dropped.map(s => s.year).filter(Boolean))].sort((a,b) => b-a);
-    yearFilterDropped.innerHTML = '<option value="all">ทุกปี</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
-    const genres = [...new Set(dropped.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
+  function updateGenreDropdownDropped() {
+    const list = activeTypeDropped === 'all' ? dropped : dropped.filter(s => s.type === activeTypeDropped);
+    const genres = [...new Set(list.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
     const prev = genreFilterDropped.value;
     genreFilterDropped.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
     genreFilterDropped.value = genres.includes(prev) ? prev : 'all';
+    if (genreFilterDropped.value === 'all' && prev !== 'all') activeGenreDropped = 'all';
+  }
+
+  function populateFiltersDropped() {
+    const years = [...new Set(dropped.map(s => s.year).filter(Boolean))].sort((a,b) => b-a);
+    yearFilterDropped.innerHTML = '<option value="all">ทุกปี</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
+    updateGenreDropdownDropped();
     activePlatformDropped = fillPlatformSelect(platformFilterDropped, dropped, activePlatformDropped);
   }
 
@@ -4121,11 +4200,11 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const pageItems = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
     pageItems.forEach((s,i) => {
       const card = document.createElement('article');
-      card.className = 'ticket';
+      card.className = 'ticket'; card.tabIndex = 0; card.setAttribute('aria-label', s.title + ' — ดูเรื่องย่อ');
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
       card.innerHTML = `
         <div class="ticket-main">
-          <button class="card-menu-btn" data-title="${s.title}">⋮</button>
+          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${s.title}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
           <div class="card-menu" hidden>
             <button class="menu-edit edit-diary-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-diary-btn" data-title="${s.title}">ลบ</button>
@@ -4191,14 +4270,14 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const pageItems = filtered.slice((currentPagePending-1)*PAGE_SIZE, currentPagePending*PAGE_SIZE);
     pageItems.forEach((s,i) => {
       const card = document.createElement('article');
-      card.className = 'ticket watchlist' + (s.watchedEp>0 ? ' is-watching' : '');
+      card.className = 'ticket watchlist' + (s.watchedEp>0 ? ' is-watching' : ''); card.tabIndex = 0; card.setAttribute('aria-label', s.title + ' — ดูเรื่องย่อ');
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
       card.dataset.title = s.title;
       const statusClass = s.finished?'ready':'airing';
       const statusLabel = s.finished?'<span class="ws-long">จบแล้ว พร้อมดูยกชุด</span><span class="ws-short">พร้อมดู</span>':'<span class="ws-long">กำลังออกอากาศ</span><span class="ws-short">ออกอากาศ</span>';
       card.innerHTML = `
         <div class="ticket-main">
-          <button class="card-menu-btn" data-title="${s.title}">⋮</button>
+          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${s.title}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
           <div class="card-menu" hidden>
             ${s.watchedEp>0?'':`<button class="start-watching-btn" data-title="${escAttr(s.title)}">▶ เริ่มดู (EP 1)</button>`}
             <button class="menu-edit edit-pending-btn" data-title="${s.title}">แก้ไข</button>
@@ -4232,7 +4311,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (!droppedLoaded) { clearSkeletonMode(gridDropped); gridDropped.innerHTML=''; emptyStateDropped.hidden=true; document.getElementById('paginationDropped').innerHTML=''; return; }
     const query = searchInputDropped.value.trim().toLowerCase();
     let filtered = dropped.filter(s => {
-      return (!query || matchesSearch(s, query))
+      return (activeTypeDropped==='all' || s.type===activeTypeDropped)
+          && (!query || matchesSearch(s, query))
           && (activeYearDropped==='all' || String(s.year)===activeYearDropped)
           && (activeGenreDropped==='all' || s.genres.includes(activeGenreDropped))
           && (activeCastDropped==='all' || splitCast(s.cast).includes(activeCastDropped))
@@ -4256,14 +4336,14 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const pageItems = filtered.slice((currentPageDropped-1)*PAGE_SIZE, currentPageDropped*PAGE_SIZE);
     pageItems.forEach((s,i) => {
       const card = document.createElement('article');
-      card.className = 'ticket dropped-card';
+      card.className = 'ticket dropped-card'; card.tabIndex = 0; card.setAttribute('aria-label', s.title + ' — ดูเรื่องย่อ');
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
       const epLabel = s.lastEp
         ? (s.episodes ? `ep ${s.lastEp} / ${s.episodes}` : `ep ${s.lastEp}`)
         : (s.episodes ? `0 / ${s.episodes} ตอน` : '');
       card.innerHTML = `
         <div class="ticket-main">
-          <button class="card-menu-btn" data-title="${s.title}">⋮</button>
+          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${s.title}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
           <div class="card-menu" hidden>
             <button class="menu-edit edit-dropped-btn" data-title="${s.title}">แก้ไข</button>
             <button class="menu-delete delete-dropped-btn" data-title="${s.title}">ลบ</button>
@@ -4406,6 +4486,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   sortSelectDropped.addEventListener('change', () => { currentPageDropped=1; renderDropped(); });
   yearFilterDropped.addEventListener('change', () => { activeYearDropped=yearFilterDropped.value; currentPageDropped=1; renderDropped(); });
   genreFilterDropped.addEventListener('change', () => { activeGenreDropped=genreFilterDropped.value; currentPageDropped=1; renderDropped(); });
+  pillsDropped.forEach(p => p.addEventListener('click', () => {
+    pillsDropped.forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    activeTypeDropped=p.dataset.dtype; currentPageDropped=1;
+    updateGenreDropdownDropped(); renderDropped();
+  }));
 
   // ============================================================
   // Pagination
@@ -4415,16 +4501,16 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (!container) return;
     if (totalPages<=1) { container.innerHTML=''; return; }
     const startItem=(page-1)*PAGE_SIZE+1, endItem=Math.min(page*PAGE_SIZE,totalItems);
-    let html=`<span class="page-info">${startItem}–${endItem} จาก ${totalItems} เรื่อง</span>`;
-    html+=`<button class="page-btn" ${page===1?'disabled':''} data-pg="prev">‹</button>`;
+    let html=`<span class="page-info page-range">${startItem}–${endItem} จาก ${totalItems} เรื่อง · หน้า ${page}/${totalPages}</span>`;
+    html+=`<button class="page-btn" ${page===1?'disabled':''} data-pg="prev" aria-label="หน้าก่อนหน้า">‹</button>`;
     const pages=new Set([1,totalPages,page,page-1,page+1].filter(p=>p>=1&&p<=totalPages));
     let prev=0;
     [...pages].sort((a,b)=>a-b).forEach(p=>{
       if(prev&&p-prev>1) html+=`<span class="page-info">…</span>`;
-      html+=`<button class="page-btn ${p===page?'active':''}" data-pg="${p}">${p}</button>`;
+      html+=`<button class="page-btn ${p===page?'active':''}" data-pg="${p}" aria-label="หน้า ${p}"${p===page?' aria-current="page"':''}>${p}</button>`;
       prev=p;
     });
-    html+=`<button class="page-btn" ${page===totalPages?'disabled':''} data-pg="next">›</button>`;
+    html+=`<button class="page-btn" ${page===totalPages?'disabled':''} data-pg="next" aria-label="หน้าถัดไป">›</button>`;
     container.innerHTML=html;
     container.querySelectorAll('.page-btn:not(:disabled)').forEach(btn=>{
       btn.addEventListener('click',()=>{
@@ -4458,6 +4544,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   function resetDroppedFilters() {
     searchInputDropped.value=''; sortSelectDropped.value='no-desc';
     yearFilterDropped.value='all'; genreFilterDropped.value='all';
+    activeTypeDropped='all'; pillsDropped.forEach(x => x.classList.toggle('active', x.dataset.dtype === 'all')); updateGenreDropdownDropped();
     activeYearDropped='all'; activeGenreDropped='all'; activeCastDropped='all'; activePlatformDropped='all'; if(platformFilterDropped) platformFilterDropped.value='all'; currentPageDropped=1;
   }
 
@@ -4800,7 +4887,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     titleEl.textContent=title;
     if(list.length===0){tbody.innerHTML='<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';return;}
     if(isPending){
-      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.finished?'<span class="liked-tag liked">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.finished?'<span class="liked-tag watchlist">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
     } else {
       tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
     }
@@ -6408,10 +6495,16 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     synopsisModalOverlay.hidden = false;
   }
 
+  // Enter / Space บนตั๋วที่โฟกัสอยู่ = เปิดเรื่องย่อ
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const t = e.target;
+    if (t && t.matches && t.matches('#grid .ticket, #gridPending .ticket, #gridDropped .ticket')) { e.preventDefault(); t.querySelector('.ticket-title')?.click(); }
+  });
   // click บนตั๋ว Watched / Watchlist / Dropped
   document.addEventListener('click', e => {
     if (e.target.closest('.card-menu-btn') || e.target.closest('.card-menu') ||
-        e.target.closest('.genre-tag') || e.target.closest('.mark-watched-btn') ||
+        e.target.closest('.genre-tag') || e.target.closest('.cast-tag') || e.target.closest('.mark-watched-btn') ||
         e.target.closest('.mark-dropped-watched-btn') || e.target.closest('.ep-btn') ||
         e.target.closest('.platform-tag') || e.target.closest('.watch-progress')) return;
 
