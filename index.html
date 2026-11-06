@@ -596,6 +596,22 @@
     color:var(--text-soft); font:600 0.8rem 'Sarabun',sans-serif; cursor:pointer; }
   .cast-more-btn:hover { color:var(--text); border-color:var(--red); }
   .cast-more-btn[hidden] { display:none; }
+  .cast-search-row { display:flex; align-items:center; gap:12px; margin:0 0 10px; flex-wrap:wrap; }
+  .cast-search-box { position:relative; flex:0 1 320px; min-width:0; display:flex; align-items:center; }
+  .cast-search-box svg { position:absolute; left:12px; color:var(--text-dim); pointer-events:none; }
+  .cast-search-box input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:9px 34px 9px 36px;
+    font:400 .88rem 'Sarabun',sans-serif; color:var(--text); }
+  .cast-search-box input::-webkit-search-cancel-button { -webkit-appearance:none; }
+  .cast-search-box input:focus-visible { outline:2px solid var(--red); outline-offset:1px; }
+  .cast-search-box button { position:absolute; right:6px; width:26px; height:26px; border:none; border-radius:50%; background:var(--surface-soft); color:var(--text-soft); cursor:pointer; font-size:.7rem; }
+  .cast-search-box button[hidden] { display:none; }
+  .cast-count { font-size:.76rem; color:var(--text-dim); }
+  .cast-count b { color:var(--text); }
+  .cast-matrix mark { background:var(--red-soft); color:inherit; border-radius:3px; padding:0 1px; }
+  .cast-matrix-empty { margin:0; padding:28px 16px; text-align:center; color:var(--text-dim); font-size:.86rem; }
+  .cast-loadmore { position:sticky; left:0; padding:10px; text-align:center; font-size:.76rem; color:var(--text-dim); }
+  .cast-loadmore[hidden], .cast-matrix-empty[hidden] { display:none; }
+  @media (max-width:860px) { .cast-search-box { flex:1 1 100%; } .cast-search-box input { font-size:16px; } }
   .result-sheet-body .genre-table-wrap[hidden] { display:none; }
   @media (max-width:860px) { .cast-overview { grid-template-columns:1fr; gap:12px; } }
   .cast-stacked-scroll {
@@ -3022,10 +3038,19 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         <div class="chart-card">
           <h3 class="genre-col-title" style="margin-bottom:2px;">นักแสดงที่เจอบ่อยที่สุด (แยกตามปีที่ออกอากาศ)</h3>
           <p class="cast-stacked-note" id="castStackedNote"></p>
+          <div class="cast-search-row">
+            <div class="cast-search-box">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input type="search" id="castSearch" placeholder="ค้นหานักแสดง..." autocomplete="off" aria-label="ค้นหานักแสดง">
+              <button type="button" id="castSearchClear" aria-label="ล้างคำค้น" hidden>✕</button>
+            </div>
+            <span class="cast-count" id="castCount"></span>
+          </div>
           <div class="cast-matrix-wrap" id="castMatrixWrap">
             <table class="cast-matrix" id="castMatrix"></table>
+            <p class="cast-matrix-empty" id="castMatrixEmpty" hidden></p>
+            <div class="cast-loadmore" id="castLoadMore" hidden>กำลังโหลดเพิ่ม…</div>
           </div>
-          <button type="button" class="cast-more-btn" id="castMoreBtn" hidden></button>
           <p class="chart-empty" id="castStackedEmpty" hidden>ยังไม่มีข้อมูลเพียงพอ</p>
         </div>
       </section>
@@ -4894,6 +4919,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     }
   }
 
+  // แท่งสั้นเกินจะใส่ตัวเลขข้างใน → ย้ายตัวเลขออกไปไว้ท้ายแท่ง
+  function smallBar(ctx, ax) {
+    const v = ctx.dataset.data[ctx.dataIndex] || 0, x = ctx.chart.scales && ctx.chart.scales.x;
+    if (x && x.width) return (x.getPixelForValue(v) - x.getPixelForValue(0)) < String(v).length * 8 + 14;
+    return v / (ax.max || 1) < 0.08;
+  }
   function renderGenreChart() {
     const canvas=document.getElementById('genreChart'), emptyMsg=document.getElementById('genreChartEmpty');
     if(!canvas) return;
@@ -4913,7 +4944,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         data:{labels,datasets:[{label:'จำนวนเรื่อง',data,backgroundColor:barColors,hoverBackgroundColor:accent(),borderRadius:6,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:false},tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft')},
-            datalabels:{display:true,color:onAccent(),font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}},
+            datalabels:{display:true,color:c=>smallBar(c,gAx)?chartC('soft'):onAccent(),font:{family:'Inter',weight:'700',size:11},anchor:'end',align:c=>smallBar(c,gAx)?'end':'start',offset:c=>smallBar(c,gAx)?4:6}},
           scales:{x:{min:0,max:gAx.max,ticks:{color:chartC('soft'),precision:0,stepSize:gAx.step},grid:{color:chartC('grid')}},
             y:{ticks:{color:chartC('soft'),font:{family:'Sarabun',size:11},autoSkip:false},
                afterFit:function(axis){if(window.innerWidth<=860){axis.width=Math.max(axis.width,90);}},
@@ -4940,7 +4971,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if(!canvas) return;
     if(typeof Chart==='undefined'){canvas.hidden=true;emptyMsg.hidden=false;return;}
     const topData=getTopGenresLiked(10);
-    const _tg=getTopGenres(1); const gAx=niceAxis(_tg.length?_tg[0][1]:1, 5); // ใช้สเกลเดียวกับกราฟ "ดูเยอะที่สุด"
+    const gAx=niceAxis(topData.length?Math.max(...topData.map(d=>d.count)):1, 5); // สเกลของตัวเอง ให้แท่งเต็มกราฟพอๆ กับกราฟซ้าย
     if(!diaryLoaded||topData.length===0){canvas.hidden=true;emptyMsg.hidden=false;if(genreLikedChartInstance){genreLikedChartInstance.destroy();genreLikedChartInstance=null;}return;}
     const labels=topData.map(d=>d.genre), pcts=topData.map(d=>d.count);
     const barColors=labels.map(l=>l===selectedGenre?'#46D369':'rgba(70,211,105,0.55)');
@@ -4954,7 +4985,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           plugins:{legend:{display:false},
             tooltip:{backgroundColor:chartC('surface'),borderColor:chartC('border'),borderWidth:1,titleColor:chartC('text'),bodyColor:chartC('soft'),
               callbacks:{label:ctx=>`${ctx.parsed.x} เรื่อง (จาก ${topData[ctx.dataIndex].total} เรื่องในแนวนี้)`}}
-            ,datalabels:{display:true,color:onAccent(),font:{family:'Inter',weight:'700',size:11},anchor:'end',align:'start',offset:6}
+            ,datalabels:{display:true,color:c=>smallBar(c,gAx)?chartC('soft'):onAccent(),font:{family:'Inter',weight:'700',size:11},anchor:'end',align:c=>smallBar(c,gAx)?'end':'start',offset:c=>smallBar(c,gAx)?4:6}
           },
           scales:{x:{min:0,max:gAx.max,ticks:{color:chartC('soft'),precision:0,stepSize:gAx.step},grid:{color:chartC('grid')}},
             y:{ticks:{color:chartC('soft'),font:{family:'Sarabun',size:11},autoSkip:false},
@@ -5172,7 +5203,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
     const sharedMax = top10Watched.length ? top10Watched[0][1] : 1;
     renderSingleDataBar('genreDataBar', top10Watched, accent(), 'watched', sharedMax);
-    renderSingleDataBar('genreLikedDataBar', top10Liked, '#46D369', 'liked', sharedMax);
+    renderSingleDataBar('genreLikedDataBar', top10Liked, '#46D369', 'liked', top10Liked.length ? Math.max(...top10Liked.map(x=>x[1])) : 1);
   }
 
   function renderSingleDataBar(containerId, data, color, source, maxOverride) {
@@ -5342,6 +5373,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   // นักแสดงที่เจอบ่อยที่สุด — ตาราง นักแสดง × ปีที่ออกอากาศ (นับเฉพาะเรื่องที่ดูแล้ว) แสดงทีละ 25 คน
   const CAST_PAGE = 25;
   let castShowCount = CAST_PAGE;
+  let castQuery = '';              // คำค้นหานักแสดง
   let castSortYear = null;        // null = เรียงตามจำนวนเรื่องรวม, ตัวเลข = เรียงตามปีนั้น
   let selectedCastYear = null;    // ปีที่คลิกในตาราง (null = ทุกปี)
 
@@ -5356,7 +5388,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         if (y) { (byYear[c] || (byYear[c] = {}))[y] = ((byYear[c] || {})[y] || 0) + 1; }
       });
     });
-    let rows = Object.keys(totals).filter(c => totals[c] >= MIN_CAST_SHOWS)
+    const q = castQuery.trim().toLowerCase();
+    let rows = Object.keys(totals).filter(c => q ? c.toLowerCase().includes(q) : totals[c] >= MIN_CAST_SHOWS)
       .map(c => ({ name: c, total: totals[c], years: byYear[c] || {} }));
     rows.forEach(r => Object.keys(r.years).forEach(y => years.add(Number(y))));
     rows.sort((a, b) => {
@@ -5377,24 +5410,34 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (selectedCastYear) row.querySelector(`td[data-year="${selectedCastYear}"]`)?.classList.add('sel');
   }
 
-  function renderCastStackedChart() {
+  function renderCastStackedChart(opts) {
+    opts = opts || {};
     const tbl = document.getElementById('castMatrix'), wrap = document.getElementById('castMatrixWrap');
-    const emptyEl = document.getElementById('castStackedEmpty'), moreBtn = document.getElementById('castMoreBtn');
-    const noteEl = document.getElementById('castStackedNote');
+    const emptyEl = document.getElementById('castStackedEmpty'), loadEl = document.getElementById('castLoadMore');
+    const noteEl = document.getElementById('castStackedNote'), countEl = document.getElementById('castCount');
+    const noMatchEl = document.getElementById('castMatrixEmpty'), searchRow = document.querySelector('.cast-search-row');
     if (!tbl) return;
+    const keepTop = opts.keepScroll ? wrap.scrollTop : 0, keepLeft = opts.keepScroll ? wrap.scrollLeft : null;
     const { rows, years } = getCastYearMatrix();
-    if (noteEl) noteEl.textContent = `นักแสดงที่อยู่ในเรื่องที่ดูแล้ว ${MIN_CAST_SHOWS} เรื่องขึ้นไป · ตัวเลข = จำนวนเรื่องที่ดูแล้วซึ่งออกอากาศปีนั้น · คลิกตัวเลขหรือชื่อเพื่อดูรายชื่อเรื่อง · คลิกปีเพื่อเรียงลำดับ`;
-    if (!rows.length) {
-      tbl.innerHTML = ''; wrap.hidden = true; if (emptyEl) emptyEl.hidden = false; if (moreBtn) moreBtn.hidden = true; return;
+    const q = castQuery.trim();
+    if (noteEl) noteEl.textContent = `นักแสดงที่อยู่ในเรื่องที่ดูแล้ว ${MIN_CAST_SHOWS} เรื่องขึ้นไป · ตัวเลข = จำนวนเรื่องที่ดูแล้วซึ่งออกอากาศปีนั้น · คลิกตัวเลขหรือชื่อเพื่อดูรายชื่อเรื่อง · คลิกปีเพื่อเรียงลำดับ · ค้นหาได้ทุกคน (รวมคนที่ดูน้อยกว่า ${MIN_CAST_SHOWS} เรื่อง)`;
+    if (!rows.length && !q) {
+      tbl.innerHTML = ''; wrap.hidden = true; if (searchRow) searchRow.hidden = true; if (emptyEl) emptyEl.hidden = false; if (loadEl) loadEl.hidden = true; return;
     }
-    wrap.hidden = false; if (emptyEl) emptyEl.hidden = true;
+    wrap.hidden = false; if (searchRow) searchRow.hidden = false; if (emptyEl) emptyEl.hidden = true;
+    if (!rows.length) {
+      tbl.innerHTML = ''; if (loadEl) loadEl.hidden = true;
+      if (noMatchEl) { noMatchEl.hidden = false; noMatchEl.textContent = `ไม่พบนักแสดงชื่อ “${q}” ในเรื่องที่ดูแล้ว`; }
+      if (countEl) countEl.innerHTML = 'พบ <b>0</b> คน';
+      return;
+    }
+    if (noMatchEl) noMatchEl.hidden = true;
 
     const shown = rows.slice(0, castShowCount);
-    if (moreBtn) {
-      const left = rows.length - shown.length;
-      moreBtn.hidden = left <= 0 && shown.length <= CAST_PAGE;
-      moreBtn.textContent = left > 0 ? `แสดงเพิ่มอีก ${Math.min(CAST_PAGE, left)} คน (เหลือ ${left} คน)` : 'ย่อกลับ';
-    }
+    if (loadEl) loadEl.hidden = shown.length >= rows.length;
+    if (countEl) countEl.innerHTML = q ? `พบ <b>${rows.length}</b> คน` : `ทั้งหมด <b>${rows.length}</b> คน`;
+    const hl = name => { const t = escAttr(name); if (!q) return t; const i = name.toLowerCase().indexOf(q.toLowerCase()); if (i < 0) return t;
+      return escAttr(name.slice(0, i)) + '<mark>' + escAttr(name.slice(i, i + q.length)) + '</mark>' + escAttr(name.slice(i + q.length)); };
     let max = 1;
     shown.forEach(r => years.forEach(y => { if ((r.years[y] || 0) > max) max = r.years[y]; }));
 
@@ -5407,13 +5450,43 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         const pct = Math.round(14 + 66 * (v / max));
         return `<td class="v" data-year="${y}" tabindex="0" style="background:color-mix(in srgb, var(--red) ${pct}%, transparent)" title="${escAttr(r.name)} · ปี ${y}: ${v} เรื่อง">${v}</td>`;
       }).join('');
-      return `<tr data-cast="${escAttr(r.name)}"><th class="nm" scope="row" tabindex="0" title="${escAttr(r.name)} — ดูแล้ว ${r.total} เรื่อง">${escAttr(r.name)}</th>${cells}</tr>`;
+      return `<tr data-cast="${escAttr(r.name)}"><th class="nm" scope="row" tabindex="0" title="${escAttr(r.name)} — ดูแล้ว ${r.total} เรื่อง">${hl(r.name)}</th>${cells}</tr>`;
     }).join('') + '</tbody>';
     tbl.innerHTML = head + body;
     highlightCastBars();
-    // จอแคบ: เลื่อนไปปีล่าสุด (ขวาสุด) ให้เห็นก่อน
-    if (wrap.scrollWidth > wrap.clientWidth) wrap.scrollLeft = wrap.scrollWidth;
+    if (opts.keepScroll) { wrap.scrollTop = keepTop; wrap.scrollLeft = keepLeft; }
+    else {
+      wrap.scrollTop = 0;
+      // จอแคบ: เลื่อนไปปีล่าสุด (ขวาสุด) ให้เห็นก่อน
+      if (wrap.scrollWidth > wrap.clientWidth) wrap.scrollLeft = wrap.scrollWidth;
+    }
+    // ถ้าตารางยังสั้นกว่ากรอบ (ไม่มีให้เลื่อน) แต่ยังมีคนเหลือ → โหลดเพิ่มต่อเลย
+    if (shown.length < rows.length && wrap.scrollHeight <= wrap.clientHeight + 4) requestAnimationFrame(loadMoreCast);
   }
+
+  // เลื่อนถึงท้ายตาราง → โหลดเพิ่มอีก 25 คนอัตโนมัติ
+  function loadMoreCast() {
+    const total = getCastYearMatrix().rows.length;
+    if (castShowCount >= total) return;
+    castShowCount += CAST_PAGE;
+    renderCastStackedChart({ keepScroll: true });
+  }
+  (function () {
+    const wrap = document.getElementById('castMatrixWrap'); if (!wrap) return;
+    let busy = false;
+    wrap.addEventListener('scroll', () => {
+      if (busy) return;
+      if (wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 120) {
+        busy = true; requestAnimationFrame(() => { loadMoreCast(); busy = false; });
+      }
+    }, { passive: true });
+    const input = document.getElementById('castSearch'), clr = document.getElementById('castSearchClear');
+    if (!input) return;
+    const apply = () => { castQuery = input.value; if (clr) clr.hidden = !input.value; castShowCount = CAST_PAGE; renderCastStackedChart(); };
+    input.addEventListener('input', debounce(apply, 150));
+    input.addEventListener('keydown', e => { if (e.key === 'Escape' && input.value) { e.stopPropagation(); input.value = ''; apply(); } });
+    clr?.addEventListener('click', () => { input.value = ''; apply(); input.focus(); });
+  })();
 
   function onCastMatrixPick(target) {
     const th = target.closest('thead th.yr');
@@ -5436,11 +5509,6 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   document.getElementById('castMatrix')?.addEventListener('click', e => onCastMatrixPick(e.target));
   document.getElementById('castMatrix')?.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onCastMatrixPick(e.target); }
-  });
-  document.getElementById('castMoreBtn')?.addEventListener('click', () => {
-    const total = getCastYearMatrix().rows.length;
-    castShowCount = castShowCount >= total ? CAST_PAGE : castShowCount + CAST_PAGE;
-    renderCastStackedChart();
   });
 
   function renderCastTable() {
