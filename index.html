@@ -2622,6 +2622,74 @@
   .wr-posters { gap:8px; }
 }
 @media (max-width:520px) { .wr-grid { grid-template-columns:1fr 1fr; } .wr-card.span-m { grid-column:1 / -1; } }
+
+  /* ===== มุมมองผนังโปสเตอร์ ===== */
+  .view-toggle { margin-left:auto; display:inline-flex; padding:3px; gap:2px; border:1px solid var(--border); border-radius:10px; background:var(--surface); flex:0 0 auto; }
+  .view-toggle button { width:32px; height:28px; display:flex; align-items:center; justify-content:center; border:none; border-radius:7px; background:none; color:var(--text-dim); cursor:pointer; }
+  .view-toggle button:hover { color:var(--text); }
+  .view-toggle button.active { background:var(--surface-soft); color:var(--text); }
+  html body #view-detail .grid.is-wall { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:20px 16px; }
+  .wall-tile { position:relative; min-width:0; cursor:pointer; outline:none; animation:wtIn .35s ease both; }
+  @keyframes wtIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .wt-poster { position:relative; aspect-ratio:2/3; border-radius:12px; overflow:hidden; background:var(--surface-soft); border:1px solid var(--border);
+    box-shadow:0 6px 18px rgba(0,0,0,.28); transition:transform .18s ease, box-shadow .18s ease, border-color .18s; }
+  .wt-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
+  .wt-cover { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; gap:6px; padding:14px 12px;
+    background:linear-gradient(165deg, hsl(var(--h) 55% 38%) 0%, hsl(calc(var(--h) + 40) 55% 16%) 70%, #0c0c0e 100%); color:#fff; }
+  .wt-cover b { font:800 1.05rem/1.2 'Sarabun','Inter',sans-serif; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; text-shadow:0 2px 8px rgba(0,0,0,.4); overflow-wrap:anywhere; }
+  .wt-cover-type { align-self:flex-start; font:700 .6rem 'Inter','Sarabun',sans-serif; letter-spacing:.06em; padding:2px 7px; border-radius:5px; background:rgba(255,255,255,.16); }
+  .wt-cover-year { font:600 .72rem 'Inter',sans-serif; opacity:.7; }
+  .wt-rank { position:absolute; z-index:3; top:8px; left:8px; background:var(--red); color:var(--on-red,#fff); font:800 .72rem 'Inter',sans-serif; padding:3px 8px; border-radius:7px; box-shadow:0 2px 6px rgba(0,0,0,.35); }
+  .wt-menu-btn.card-menu-btn { position:absolute; z-index:4; top:6px; right:6px; width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,.55); color:#fff; border:none;
+    opacity:0; transition:opacity .15s; backdrop-filter:blur(4px); }
+  .wall-tile .card-menu { z-index:8; top:40px; right:6px; left:6px; min-width:0; }
+  .wall-tile:has(.card-menu:not([hidden])) { z-index:30; animation:none; }
+  .wall-tile .card-menu button { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wall-tile .card-menu :is(.menu-watched,.menu-ep) { display:block; width:100%; text-align:left; padding:8px 12px; border:none; border-radius:0; background:transparent; font:600 .78rem 'Inter','Sarabun',sans-serif; line-height:1.3; color:var(--mint); }
+  .wall-tile .card-menu :is(.menu-watched,.menu-ep):hover { background:var(--surface); color:var(--mint); }
+  .wall-tile:hover .wt-menu-btn { z-index:7; }
+  .wt-bottom { position:absolute; z-index:3; left:0; right:0; bottom:0; display:flex; align-items:flex-end; gap:6px; padding:8px; pointer-events:none; }
+  .wt-like { margin-left:auto; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--mint); color:#0b0b0b; font-size:.8rem; box-shadow:0 2px 6px rgba(0,0,0,.35); }
+  .wt-chip { font:700 .66rem 'Inter','Sarabun',sans-serif; padding:3px 8px; border-radius:999px; box-shadow:0 2px 6px rgba(0,0,0,.35); white-space:nowrap; }
+  .wt-ready { background:var(--blue); color:#fff; }
+  .wt-watching { background:var(--mint); color:#0b0b0b; margin-bottom:6px; }
+  .wt-dropped { background:var(--amber); color:#fff; }
+  .wt-progress { position:absolute; left:0; right:0; bottom:0; height:4px; background:rgba(0,0,0,.5); }
+  .wt-progress i { display:block; height:100%; background:var(--mint); }
+  .wt-info { position:absolute; z-index:2; inset:auto 0 0 0; padding:40px 10px 10px; display:flex; flex-direction:column; gap:2px; color:#fff; font-size:.72rem;
+    background:linear-gradient(transparent, rgba(0,0,0,.88) 45%); opacity:0; transform:translateY(8px); transition:opacity .18s, transform .18s; pointer-events:none; }
+  .wt-info b { font-size:.84rem; line-height:1.25; margin-bottom:2px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .wt-info span { opacity:.8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .wt-title { margin:8px 2px 0; font:600 .84rem/1.3 'Sarabun',sans-serif; color:var(--text); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  @media (hover:hover) {
+    .wall-tile:hover .wt-poster { transform:translateY(-4px) scale(1.03); box-shadow:0 14px 30px rgba(0,0,0,.45); border-color:var(--red); }
+    .wall-tile:hover .wt-info { opacity:1; transform:none; }
+    .wall-tile:hover .wt-cover > * { opacity:0; transition:opacity .15s; }
+    .wall-tile:hover .wt-bottom { opacity:0; }
+    .wall-tile:hover .wt-menu-btn, .wall-tile:focus-within .wt-menu-btn { opacity:1; }
+  }
+  .wall-tile:focus-visible .wt-poster { outline:2px solid var(--red); outline-offset:3px; }
+  @media (hover:none) { .wt-menu-btn.card-menu-btn { opacity:1; width:26px; height:26px; font-size:.8rem; } }
+  html body #view-detail .wall-tile .card-menu { z-index:20; }
+  html body #view-detail .wall-tile .card-menu :is(.menu-watched,.menu-ep) { position:static; margin:0; padding:8px 12px; width:100%; border:none; background:transparent; color:var(--mint); text-align:left; }
+  /* ซ่อนชื่อใต้รูป (แบบ B) — ชื่อขึ้นตอนชี้ หรือแตะเปิดเรื่องย่อ */
+  .wt-title { display:none; }
+  html body #view-detail .grid.is-wall { row-gap:16px; }
+  @media (max-width:860px) {
+    html body #view-detail .grid.is-wall { grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px 8px; }
+    .wt-poster { border-radius:9px; }
+    .wt-cover { padding:8px 7px; gap:4px; } .wt-cover b { font-size:.78rem; } .wt-cover-type { font-size:.52rem; padding:1px 5px; } .wt-cover-year { font-size:.6rem; }
+    .wt-title { font-size:.72rem; margin-top:5px; }
+    .wt-rank { top:5px; left:5px; font-size:.6rem; padding:2px 6px; }
+    .wt-chip { font-size:.56rem; padding:2px 6px; } .wt-like { width:20px; height:20px; font-size:.62rem; }
+    .wt-bottom { padding:5px; }
+    .view-toggle button { width:30px; height:26px; }
+    .wall-tile .card-menu { top:34px; left:3px; right:3px; }
+    html body #view-detail .wall-tile .card-menu button { padding:9px 10px; font-size:.74rem; }
+  }
+  @media (max-width:860px) and (orientation:landscape) and (min-width:600px) {
+    html body #view-detail .grid.is-wall { grid-template-columns:repeat(5, minmax(0,1fr)); }
+  }
 /* ===== Settings: ตัวเลือกโปสเตอร์บนตั๋ว ===== */
 .poster-opt-note { margin:-4px 0 14px; font-size:0.8rem; color:var(--text-dim); }
 .poster-opt-grid { display:flex; gap:16px; flex-wrap:wrap; }
@@ -3495,7 +3563,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
             <div class="form-field"><label for="newEpisodes">จำนวนตอน</label><input type="number" id="newEpisodes" placeholder="16" min="0"></div>
             <div class="form-field"><label for="newPoster">ลิงก์รูปโปสเตอร์ (URL)</label><input type="url" id="newPoster" placeholder="https://..."></div>
             <div class="form-field"><label for="newPlatform">แพลตฟอร์ม (คั่นด้วยจุลภาค)</label><input type="text" id="newPlatform" list="platformList" placeholder="คั่นด้วยจุลภาค เช่น Netflix, Viu"></div>
-            <datalist id="platformList"><option value="Netflix"><option value="Viu"><option value="Disney+"><option value="Prime Video"><option value="iQIYI"><option value="TVING"><option value="WeTV"><option value="Apple TV+"><option value="HBO Max"><option value="Coupang Play"><option value="YouTube"><option value="Monomax"></datalist>
+            <datalist id="platformList"><option value="Netflix"><option value="Viu"><option value="Disney+"><option value="Prime Video"><option value="iQIYI"><option value="WeTV"><option value="HBO Max"><option value="Monomax"></datalist>
             <div class="form-checkbox"><input type="checkbox" id="newFinished"><label for="newFinished">ออกอากาศจบครบทุกตอนแล้ว</label></div>
           </div>
           <div class="edit-form-right">
@@ -3778,14 +3846,13 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   const PLATFORM_ALIASES = {
     'netflix':'Netflix', 'viu':'Viu', 'disney+':'Disney+', 'disney plus':'Disney+', 'disney':'Disney+', 'disney+ hotstar':'Disney+',
     'prime video':'Prime Video', 'prime':'Prime Video', 'amazon prime':'Prime Video', 'amazon prime video':'Prime Video',
-    'iqiyi':'iQIYI', 'tving':'TVING', 'wetv':'WeTV', 'we tv':'WeTV', 'apple tv+':'Apple TV+', 'apple tv':'Apple TV+',
-    'hbo max':'HBO Max', 'max':'HBO Max', 'hbo':'HBO Max', 'hbo go':'HBO Max', 'coupang play':'Coupang Play', 'youtube':'YouTube',
-    'trueid':'TrueID', 'true id':'TrueID', 'kocowa':'KOCOWA', 'wavve':'Wavve', 'monomax':'Monomax', 'mono max':'Monomax', 'mono29':'Monomax'
+    'iqiyi':'iQIYI', 'wetv':'WeTV', 'we tv':'WeTV',
+    'hbo max':'HBO Max', 'max':'HBO Max', 'hbo':'HBO Max', 'hbo go':'HBO Max',
+    'monomax':'Monomax', 'mono max':'Monomax', 'mono29':'Monomax'
   };
   const PLATFORM_COLORS = {
-    'Netflix':'#E50914', 'Viu':'#F5B800', 'Disney+':'#3D7BFF', 'Prime Video':'#00A8E1', 'iQIYI':'#00C341', 'TVING':'#FF153C',
-    'WeTV':'#FF6A00', 'Apple TV+':'#B4B4B8', 'HBO Max':'#9B59FF', 'Coupang Play':'#5A6BFF', 'YouTube':'#FF3B30',
-    'TrueID':'#E4002B', 'KOCOWA':'#F25C05', 'Wavve':'#1F6BFF', 'Monomax':'#E4007C'
+    'Netflix':'#E50914', 'Viu':'#F5B800', 'Disney+':'#3D7BFF', 'Prime Video':'#00A8E1',
+    'iQIYI':'#00C341', 'WeTV':'#FF6A00', 'HBO Max':'#9B59FF', 'Monomax':'#E4007C'
   };
   function canonicalPlatform(raw) {
     const t = (raw || '').toString().trim();
@@ -3929,7 +3996,61 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       : `<span class="result-count">ทั้งหมด <b>${total}</b> เรื่อง</span>`;
     bar.innerHTML = countHtml + chips.map(([k, label]) =>
       `<button type="button" class="filter-chip" data-chip="${k}" title="เอาตัวกรองนี้ออก"><span>${escAttr(label)}</span><i aria-hidden="true">✕</i></button>`).join('')
-      + (chips.length > 1 ? `<button type="button" class="filter-chip-clear" data-chip="all">ล้างทั้งหมด</button>` : '');
+      + (chips.length > 1 ? `<button type="button" class="filter-chip-clear" data-chip="all">ล้างทั้งหมด</button>` : '')
+      + viewToggleHtml(page);
+  }
+  // ===== มุมมอง: ตั๋ว / ผนังโปสเตอร์ (จำแยกต่อหน้า) =====
+  const VIEW_KEY = 'ktracker_view_';
+  const viewMode = {};
+  ['diary','watchlist','dropped'].forEach(p => { let v = 'ticket'; try { v = localStorage.getItem(VIEW_KEY + p) || 'ticket'; } catch(e) {} viewMode[p] = v === 'wall' ? 'wall' : 'ticket'; });
+  const isWall = page => viewMode[page] === 'wall';
+  function viewToggleHtml(page) {
+    const w = isWall(page);
+    return `<div class="view-toggle" role="group" aria-label="มุมมอง">
+      <button type="button" data-view="ticket" class="${w ? '' : 'active'}" aria-pressed="${!w}" title="มุมมองตั๋ว"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/></svg></button>
+      <button type="button" data-view="wall" class="${w ? 'active' : ''}" aria-pressed="${w}" title="ผนังโปสเตอร์"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="5" height="8" rx="1"/><rect x="9.5" y="3" width="5" height="8" rx="1"/><rect x="16" y="3" width="5" height="8" rx="1"/><rect x="3" y="13" width="5" height="8" rx="1"/><rect x="9.5" y="13" width="5" height="8" rx="1"/><rect x="16" y="13" width="5" height="8" rx="1"/></svg></button>
+    </div>`;
+  }
+  function setViewMode(page, v) {
+    viewMode[page] = v; try { localStorage.setItem(VIEW_KEY + page, v); } catch(e) {}
+    if (page === 'diary') render(); else if (page === 'watchlist') renderPending(); else renderDropped();
+  }
+  function wallHue(str) { let h = 0; for (const ch of String(str || '')) h = (h * 31 + ch.codePointAt(0)) % 360; return h; }
+  function wallTileHtml(s, page) {
+    const t = escAttr(s.title);
+    const hasImg = /^https?:\/\//i.test(s.poster || '');
+    const hue = wallHue(s.genres[0] || s.title);
+    const cover = `<div class="wt-cover" style="--h:${hue}"><span class="wt-cover-type">${s.type === 'series' ? 'ซีรีส์' : 'วาไรตี้'}</span><b>${t}</b><span class="wt-cover-year">${s.year || ''}</span></div>`;
+    const img = hasImg ? `<img class="wt-img" src="${escAttr(s.poster)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
+    let badges = '', menuItems = '', bottom = '';
+    if (page === 'diary') {
+      if (s.rank) badges += `<span class="wt-rank">#${s.rank}</span>`;
+      if (s.liked) bottom += `<span class="wt-like" title="ชอบ">♥</span>`;
+      menuItems = `<button class="menu-edit edit-diary-btn" data-title="${t}">แก้ไข</button><button class="menu-delete delete-diary-btn" data-title="${t}">ลบ</button>`;
+    } else if (page === 'watchlist') {
+      if (s.watchedEp > 0) {
+        const pct = s.episodes ? Math.min(100, Math.round(s.watchedEp / s.episodes * 100)) : 0;
+        bottom += `<span class="wt-chip wt-watching">EP ${s.watchedEp}${s.episodes ? '/' + s.episodes : ''}</span>`;
+        if (s.episodes) bottom += `<span class="wt-progress"><i style="width:${pct}%"></i></span>`;
+      } else if (s.finished) bottom += `<span class="wt-chip wt-ready">พร้อมดู</span>`;
+      menuItems = (s.watchedEp > 0 ? `<button class="ep-btn ep-plus menu-ep" data-title="${t}">+1 ตอน (EP ${s.watchedEp + 1})</button>` : `<button class="start-watching-btn" data-title="${t}">▶ เริ่มดู (EP 1)</button>`)
+        + `<button class="mark-watched-btn menu-watched" data-title="${t}">ดูแล้ว ✓</button><button class="menu-edit edit-pending-btn" data-title="${t}">แก้ไข</button><button class="menu-delete delete-pending-btn" data-title="${t}">ลบ</button>`;
+    } else {
+      const ep = s.lastEp ? (s.episodes ? `ep ${s.lastEp}/${s.episodes}` : `ep ${s.lastEp}`) : '';
+      if (ep) bottom += `<span class="wt-chip wt-dropped">${ep}</span>`;
+      menuItems = `<button class="mark-dropped-watched-btn menu-watched" data-title="${t}">ดูแล้ว ✓</button><button class="menu-edit edit-dropped-btn" data-title="${t}">แก้ไข</button><button class="menu-delete delete-dropped-btn" data-title="${t}">ลบ</button>`;
+    }
+    const info = [s.year, s.genres.slice(0, 2).join(' · '), pfList(s).join(', ')].filter(Boolean).map(x => `<span>${escAttr(x)}</span>`).join('');
+    return `<article class="wall-tile" tabindex="0" data-title="${t}" aria-label="${t} — ดูเรื่องย่อ">
+      <button class="card-menu-btn wt-menu-btn" data-title="${t}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
+      <div class="card-menu" hidden>${menuItems}</div>
+      <div class="wt-poster">${cover}${img}
+        ${badges}
+        <div class="wt-info"><b>${t}</b>${info}</div>
+        <div class="wt-bottom">${bottom}</div>
+      </div>
+      <p class="wt-title">${t}</p>
+    </article>`;
   }
   function removeFilterChip(page, key) {
     if (key === 'all') { document.getElementById(page === 'diary' ? 'clearFiltersDiary' : page === 'watchlist' ? 'clearFiltersPending' : 'clearFiltersDropped')?.click(); return; }
@@ -3962,6 +4083,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   }
   ['diary','watchlist','dropped'].forEach(page => {
     document.getElementById('resultBar-' + page)?.addEventListener('click', e => {
+      const v = e.target.closest('[data-view]'); if (v) { if (viewMode[page] !== v.dataset.view) setViewMode(page, v.dataset.view); return; }
       const b = e.target.closest('[data-chip]'); if (b) removeFilterChip(page, b.dataset.chip);
     });
   });
@@ -4385,7 +4507,10 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     if (currentPage > totalPages) currentPage = totalPages;
     const pageItems = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
-    pageItems.forEach((s,i) => {
+    grid.classList.toggle('is-wall', isWall('diary'));
+    if (isWall('diary')) {
+      grid.innerHTML = pageItems.map(s => wallTileHtml(s, 'diary')).join('');
+    } else pageItems.forEach((s,i) => {
       const card = document.createElement('article');
       card.className = 'ticket'; card.tabIndex = 0; card.setAttribute('aria-label', s.title + ' — ดูเรื่องย่อ');
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
@@ -4455,7 +4580,10 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const totalPages = Math.ceil(filtered.length/PAGE_SIZE);
     if (currentPagePending>totalPages) currentPagePending=totalPages;
     const pageItems = filtered.slice((currentPagePending-1)*PAGE_SIZE, currentPagePending*PAGE_SIZE);
-    pageItems.forEach((s,i) => {
+    gridPending.classList.toggle('is-wall', isWall('watchlist'));
+    if (isWall('watchlist')) {
+      gridPending.innerHTML = pageItems.map(s => wallTileHtml(s, 'watchlist')).join('');
+    } else pageItems.forEach((s,i) => {
       const card = document.createElement('article');
       card.className = 'ticket watchlist' + (s.watchedEp>0 ? ' is-watching' : ''); card.tabIndex = 0; card.setAttribute('aria-label', s.title + ' — ดูเรื่องย่อ');
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
@@ -4521,7 +4649,10 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const totalPages = Math.ceil(filtered.length/PAGE_SIZE);
     if (currentPageDropped>totalPages) currentPageDropped=totalPages;
     const pageItems = filtered.slice((currentPageDropped-1)*PAGE_SIZE, currentPageDropped*PAGE_SIZE);
-    pageItems.forEach((s,i) => {
+    gridDropped.classList.toggle('is-wall', isWall('dropped'));
+    if (isWall('dropped')) {
+      gridDropped.innerHTML = pageItems.map(s => wallTileHtml(s, 'dropped')).join('');
+    } else pageItems.forEach((s,i) => {
       const card = document.createElement('article');
       card.className = 'ticket dropped-card'; card.tabIndex = 0; card.setAttribute('aria-label', s.title + ' — ดูเรื่องย่อ');
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
@@ -6941,6 +7072,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const t = e.target;
     if (t && t.matches && t.matches('#grid .ticket, #gridPending .ticket, #gridDropped .ticket')) { e.preventDefault(); t.querySelector('.ticket-title')?.click(); }
+    else if (t && t.matches && t.matches('.wall-tile')) { e.preventDefault(); t.querySelector('.wt-title')?.click(); }
   });
   // click บนตั๋ว Watched / Watchlist / Dropped
   document.addEventListener('click', e => {
@@ -6950,10 +7082,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         e.target.closest('.platform-tag') || e.target.closest('.watch-progress')) return;
 
     // หาว่าคลิกอยู่ใน grid ไหน
-    const card = e.target.closest('#grid .ticket, #gridPending .ticket, #gridDropped .ticket');
+    const card = e.target.closest('#grid .ticket, #gridPending .ticket, #gridDropped .ticket, .wall-tile');
     if (!card) return;
 
-    const title = card.querySelector('.ticket-title')?.textContent?.trim();
+    const title = card.classList.contains('wall-tile')
+      ? card.dataset.title
+      : card.querySelector('.ticket-title')?.textContent?.trim();
 
     // หาข้อมูลจาก shows, pending, หรือ dropped
     const show = shows.find(s => s.title === title)
