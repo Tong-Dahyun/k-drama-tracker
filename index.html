@@ -4362,7 +4362,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const filteredShows = activeType === 'all' ? shows : shows.filter(s => s.type === activeType);
     const genres = [...new Set(filteredShows.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
     const prev = genreFilter.value;
-    genreFilter.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
+    genreFilter.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${escAttr(g)}">${escAttr(g)}</option>`).join('');
     genreFilter.value = genres.includes(prev) ? prev : 'all';
     if (genreFilter.value === 'all' && prev !== 'all') { activeGenre = 'all'; render(); }
   }
@@ -4378,7 +4378,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const filteredPending = activeTypePending === 'all' ? pending : pending.filter(s => s.type === activeTypePending);
     const genres = [...new Set(filteredPending.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
     const prev = genreFilterPending.value;
-    genreFilterPending.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
+    genreFilterPending.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${escAttr(g)}">${escAttr(g)}</option>`).join('');
     genreFilterPending.value = genres.includes(prev) ? prev : 'all';
     if (genreFilterPending.value === 'all' && prev !== 'all') { activeGenrePending = 'all'; renderPending(); }
   }
@@ -4387,7 +4387,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     const list = activeTypeDropped === 'all' ? dropped : dropped.filter(s => s.type === activeTypeDropped);
     const genres = [...new Set(list.flatMap(s => s.genres))].sort((a,b) => a.localeCompare(b,'th'));
     const prev = genreFilterDropped.value;
-    genreFilterDropped.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${g}">${g}</option>`).join('');
+    genreFilterDropped.innerHTML = '<option value="all">ทุกแนว</option>' + genres.map(g => `<option value="${escAttr(g)}">${escAttr(g)}</option>`).join('');
     genreFilterDropped.value = genres.includes(prev) ? prev : 'all';
     if (genreFilterDropped.value === 'all' && prev !== 'all') activeGenreDropped = 'all';
   }
@@ -4445,8 +4445,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       delete progressSaveTimers[title];
       if (!APPS_SCRIPT_URL.trim()) return;
       try {
-        await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body: JSON.stringify({ action:'updateProgress', title, ep })});
+        await apiWrite({ action:'updateProgress', title, ep });
       } catch(err) { console.error(err); }
     }, 700);
   }
@@ -4516,18 +4515,18 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       card.style.animationDelay = `${Math.min(i,12)*0.04}s`;
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${s.title}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
+          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${escAttr(s.title)}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
           <div class="card-menu" hidden>
-            <button class="menu-edit edit-diary-btn" data-title="${s.title}">แก้ไข</button>
-            <button class="menu-delete delete-diary-btn" data-title="${s.title}">ลบ</button>
+            <button class="menu-edit edit-diary-btn" data-title="${escAttr(s.title)}">แก้ไข</button>
+            <button class="menu-delete delete-diary-btn" data-title="${escAttr(s.title)}">ลบ</button>
           </div>
           ${posterThumbHtml(s,'tp-main')}<div class="ticket-top"><div class="ticket-head">
             <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
-            <h2 class="ticket-title">${s.title}</h2>
+            <h2 class="ticket-title">${escAttr(s.title)}</h2>
             ${yearLineHtml(s,'diary',activePlatform)}
           </div></div>
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenre?' active-filter':''}" data-genre="${g}" data-page="diary">${g}</span>`).join('')}</div>
-          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCast?' active-filter':''}" data-cast="${c}" data-page="diary">${c}</span>`).join('')}</div>` : ''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenre?' active-filter':''}" data-genre="${escAttr(g)}" data-page="diary">${escAttr(g)}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCast?' active-filter':''}" data-cast="${escAttr(c)}" data-page="diary">${escAttr(c)}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">${posterThumbHtml(s,'tp-stub')}
@@ -4592,19 +4591,19 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       const statusLabel = s.finished?'<span class="ws-long">จบแล้ว พร้อมดูยกชุด</span><span class="ws-short">พร้อมดู</span>':'<span class="ws-long">กำลังออกอากาศ</span><span class="ws-short">ออกอากาศ</span>';
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${s.title}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
+          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${escAttr(s.title)}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
           <div class="card-menu" hidden>
             ${s.watchedEp>0?'':`<button class="start-watching-btn" data-title="${escAttr(s.title)}">▶ เริ่มดู (EP 1)</button>`}
-            <button class="menu-edit edit-pending-btn" data-title="${s.title}">แก้ไข</button>
-            <button class="menu-delete delete-pending-btn" data-title="${s.title}">ลบ</button>
+            <button class="menu-edit edit-pending-btn" data-title="${escAttr(s.title)}">แก้ไข</button>
+            <button class="menu-delete delete-pending-btn" data-title="${escAttr(s.title)}">ลบ</button>
           </div>
           ${posterThumbHtml(s,'tp-main')}<div class="ticket-top"><div class="ticket-head">
             <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
-            <h2 class="ticket-title">${s.title}</h2>
+            <h2 class="ticket-title">${escAttr(s.title)}</h2>
             ${yearLineHtml(s,'watchlist',activePlatformPending)}
           </div></div>
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenrePending?' active-filter':''}" data-genre="${g}" data-page="watchlist">${g}</span>`).join('')}</div>
-          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastPending?' active-filter':''}" data-cast="${c}" data-page="watchlist">${c}</span>`).join('')}</div>` : ''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenrePending?' active-filter':''}" data-genre="${escAttr(g)}" data-page="watchlist">${escAttr(g)}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastPending?' active-filter':''}" data-cast="${escAttr(c)}" data-page="watchlist">${escAttr(c)}</span>`).join('')}</div>` : ''}
           ${progressHtml(s)}
         </div>
         <div class="perforation"></div>
@@ -4612,7 +4611,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
           <span class="ticket-meta">${s.episodes?s.episodes+' ตอน':''}</span>
           <span class="watch-status ${statusClass}">${statusLabel}</span>
         </div>
-        <button class="mark-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
+        <button class="mark-watched-btn" data-title="${escAttr(s.title)}">ดูแล้ว ✓</button>`;
       frag.appendChild(card);
     });
     gridPending.appendChild(frag);
@@ -4661,25 +4660,25 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
         : (s.episodes ? `0 / ${s.episodes} ตอน` : '');
       card.innerHTML = `
         <div class="ticket-main">
-          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${s.title}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
+          <span class="ticket-hint" aria-hidden="true">ดูเรื่องย่อ ›</span><button class="card-menu-btn" data-title="${escAttr(s.title)}" aria-label="ตัวเลือกเพิ่มเติม">⋮</button>
           <div class="card-menu" hidden>
-            <button class="menu-edit edit-dropped-btn" data-title="${s.title}">แก้ไข</button>
-            <button class="menu-delete delete-dropped-btn" data-title="${s.title}">ลบ</button>
+            <button class="menu-edit edit-dropped-btn" data-title="${escAttr(s.title)}">แก้ไข</button>
+            <button class="menu-delete delete-dropped-btn" data-title="${escAttr(s.title)}">ลบ</button>
           </div>
           ${posterThumbHtml(s,'tp-main')}<div class="ticket-top"><div class="ticket-head">
             <span class="ticket-type ${s.type}">${s.type==='series'?'ซีรีส์':'วาไรตี้'}</span>
-            <h2 class="ticket-title">${s.title}</h2>
+            <h2 class="ticket-title">${escAttr(s.title)}</h2>
             ${yearLineHtml(s,'dropped',activePlatformDropped)}
           </div></div>
-          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenreDropped?' active-filter':''}" data-genre="${g}" data-page="dropped">${g}</span>`).join('')}</div>
-          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastDropped?' active-filter':''}" data-cast="${c}" data-page="dropped">${c}</span>`).join('')}</div>` : ''}
+          <div class="ticket-genres">${s.genres.map(g=>`<span class="genre-tag${g===activeGenreDropped?' active-filter':''}" data-genre="${escAttr(g)}" data-page="dropped">${escAttr(g)}</span>`).join('')}</div>
+          ${splitCast(s.cast).length ? `<div class="ticket-cast">${splitCast(s.cast).map(c=>`<span class="cast-tag${c===activeCastDropped?' active-filter':''}" data-cast="${escAttr(c)}" data-page="dropped">${escAttr(c)}</span>`).join('')}</div>` : ''}
         </div>
         <div class="perforation"></div>
         <div class="ticket-stub">${posterThumbHtml(s,'tp-stub')}
           <span class="ticket-meta">ดูถึง</span>
           <div class="stamp dropped-stamp">${epLabel || '—'}</div>
         </div>
-        <button class="mark-dropped-watched-btn" data-title="${s.title}">ดูแล้ว ✓</button>`;
+        <button class="mark-dropped-watched-btn" data-title="${escAttr(s.title)}">ดูแล้ว ✓</button>`;
       frag.appendChild(card);
     });
     gridDropped.appendChild(frag);
@@ -5416,9 +5415,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     titleEl.textContent=title;
     if(list.length===0){tbody.innerHTML='<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่องในหมวดนี้</td></tr>';return;}
     if(isPending){
-      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.finished?'<span class="liked-tag watchlist">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${escAttr(s.title)}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${escAttr(g)}</span>`).join('')}</span>`:''}</td><td>${s.finished?'<span class="liked-tag watchlist">✓ พร้อมดู</span>':'<span class="watch-status airing" style="font-size:0.75rem">กำลังออกอากาศ</span>'}</td></tr>`).join('');
     } else {
-      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
+      tbody.innerHTML=list.map(s=>`<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${escAttr(s.title)}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${escAttr(g)}</span>`).join('')}</span>`:''}</td><td>${s.liked?'<span class="liked-tag liked">♥ ชอบ</span>':'<span class="liked-tag neutral">♡ เฉยๆ</span>'}</td></tr>`).join('');
     }
   }
 
@@ -5716,8 +5715,8 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     wrap.innerHTML = data.map(([genre, count]) => {
       const pct = Math.round((count / maxVal) * 100);
       const isSelected = selectedGenre === genre && selectedGenreSource === source;
-      return `<div class="databar-row ${isSelected ? (source==='watched'?'selected':'selected-liked') : ''}" data-genre="${genre}" data-source="${source}">
-        <span class="databar-label" title="${genre}">${genre}</span>
+      return `<div class="databar-row ${isSelected ? (source==='watched'?'selected':'selected-liked') : ''}" data-genre="${escAttr(genre)}" data-source="${source}">
+        <span class="databar-label" title="${escAttr(genre)}">${escAttr(genre)}</span>
         <div class="databar-bar-wrap">
           <div class="databar-bar" style="width:${pct}%; background:${color};opacity:${isSelected?1:0.7};"></div>
         </div>
@@ -6037,7 +6036,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     titleEl.textContent = selectedCastYear ? `${selectedCast} · ปี ${selectedCastYear} — ${totalCount} เรื่อง` : `${selectedCast} — ${totalCount} เรื่อง${suffix}`;
     if (!totalCount) { tbody.innerHTML = '<tr class="genre-table-empty-row"><td colspan="2">ไม่พบเรื่อง</td></tr>'; return; }
 
-    const rowHtml = (s, feelingHtml) => `<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${s.title}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${g}</span>`).join('')}</span>`:''}</td><td>${feelingHtml}</td></tr>`;
+    const rowHtml = (s, feelingHtml) => `<tr class="row-link" tabindex="0" data-title="${escAttr(s.title)}" title="ดูเรื่องย่อ"><td>${escAttr(s.title)}${s.genres&&s.genres.length?`<span class="genre-table-tags">${s.genres.slice(0,3).map(g=>`<span class="genre-table-pill">${escAttr(g)}</span>`).join('')}</span>`:''}</td><td>${feelingHtml}</td></tr>`;
 
     tbody.innerHTML =
       list.map(s => rowHtml(s, s.liked ? '<span class="liked-tag liked">♥ ชอบ</span>' : '<span class="liked-tag neutral">♡ เฉยๆ</span>')).join('') +
@@ -6252,8 +6251,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     showToast(`เพิ่ม "${newEntry.title}" ใน Watchlist แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'addPending',title:newEntry.title,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,year:newEntry.year,episodes:newEntry.episodes,finished:newEntry.finished})});
+      await apiWrite({action:'addPending',title:newEntry.title,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,year:newEntry.year,episodes:newEntry.episodes,finished:newEntry.finished});
     } catch(err){console.error(err);}
   });
 
@@ -6377,11 +6375,10 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
       if (!APPS_SCRIPT_URL.trim()) return;
       try {
-        await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body: JSON.stringify({ action:'movePendingToDropped', title:entry.title,
+        await apiWrite({ action:'movePendingToDropped', title:entry.title,
             type:entry.type==='variety'?'Variety':'Series',
             genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year,
-            episodes:entry.episodes, lastEp })});
+            episodes:entry.episodes, lastEp });
       } catch(err) { console.error(err); }
 
     } else {
@@ -6406,14 +6403,12 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       if (!APPS_SCRIPT_URL.trim()) return;
       try {
         if (source === 'dropped') {
-          await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
-            body: JSON.stringify({ action:'moveDroppedToWatched', title:entry.title, type:'Series',
-              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year, episodes:entry.episodes, liked })});
+          await apiWrite({ action:'moveDroppedToWatched', title:entry.title, type:'Series',
+              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year, episodes:entry.episodes, liked });
         } else {
-          await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
-            body: JSON.stringify({ action:'moveToWatched', title:entry.title,
+          await apiWrite({ action:'moveToWatched', title:entry.title,
               type:entry.type==='variety'?'Variety':'Series',
-              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year, episodes:entry.episodes, liked })});
+              genres:entry.genres.join(', '), cast:entry.cast||'', synopsis:entry.synopsis||'', poster:entry.poster||'', platform:entry.platform||'', year:entry.year, episodes:entry.episodes, liked });
         }
       } catch(err) { console.error(err); }
     }
@@ -6585,8 +6580,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     if(source!=='pending' && rankNum){const dup=shows.find(x=>x.type==='series'&&x.rank===rankNum&&x.title!==newTitle);if(dup) setTimeout(()=>showToast(`อันดับ ${rankNum} ซ้ำกับ "${dup.title}" — ไปเคลียร์อันดับของเรื่องใดเรื่องหนึ่งด้วยนะ`,'info'),600);}
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,...(source==='pending'?{watchedEp:watchedEpNum}:{rank:rankNum||''}),year,episodes,liked,finished})});
+      await apiWrite({action:'update',sheet:sheetKeyFor(source,type),originalTitle,title:newTitle,type:typeRaw,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,platform:platformStr,...(source==='pending'?{watchedEp:watchedEpNum}:{rank:rankNum||''}),year,episodes,liked,finished});
     } catch(err){console.error(err);}
   });
 
@@ -6601,8 +6595,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     showToast(`ลบ "${title}" แล้ว`, 'info');
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'delete',sheet:sheetKeyFor(source,type),title})});
+      await apiWrite({action:'delete',sheet:sheetKeyFor(source,type),title});
     } catch(err){console.error(err);}
   });
 
@@ -6656,8 +6649,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     showToast(`บันทึกการแก้ไข "${newTitle}" แล้ว`);
     if(!APPS_SCRIPT_URL.trim()) return;
     try {
-      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action:'update',sheet:'dropped',originalTitle,title:newTitle,type:droppedType,platform:platformStr,year,episodes,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,lastEp})});
+      await apiWrite({action:'update',sheet:'dropped',originalTitle,title:newTitle,type:droppedType,platform:platformStr,year,episodes,genres:genresStr,cast:castStr,synopsis:synopsisStr,poster:posterStr,lastEp});
     } catch(err){console.error(err);}
   });
 
@@ -6665,7 +6657,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   // Login system
   // ============================================================
   const AUTH_STORAGE_KEY = 'ktracker_auth';
-  const SESSION_PW_KEY   = 'ktracker_session_pw';
+  const SESSION_PW_KEY   = 'ktracker_session_pw';   // ของเดิม — เก็บไว้แค่เพื่อลบทิ้ง
 
   const loginOverlay    = document.getElementById('loginOverlay');
   const loginForm       = document.getElementById('loginForm');
@@ -6675,17 +6667,42 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   const settingsSectionLabel = document.getElementById('settingsSectionLabel');
   const settingsSubNav       = document.getElementById('settingsSubNav');
 
-  let currentUsername=null, currentPassword=null, currentRole=null;
+  let currentUsername=null, currentRole=null, currentToken=null;
+  try{ sessionStorage.removeItem(SESSION_PW_KEY); }catch(err){}   // ไม่เก็บรหัสผ่านในเบราว์เซอร์อีกต่อไป
 
-  function rememberSessionPassword(password,role) {
-    currentPassword=password;
-    try{ sessionStorage.setItem(SESSION_PW_KEY,password); }catch(err){}
+  function getStoredAuth()  { try{ const raw=localStorage.getItem(AUTH_STORAGE_KEY); if(!raw) return null; const p=JSON.parse(raw); return(p&&p.username&&p.token)?p:null; }catch(err){return null;} }
+  function setStoredAuth(username,role,token) { try{ localStorage.setItem(AUTH_STORAGE_KEY,JSON.stringify({username,role,token,loggedInAt:Date.now()})); }catch(err){} }
+  function clearStoredAuth() { try{ localStorage.removeItem(AUTH_STORAGE_KEY); }catch(err){} }
+
+  // เซสชันหมดอายุ / ถูกปิดบัญชี → กลับหน้าล็อกอิน
+  let authExpiredShown=false;
+  function handleAuthExpired(msg) {
+    if (authExpiredShown) return; authExpiredShown=true;
+    clearStoredAuth(); currentToken=null;
+    showToast(msg||'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่','error',5000);
+    loginFormStatus.textContent=msg||'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่'; loginFormStatus.className='form-status error';
+    loginOverlay.hidden=false;
   }
-  function restoreSessionPassword() { try{ const pw=sessionStorage.getItem(SESSION_PW_KEY); if(pw) currentPassword=pw; }catch(err){} }
-  function clearSessionPassword()   { currentPassword=null; try{ sessionStorage.removeItem(SESSION_PW_KEY); }catch(err){} }
-  function getStoredAuth()  { try{ const raw=localStorage.getItem(AUTH_STORAGE_KEY); if(!raw) return null; const p=JSON.parse(raw); return(p&&p.username)?p:null; }catch(err){return null;} }
-  function setStoredAuth(username,role) { localStorage.setItem(AUTH_STORAGE_KEY,JSON.stringify({username,role,loggedInAt:Date.now()})); }
-  function clearStoredAuth() { localStorage.removeItem(AUTH_STORAGE_KEY); }
+
+  // เรียก Apps Script พร้อมแนบ token (อ่านผลตอบกลับได้)
+  async function apiCall(payload) {
+    if (!APPS_SCRIPT_URL.trim()) return { ok:false, error:'ยังไม่ได้ตั้งค่า APPS_SCRIPT_URL' };
+    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({},payload,{token:currentToken}))});
+    const result=await res.json();
+    if (result && result.authError) handleAuthExpired(result.error);
+    return result;
+  }
+  // คำสั่งแก้ข้อมูล: หน้าเว็บอัปเดตไปก่อนแล้ว ถ้าเซิร์ฟเวอร์ไม่ยอม ให้แจ้ง + โหลดข้อมูลจริงกลับมา
+  async function apiWrite(payload) {
+    let result;
+    try { result=await apiCall(payload); }
+    catch(err){ console.error(err); showToast('บันทึกไม่สำเร็จ (เชื่อมต่อไม่ได้) — ลองรีเฟรชหน้า','error',5000); return; }
+    if (result && !result.ok && !result.authError) {
+      showToast(result.error||'บันทึกไม่สำเร็จ','error',5000);
+      try { diaryLoaded=false; await loadData(); await loadPending(); if (typeof loadDropped==='function' && droppedLoaded) { droppedLoaded=false; await loadDropped(); } } catch(err){}
+    }
+    return result;
+  }
 
   function updateUserInfoCard() {
     const card = document.getElementById('userInfoCard');
@@ -6726,10 +6743,14 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     try{
       const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',username,password})});
       const result=await res.json();
-      if(result.ok){
-        currentUsername=result.username||username; currentRole=result.role||'Editor';
-        rememberSessionPassword(password,currentRole); setStoredAuth(currentUsername,currentRole);
-        loginFormStatus.textContent=''; loginForm.reset(); unlockApp();
+      if(result.ok && result.token){
+        const wasExpired=authExpiredShown; authExpiredShown=false;
+        currentUsername=result.username||username; currentRole=result.role||'Editor'; currentToken=result.token;
+        setStoredAuth(currentUsername,currentRole,currentToken);
+        loginFormStatus.textContent=''; loginForm.reset();
+        if (wasExpired) { loginOverlay.hidden=true; applyRoleVisibility(); } else unlockApp();
+      } else if(result.ok){
+        loginFormStatus.textContent='Apps Script ยังเป็นเวอร์ชันเก่า — กรุณา Deploy Code.gs ตัวใหม่'; loginFormStatus.className='form-status error';
       } else {
         loginFormStatus.textContent=result.error||'Username หรือ Password ไม่ถูกต้อง'; loginFormStatus.className='form-status error';
       }
@@ -6737,24 +6758,28 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     finally{loginSubmitBtn.disabled=false;}
   });
 
-  logoutBtn.addEventListener('click',()=>{ clearStoredAuth(); clearSessionPassword(); location.reload(); });
+  logoutBtn.addEventListener('click',()=>{
+    const t=currentToken; clearStoredAuth();
+    if (t && APPS_SCRIPT_URL.trim()) { try { navigator.sendBeacon ? navigator.sendBeacon(APPS_SCRIPT_URL, new Blob([JSON.stringify({action:'logout',token:t})],{type:'text/plain'})) : null; } catch(err){} }
+    location.reload();
+  });
 
+  // ล็อกอินค้างไว้แบบเก่า (ไม่มี token) → ต้องล็อกอินใหม่ 1 ครั้ง
+  try { const raw=localStorage.getItem(AUTH_STORAGE_KEY); if (raw && !(JSON.parse(raw)||{}).token) localStorage.removeItem(AUTH_STORAGE_KEY); } catch(err){}
   const existingAuth=getStoredAuth();
-  if(existingAuth){ currentUsername=existingAuth.username; currentRole=existingAuth.role||'Editor'; restoreSessionPassword(); unlockApp(); }
+  if(existingAuth){
+    currentUsername=existingAuth.username; currentRole=existingAuth.role||'Editor'; currentToken=existingAuth.token; unlockApp();
+    // เช็กกับเซิร์ฟเวอร์เบื้องหลัง: token ยังใช้ได้ไหม + สิทธิ์ล่าสุด
+    apiCall({action:'whoami'}).then(r=>{
+      if (r && r.ok && r.role && r.role!==currentRole) { currentRole=r.role; setStoredAuth(currentUsername,currentRole,currentToken); applyRoleVisibility(); }
+    }).catch(()=>{});
+  }
 
   // ============================================================
   // Admin reauth
   // ============================================================
-  function ensureAdminPassword() {
-    if (currentPassword) return Promise.resolve(currentPassword);
-    return Promise.reject(new Error('ไม่พบ session password'));
-  }
-
   async function callAdminAction(action,extraPayload) {
-    const password=await ensureAdminPassword();
-    const payload=Object.assign({action,adminUsername:currentUsername,adminPassword:password},extraPayload||{});
-    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
-    return res.json();
+    return apiCall(Object.assign({action},extraPayload||{}));
   }
 
   // ============================================================
@@ -6779,15 +6804,15 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     usersTableBody.innerHTML=usersList.map(u=>{
       const isSelf=u.username===currentUsername;
       return `<tr class="${u.active?'':'is-off'}">
-        <td class="u-name">${u.username}${isSelf?' <span style="color:var(--text-dim);font-size:0.75rem;">(คุณ)</span>':''}</td>
-        <td class="u-role" data-label="สิทธิ์"><select class="role-select" data-username="${u.username}" ${isSelf?'disabled':''}>
+        <td class="u-name">${escAttr(u.username)}${isSelf?' <span style="color:var(--text-dim);font-size:0.75rem;">(คุณ)</span>':''}</td>
+        <td class="u-role" data-label="สิทธิ์"><select class="role-select" data-username="${escAttr(u.username)}" ${isSelf?'disabled':''}>
           <option value="Admin" ${u.role==='Admin'?'selected':''}>Admin</option>
           <option value="Editor" ${u.role==='Editor'?'selected':''}>Editor</option>
           <option value="Viewer" ${u.role==='Viewer'?'selected':''}>Viewer</option>
         </select></td>
-        <td class="u-status" data-label="สถานะ"><button type="button" role="switch" aria-checked="${u.active?'true':'false'}" aria-label="เปิด/ปิดการใช้งาน ${u.username}" class="active-toggle-btn ${u.active?'active':'inactive'}" data-username="${u.username}" data-active="${u.active}" ${isSelf?'disabled':''}><span class="sw-track"><span class="sw-knob"></span></span><span class="sw-text">${u.active?'ใช้งานอยู่':'ปิดใช้งาน'}</span></button></td>
-        <td class="u-reset"><button class="table-action-btn reset-pw-btn" data-username="${u.username}">Reset รหัสผ่าน</button></td>
-        <td class="u-del"><button class="table-action-btn danger delete-user-btn" data-username="${u.username}" ${isSelf?'disabled':''}>ลบ</button></td>
+        <td class="u-status" data-label="สถานะ"><button type="button" role="switch" aria-checked="${u.active?'true':'false'}" aria-label="เปิด/ปิดการใช้งาน ${escAttr(u.username)}" class="active-toggle-btn ${u.active?'active':'inactive'}" data-username="${escAttr(u.username)}" data-active="${u.active}" ${isSelf?'disabled':''}><span class="sw-track"><span class="sw-knob"></span></span><span class="sw-text">${u.active?'ใช้งานอยู่':'ปิดใช้งาน'}</span></button></td>
+        <td class="u-reset"><button class="table-action-btn reset-pw-btn" data-username="${escAttr(u.username)}">Reset รหัสผ่าน</button></td>
+        <td class="u-del"><button class="table-action-btn danger delete-user-btn" data-username="${escAttr(u.username)}" ${isSelf?'disabled':''}>ลบ</button></td>
       </tr>`;
     }).join('');
   }
@@ -6954,7 +6979,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     toast.className = `toast ${type}`;
     toast.innerHTML = `
       <span class="toast-icon">${TOAST_ICONS[type] || 'i'}</span>
-      <span>${message}</span>`;
+      <span>${escAttr(message)}</span>`;
     container.appendChild(toast);
 
     // auto hide
