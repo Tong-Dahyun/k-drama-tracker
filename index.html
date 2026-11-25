@@ -2690,6 +2690,11 @@
   @media (max-width:860px) and (orientation:landscape) and (min-width:600px) {
     html body #view-detail .grid.is-wall { grid-template-columns:repeat(5, minmax(0,1fr)); }
   }
+/* หน้าแรกเมื่อเปิดเว็บ */
+.start-page-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.start-page-row .sort-select { min-width:220px; }
+.start-page-note { font-size:.78rem; color:var(--text-dim); }
+@media (max-width:860px) { .start-page-row .sort-select { flex:1 1 100%; min-width:0; } }
 /* ===== Settings: ตัวเลือกโปสเตอร์บนตั๋ว ===== */
 .poster-opt-note { margin:-4px 0 14px; font-size:0.8rem; color:var(--text-dim); }
 .poster-opt-grid { display:flex; gap:16px; flex-wrap:wrap; }
@@ -2960,9 +2965,9 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
         <div class="nav-section-label"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></span>Series &amp; Variety</div>
         <div class="page-tabs-sub">
-          <button class="page-tab sub-page-tab" data-nav="diary">Watched Series</button>
+          <button class="page-tab sub-page-tab" data-nav="diary">Watched</button>
           <button class="page-tab sub-page-tab" data-nav="watchlist">Watchlist</button>
-          <button class="page-tab sub-page-tab" data-nav="dropped">Dropped Series</button>
+          <button class="page-tab sub-page-tab" data-nav="dropped">Dropped</button>
         </div>
 
         <div class="nav-section-label" id="settingsSectionLabel"><span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg></span>Settings</div>
@@ -3383,6 +3388,22 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       <!-- Settings > Mode -->
       <section class="view-section" id="view-mode">
         <div class="users-topbar">
+          <h2 class="users-heading">หน้าแรกเมื่อเปิดเว็บ</h2>
+        </div>
+        <div class="start-page-row">
+          <select id="startPageSelect" class="sort-select" aria-label="หน้าแรกเมื่อเปิดเว็บ">
+            <option value="last">หน้าล่าสุดที่เปิดไว้</option>
+            <option value="summary">Summary</option>
+            <option value="cast">Cast</option>
+            <option value="top">My Top 10</option>
+            <option value="wrapped">Year in Review</option>
+            <option value="diary">Watched</option>
+            <option value="watchlist">Watchlist</option>
+            <option value="dropped">Dropped</option>
+          </select>
+          <span class="start-page-note">จำค่าไว้ในเบราว์เซอร์นี้</span>
+        </div>
+        <div class="users-topbar" style="margin-top:28px;">
           <h2 class="users-heading">ธีมการแสดงผล</h2>
         </div>
         <div class="theme-opt-grid">
@@ -3647,7 +3668,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   <!-- Modal: Edit Dropped -->
   <div class="modal-overlay" id="editDroppedModalOverlay" hidden>
     <div class="modal-box modal-box-wide">
-      <h3>แก้ไข Dropped Series</h3>
+      <h3>แก้ไขเรื่องที่ดรอป</h3>
       <form id="editDroppedForm">
         <div class="edit-form-columns">
           <div class="edit-form-left">
@@ -4342,7 +4363,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
     droppedLoaded = true;
     clearSkeletonMode(gridDropped);
     if (loadFailed) {
-      renderLoadError(gridDropped, () => { droppedLoaded = false; loadDropped(); }, 'โหลด Dropped Series ไม่สำเร็จ');
+      renderLoadError(gridDropped, () => { droppedLoaded = false; loadDropped(); }, 'โหลดรายการ Dropped ไม่สำเร็จ');
       return;
     }
     populateFiltersDropped(); renderDropped();
@@ -4927,6 +4948,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   navItems.forEach(tab => tab.addEventListener('click', async () => {
     navItems.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
+    try { localStorage.setItem(LAST_NAV_KEY, tab.dataset.nav); } catch(e) {}
     const mobileTitle = document.getElementById('mobileTopbarTitle');
     if (mobileTitle) mobileTitle.textContent = tab.textContent.trim();
     closeFilterSheet();
@@ -4949,7 +4971,7 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
       renderTopSeries();
     } else if (tab.dataset.nav === 'wrapped') {
       document.getElementById('view-wrapped').classList.add('active');
-      if (!diaryLoaded) { document.getElementById('wrBody').innerHTML = '<p class="chart-empty">กำลังโหลดข้อมูล…</p>'; await loadData(); }
+      if (!diaryLoaded) { document.getElementById('wrBody').innerHTML = '<p class="chart-empty">กำลังโหลดข้อมูล…</p>'; await (dataLoadingPromise || loadData()); }
       renderWrapped();
     } else if (tab.dataset.nav === 'mode') {
       document.getElementById('view-mode').classList.add('active');
@@ -6657,6 +6679,13 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
   // Login system
   // ============================================================
   const AUTH_STORAGE_KEY = 'ktracker_auth';
+  const START_PAGE_KEY = 'ktracker_start_page';
+  const LAST_NAV_KEY   = 'ktracker_last_nav';
+  (function () {
+    const sel = document.getElementById('startPageSelect'); if (!sel) return;
+    try { sel.value = localStorage.getItem(START_PAGE_KEY) || 'last'; } catch(e) {}
+    sel.addEventListener('change', () => { try { localStorage.setItem(START_PAGE_KEY, sel.value); } catch(e) {} showToast('ตั้งหน้าแรกแล้ว — มีผลตอนเปิดเว็บครั้งถัดไป','success'); });
+  })();
   const SESSION_PW_KEY   = 'ktracker_session_pw';   // ของเดิม — เก็บไว้แค่เพื่อลบทิ้ง
 
   const loginOverlay    = document.getElementById('loginOverlay');
@@ -6729,8 +6758,25 @@ body.poster-stub .ticket-stub:has(.tp-stub) > :last-child { margin-left:auto; }
 
   function unlockApp() {
     loginOverlay.hidden=true; applyRoleVisibility();
-    loadData(); loadPending();
+    dataLoadingPromise = loadData(); loadPending();
     // Dropped loads lazily when tab is clicked
+    setTimeout(openStartPage, 0);   // รอให้สคริปต์ทั้งหมดโหลดเสร็จก่อน
+  }
+  let dataLoadingPromise = null;
+
+  // เปิดหน้าแรกตามที่ตั้งไว้ใน Settings → Mode (ค่าเริ่มต้น = หน้าล่าสุดที่เปิดไว้)
+  function openStartPage() {
+    let pref = 'last', target = 'summary';
+    try { pref = localStorage.getItem(START_PAGE_KEY) || 'last'; } catch(e) {}
+    if (pref === 'last') { try { target = localStorage.getItem(LAST_NAV_KEY) || 'summary'; } catch(e) {} }
+    else target = pref;
+    const tab = document.querySelector(`.page-tab[data-nav="${target}"]`);
+    if (!tab || tab.hidden || target === 'summary') return;
+    tab.click();
+    // หน้า Dashboard ที่ต้องใช้ข้อมูลครบ → วาดใหม่อีกรอบเมื่อโหลดเสร็จ (ถ้ายังอยู่หน้านั้น)
+    if (['cast','top','wrapped'].includes(target) && dataLoadingPromise) {
+      Promise.resolve(dataLoadingPromise).then(() => { if (tab.classList.contains('active')) tab.click(); }).catch(() => {});
+    }
   }
 
   loginForm.addEventListener('submit', async e => {
